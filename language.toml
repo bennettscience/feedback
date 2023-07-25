@@ -1,0 +1,3 @@
+[[language]]
+name = "python"
+language-server = { command = "~/.pyenv/shims/pyright-langserver", args = ["--stdio"]}

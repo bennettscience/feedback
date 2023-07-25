@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "grades"
+version = "0.1.0"
+description = "A standalone standards-based gradebook"
+authors = ["Brian Bennett <brian.bennett2@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+flask = "^2.3.1"
+flask-sqlalchemy = "^3.0.3"
+flask-login = "^0.6.2"
+python-dotenv = "^1.0.0"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.3.0"
+flake8 = "^6.0.0"
+flask-migrate = "^4.0.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,10 @@
+.venv
+.env
+.flaskenv
+__pycache__/
+instance/app.db
+config.py
+gunicorn.config.py
+.DS_Store
+
+log/
