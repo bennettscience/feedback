@@ -3,8 +3,8 @@ from webargs import fields
 from webargs.flaskparser import parser
 
 from feedbook.extensions import db
-from feedbook.models import Course, User
-from feedbook.schemas import CourseSchema
+from feedbook.models import Course, Standard, User
+from feedbook.schemas import CourseSchema, StandardListSchema
 
 bp = Blueprint("course", __name__)
 
@@ -40,14 +40,30 @@ def create_course():
     courses = Course.query.all()
     
     return render_template(
-        "home/courses",
-        courses=courses    
+        "course/partials/course_card.html",
+        data=courses    
     )
     
 @bp.get("/courses/<int:id>")
 def get_single_course(id):
     course = Course.query.filter(Course.id == id).first()
+    print(CourseSchema().dump(course))   
     return render_template(
-        "home/single-course.html",
-        course=course
+        "course/teacher_index_htmx.html",
+        course=CourseSchema().dump(course)
     )
+
+# Create new standard
+@bp.get("/courses/<int:course_id>/standards/create")
+def get_create_standard_form(course_id):
+    standards = Standard.query.all()
+    
+    return render_template(
+        "shared/partials/sidebar.html",
+        position="right",
+        partial="standards/standard-small.html",
+        title="Add standards",
+        items=StandardListSchema(many=True).dump(standards),
+        data=course_id
+    )
+

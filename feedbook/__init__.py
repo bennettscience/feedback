@@ -1,6 +1,6 @@
 from flask import Flask
 from feedbook.extensions import db, login_manager, migrate, partials
-from feedbook.blueprints import home, course
+from feedbook.blueprints import home, course, standard
 
 def create_app(config):
 	app = Flask(__name__, static_url_path='/static')
@@ -16,5 +16,6 @@ def create_app(config):
 	
 	app.register_blueprint(home.bp)
 	app.register_blueprint(course.bp)
+	app.register_blueprint(standard.bp)
 
 	return app

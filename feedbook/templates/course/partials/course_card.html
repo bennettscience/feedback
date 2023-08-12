@@ -1,20 +1,9 @@
-<div
-    id="course-{{item.canvas_id}}"
-    class="item course-item"
-    hx-get="/courses/{{ item.canvas_id }}"
-    hx-trigger="click"
-    hx-target="#course-details"
-    hx-swap="innerHTML"
-    hx-indicator="#toast"
-    hx-push-url="true"
-    _="on click 
+<div id="course-{{item.id}}" class="item course-item" hx-get="/courses/{{ item.id}}" hx-trigger="click"
+    hx-target="#course-details" hx-swap="innerHTML" hx-indicator="#toast" hx-push-url="true" _="on click 
             remove .active from <div />
-            then add .active to me"
->
-    <div
-        class="course-item-inner"
-        title="{{item.outcomes|length}} outcome{%if item.outcomes|length == 0 or item.outcomes|length > 1%}s{%endif%} set up"
-    >
+            then add .active to me">
+    <div class="course-item-inner"
+        title="{{item.standards|length}} standards{%if item.standards|length == 0 or item.standards|length > 1%}s{%endif%} set up">
         <p>{{ item.name }}</p>
     </div>
 </div>

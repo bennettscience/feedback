@@ -4,7 +4,7 @@ from webargs.flaskparser import parser
 
 from feedbook.extensions import db
 from feedbook.models import Standard, StandardAttempt
-
+from feedbook.schemas import StandardListSchema
 
 bp = Blueprint("standard", __name__)
 
@@ -17,12 +17,6 @@ def all_standards():
         standards=standards
     )
 
-# Create new standard
-@bp.get("/standards/create")
-def get_create_standard_form():
-    return render_template(
-        "shared/forms/create-standard.html"
-    )
 
 @bp.post("/standards")
 def create_standard():
@@ -48,4 +42,25 @@ def get_single_standard(id):
     return render_template(
         "standards/single-standard.html",
         standard=standard
+    )
+
+# Attach a standard to a course
+@bp.post("/standards/align")
+def add_standard_to_course():
+    from feedbook.models import Course
+    
+    args = parser.parse({
+        "standard_id": fields.Int(),
+        "course_id": fields.Int()
+    }, location="form")
+
+    standard = Standard.query.filter(Standard.id == args["standard_id"]).first()
+    course = Course.query.filter(Course.id == args['course_id']).first()
+
+    course.standards.append(standard) 
+    db.session.commit()
+    
+    return render_template(
+        "course/teacher_index_htmx.html",
+        course=course
     )

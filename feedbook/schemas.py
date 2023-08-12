@@ -23,7 +23,7 @@ class OutcomeScore(Schema):
 class CourseSchema(Schema):
     id = fields.Int(dump_only=True)
     name = fields.Str()
-    standards = fields.List(fields.Nested("OutomeListSchema"), dump_only=True)
+    standards = fields.List(fields.Nested("StandardListSchema"), dump_only=True)
     # assignments = fields.List(fields.Nested(lambda: AssignmentSchema(exclude=('watching',))))
     # enrollments = fields.List(fields.Nested(lambda: UserSchema(exclude=('enrollments',))))
 
@@ -57,17 +57,15 @@ class CanvasSyncServiceOutcome(Schema):
     name = fields.Str(dump_only=True)
 
 
-class OutcomeListSchema(Schema):
+class StandardListSchema(Schema):
     id = fields.Int(dump_only=True)
     name = fields.Str()
 
 
-class OutcomeSchema(Schema):
+class StandardSchema(Schema):
     type = fields.Str(dump_default='outcome')
     id = fields.Int(dump_only=True)
     name = fields.Str()
-    canvas_id = fields.Int()
-    alignment = fields.Nested(AssignmentSchema(exclude=("watching", "mastery")))
     score = fields.Float(dump_only=True)
 
 
