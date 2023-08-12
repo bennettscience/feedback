@@ -1,5 +1,6 @@
 from flask import Flask
-from feedbook.extensions import db, login_manager, migrate
+from feedbook.extensions import db, login_manager, migrate, partials
+from feedbook.blueprints import home, course
 
 def create_app(config):
 	app = Flask(__name__, static_url_path='/static')
@@ -10,5 +11,10 @@ def create_app(config):
 	db.init_app(app)
 	migrate.init_app(app, db, render_as_batch=True)
 	login_manager.init_app(app)
+
+	partials.register_extensions(app)
+	
+	app.register_blueprint(home.bp)
+	app.register_blueprint(course.bp)
 
 	return app

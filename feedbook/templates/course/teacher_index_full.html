@@ -1,0 +1,54 @@
+{% extends 'home/index.html'%} {% block main_content %}
+<div class="course-header">
+    <h1>{{ course.name }}</h1>
+    <div class="course-actions-container">
+        <button
+            class="btn"
+            _="on click toggle @active on me 
+                then toggle .show on the next <div />"
+        >
+            + Add
+        </button>
+        <div class="course-actions" _="on click toggle .show on me">
+            <span
+                hx-get="/sync/assignments/{{course.canvas_id}}"
+                hx-target="main"
+                hx-swap="beforeend"
+                hx-indicator="#toast"
+                >Import Assignment</span
+            >
+            <span
+                hx-get="/sync/outcomes/{{course.canvas_id}}"
+                hx-target="main"
+                hx-swap="beforeend"
+                hx-indicator="#toast"
+                >Import Outcome</span
+            >
+        </div>
+    </div>
+</div>
+<section class="stored-outcomes">
+    {% for outcome in course.outcomes %}
+    {{render_partial('outcome/partials/outcome_card.html', item=outcome,
+    course_id=course.canvas_id)}} {%endfor%}
+</section>
+
+<section class="roster-actions">
+    <input
+        id="roster-search"
+        type="text"
+        placeholder="Search students..."
+        _="on keyup 
+                if the event's key is 'Escape' 
+                    set my value to ' ' 
+                    trigger keyup 
+                else show <tr /> in .scroller when its textContent contains my value
+                "
+    />
+</section>
+<section id="scores">
+    {{ render_partial('course/partials/score_table.html', students=students,
+    course=course, has_alignment=has_alignment) }}
+</section>
+
+{% endblock %}

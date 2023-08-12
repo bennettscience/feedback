@@ -58,7 +58,7 @@ class Standard(db.Model):
 
     def current_score(self, user_id):
         """ Average the last attemp with the highest attempt.
-
+        Make sure to score by submission date, not assessed date!
         Example 1:
         scores = [1, 4, 3, 2]
         Average = 3

@@ -1,23 +1,31 @@
-[tool.poetry]
+[project]
 name = "grades"
 version = "0.1.0"
 description = "A standalone standards-based gradebook"
-authors = ["Brian Bennett <brian.bennett2@gmail.com>"]
-readme = "README.md"
+authors = [
+  { name = "Brian Bennett", email= "brian.bennett2@gmail.com" }
+]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-flask = "^2.3.1"
-flask-sqlalchemy = "^3.0.3"
-flask-login = "^0.6.2"
-python-dotenv = "^1.0.0"
-
-
-[tool.poetry.group.dev.dependencies]
-black = "^23.3.0"
-flake8 = "^6.0.0"
-flask-migrate = "^4.0.4"
+dependencies = [
+    "flask>=2.3.2",
+    "flask-sqlalchemy>=3.0.5",
+    "flask-login>=0.6.2",
+    "python-dotenv>=1.0.0",
+    "webargs>=8.3.0",
+    "jinja_partials>=0.1.1",
+]
+requires-python = ">= 3.11"
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = [
+  "black>=23.7.0",
+  "flask-migrate>=4.0.4"
+]
+
+[tool.hatch.metadata]
+allow-direct-references = true

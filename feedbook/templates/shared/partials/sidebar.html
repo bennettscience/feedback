@@ -1,0 +1,28 @@
+{# TODO: Refactor to accept a dict of hx-attributes to apply #} {# TODO:
+Refactor to name inner container? #} {# Several params are passed in to make
+this dynamic: 1. HTTP method 2. app endpoint 3. Sidebar position - left or right
+4. Hidden: bool #}
+<section {% if position=='right' %} _="on closeModal
+        add .hide to me
+        then wait 1s
+        then remove me
+        end
+        " {% else %} _="on htmx:load call checkActivePage()" {% endif %} id="{{position}}-sidebar"
+    class="sidebar sidebar--{{ position }} {{'hide' if hide}}">
+    <div id="{{position}}-sidebar-inner">
+        {% if position == 'left' %}
+        <h3>Your Courses</h3>
+        <button class="btn btn-primary" hx-get="/sync/courses" hx-trigger="click" hx-target="main" hx-swap="beforeend"
+            hx-indicator="#toast">
+            Add new course
+        </button>
+        {% endif %} {%if position == 'right' %}
+        <button class="btn-close" _="on click trigger closeModal">
+            × close
+        </button>
+        <h2>{{title}}</h2>
+        {% include 'shared/partials/search.html' %} {% endif %} {% for item in
+        items %} {{ render_partial(partial, item=item,
+        course_canvas_id=course_id)}} {%endfor%}
+    </div>
+</section>
