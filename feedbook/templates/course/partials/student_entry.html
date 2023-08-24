@@ -1,12 +1,7 @@
 <tr>
-    <td>{{student.name}}</td>
+    <td>{{student.last_name}}, {{ student.first_name }}</td>
     {% for outcome in student.scores %}
-    <td
-        hx-get="{{course.canvas_id}}/users/{{student.canvas_id}}/results/{{outcome.outcome_canvas_id}}"
-        hx-swap="afterend"
-        hx-target="closest tr"
-        hx-trigger="click"
-    >
+    <td>
         {{outcome.score}}
     </td>
     {%endfor%}

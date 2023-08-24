@@ -47,23 +47,88 @@ def create_course():
 @bp.get("/courses/<int:id>")
 def get_single_course(id):
     course = Course.query.filter(Course.id == id).first()
-    print(CourseSchema().dump(course))   
+
+    # Student scores need to be calculated before sending
+    student_enrollments = course.enrollments.filter(User.usertype_id == 2).all()
+    for student in student_enrollments:
+        student.scores = []
+        for standard in course.standards.all():
+            user_score = standard.current_score(student.id)
+            student.scores.append({
+                "standard_id": standard.id,
+                "score": user_score
+            })
+                    
     return render_template(
         "course/teacher_index_htmx.html",
-        course=CourseSchema().dump(course)
+        course=CourseSchema().dump(course),
+        students=student_enrollments
     )
 
 # Create new standard
 @bp.get("/courses/<int:course_id>/standards/create")
 def get_create_standard_form(course_id):
     standards = Standard.query.all()
+    course = Course.query.filter(Course.id == course_id).first()
+
+    filtered = [standard for standard in standards if standard not in course.standards]
     
     return render_template(
-        "shared/partials/sidebar.html",
+        "standards/standard-sidebar.html",
         position="right",
-        partial="standards/standard-small.html",
+        partial="shared/forms/create-standard.html",
         title="Add standards",
-        items=StandardListSchema(many=True).dump(standards),
-        data=course_id
+        items=StandardListSchema(many=True).dump(filtered),
+        course_id=course_id
     )
 
+# Get results for a standard in the course context
+@bp.get("/courses/<int:course_id>/standards/<int:standard_id>/results")
+def get_standard_scores_in_course(course_id, standard_id):
+    from feedbook.models import StandardAttempt
+    from feedbook.schemas import StandardAttemptSchema
+
+    course = Course.query.filter(Course.id== course_id).first()
+    standard = Standard.query.filter(Standard.id == standard_id).first()
+
+    student_enrollments = course.enrollments.filter(User.usertype_id == 2).all()
+
+    scores = []
+    for student in student_enrollments:
+        assessments = student.assessments.filter(StandardAttempt.standard_id == standard_id)
+        scores.append({
+            "last_name": student.last_name,
+            "first_name": student.first_name, 
+            "scores": StandardAttemptSchema(many=True).dump(assessments)
+        })
+
+    return render_template(
+        "course/partials/standard_score_table.html",
+        students=scores
+    )
+
+# Remove a standard from the course
+@bp.delete("/courses/<int:course_id>/standards/<int:standard_id>")
+def remove_standard_from_course(course_id, standard_id):
+    course = Course.query.filter(Course.id == course_id).first()
+    standard = Standard.query.filter(Standard.id == standard_id).first()
+    
+    print(standard)
+    course.standards.remove(standard)
+    db.session.commit()
+
+    student_enrollments = course.enrollments.filter(User.usertype_id == 2).all()
+    for student in student_enrollments:
+        student.scores = []
+        for standard in course.standards.all():
+            user_score = standard.current_score(student.id)
+            student.scores.append({
+                "standard_id": standard.id,
+                "score": user_score
+            })
+                    
+    return render_template(
+        "course/teacher_index_htmx.html",
+        course=CourseSchema().dump(course),
+        students=student_enrollments
+    )

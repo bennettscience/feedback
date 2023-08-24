@@ -6,23 +6,11 @@
                     <p _="on click toggle .show on the next <div/>">Name</p>
                     <div class="outcome-actions">
                         <span class="sort-trigger">Sort A-Z</span>
-                        {% if has_alignment%}
-                        <span
-                            hx-put="/courses/{{course.canvas_id}}/assignments/push"
-                            hx-swap="none"
-                            _="on click set my innerHTML to `<img src='{{url_for("static", filename="img/bars.svg")}}' />`
-                                on htmx:afterRequest(detail)
-                                    set my innerHTML to 'Post all grades'
-                                    then toast(detail, 5000)"
-                        >
-                            Post all grades
-                        </span>
-                            {%endif%}
                     </div>
                 </div>
             </th>
-            {% for outcome in course.outcomes %}
-            <th class="columnheader" role="columnheader" data-aligned="{{outcome.alignment is not none}}">
+            {% for standard in course.standards %}
+            <th class="columnheader" role="columnheader">
                 <div class="th-inner-container">
                     <span _="on click 
                                 set :menu to the next <div/>
@@ -32,25 +20,9 @@
                                     remove .show from <div/>
                                     log 'not showing'
                                     toggle .show on :menu
-                                end"
-                        >{{ outcome.name }}</span
-                    >
+                                end">{{ standard.name }}</span>
                     <div class="outcome-actions">
                         <span class="sort-trigger">Sort A-Z</span>
-                        {% if outcome.alignment %}
-                        <span
-                            hx-put="/assignments/{{outcome.alignment.canvas_id}}/push"
-                            hx-swap="none"
-                            _="
-                                on click set my innerHTML to `<img src='{{url_for("static", filename="img/bars.svg")}}' />`
-                                on htmx:afterRequest(detail)
-                                    set my innerHTML to 'Post grades to Canvas'
-                                    then toast(detail, 5000)
-                            "
-                        >
-                            Post grades to Canvas
-                        </span>
-                        {% endif %}
                     </div>
                 </div>
             </th>
