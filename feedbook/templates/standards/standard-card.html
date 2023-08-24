@@ -1,12 +1,15 @@
 <div class="item outcome" _="on delete remove me">
 	<h3>{{item.name}}</h3>
-	<button class="btn" hx-trigger="confirmed" hx-delete="{{course_id}}/outcomes/{{item.id}}" _='on click
+	<button class="btn" hx-get="/courses/{{course_id}}/standards/{{item.id}}/results" hx-target="#scores"
+		hx-swap="innerHTML">Expand</button>
+	<button class="btn" hx-trigger="confirmed" hx-delete="/courses/{{course_id}}/standards/{{item.id}}"
+		hx-target="#course-details" hx-swap="innerHTML" _='on click
                 call Swal.fire({
                     title:"Are you sure?",
-                    text: "This will remove the outcome and any stored attempts for all students in the course.",
+                    text: "This will remove the standard and any stored attempts for all students in the course.",
                     icon: "warning",
                     showCancelButton: true,
-                    confirmButtonText: "Yes, delete the outcome",
+                    confirmButtonText: "Yes, remove the standard from the course",
                     cancelButtonText: "Cancel",
                     confirmButtonColor: "#f55951",
                     cancelButtonColor: "#361d32"
