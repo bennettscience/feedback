@@ -10,9 +10,9 @@ class UserSchema(Schema):
     canvas_id = fields.Int(dump_only=True)
     user_type = fields.Str()
     email = fields.Str()
-    enrollments = fields.List(fields.Nested("CourseSchema"))
-    # preferences = fields.Nested(UserPrefsSchema)
-    scores = fields.List(fields.Nested("OutcomeScore"))
+    # enrollments = fields.List(fields.Nested(lambda: CourseSchema(only=("user.course.name", "course.id"))))
+    enrollments = fields.Pluck("self", "name", many=True)
+    # scores = fields.List(fields.Nested("StandardAttempt"))
 
 
 class OutcomeScore(Schema):
@@ -25,7 +25,7 @@ class CourseSchema(Schema):
     name = fields.Str()
     standards = fields.List(fields.Nested("StandardListSchema"), dump_only=True)
     # assignments = fields.List(fields.Nested(lambda: AssignmentSchema(exclude=('watching',))))
-    # enrollments = fields.List(fields.Nested(lambda: UserSchema(exclude=('enrollments',))))
+    enrollments = fields.List(fields.Nested(lambda: UserSchema(exclude=('enrollments',))))
 
 
 class UserAssignment(Schema):
@@ -63,15 +63,14 @@ class StandardListSchema(Schema):
 
 
 class StandardSchema(Schema):
-    type = fields.Str(dump_default='outcome')
     id = fields.Int(dump_only=True)
     name = fields.Str()
     score = fields.Float(dump_only=True)
+    attempts = fields.List(fields.Nested("StandardAttemptSchema"))
 
-
-class OutcomeAttemptSchema(Schema):
+class StandardAttemptSchema(Schema):
     id = fields.Int(dump_only=True)
+    # user = fields.Nested(UserSchema)
     success = fields.Bool()
     score = fields.Float()
     occurred = fields.DateTime()
-    assignments = fields.List(fields.Nested(lambda: AssignmentSchema(exclude=('watching',))))

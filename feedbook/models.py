@@ -90,7 +90,6 @@ class StandardAttempt(db.Model):
     occurred = db.Column(db.DateTime(timezone=True), default=func.now())
     comments = db.Column(db.String(1000))
 
-
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     last_name = db.Column(db.String(32), nullable=False)
@@ -112,8 +111,13 @@ class User(UserMixin, db.Model):
         backref=backref("artifacts", lazy="subquery"),
         lazy="dynamic"
     )
-    # assessments = db.relationship()
-    # assignments = db.relationship()
+
+    assessments = db.relationship(
+        "StandardAttempt",
+        backref=backref("user", cascade='all,delete,delete-orphan', single_parent=True),
+        lazy='dynamic',
+        passive_deletes=True
+    )
 
     def enroll(self, course):
         if not self.is_enrolled(course):
