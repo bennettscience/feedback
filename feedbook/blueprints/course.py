@@ -104,7 +104,8 @@ def get_standard_scores_in_course(course_id, standard_id):
 
     return render_template(
         "course/partials/standard_score_table.html",
-        students=scores
+        students=scores,
+        course_id=course_id
     )
 
 # Remove a standard from the course

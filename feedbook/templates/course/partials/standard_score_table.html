@@ -1,3 +1,6 @@
+<button class="btn btn-primary" hx-swap-oob="outerHTML:#roster-button" hx-get="/courses/{{course_id}}"
+	hx-target="#course-details" hx-swap="innerHTML">Go
+	back</button>
 <table id="course-roster" _="install Sortable">
 	<thead>
 		<tr>
@@ -9,6 +12,9 @@
 					</div>
 				</div>
 			</th>
+			{% for _ in students[0].scores %}
+			<th>Assessment {{ loop.index }}</th>
+			{% endfor %}
 		</tr>
 	</thead>
 	<tbody class="scroller">
