@@ -50,6 +50,38 @@ def get_single_standard(id):
     print(StandardSchema().dump(standard))
     return StandardSchema().dump(standard)
 
+# Add an assessment to a standard
+@bp.post("/standards/<int:standard_id>/attempts")
+def add_standard_assessment(standard_id):
+    from feedbook.models import StandardAttempt, User
+    from feedbook.schemas import StandardAttemptSchema, UserSchema
+    
+    args = parser.parse({
+        "user_id": fields.Int(),
+        "standard_id": fields.Int(),
+        "score": fields.Int(),
+        "comments": fields.Str()
+    }, location="form")
+
+    sa = StandardAttempt(
+        user_id=args['user_id'], 
+        standard_id=args['standard_id'], 
+        score=args['score'], 
+        comments=args['comments']
+    )
+    db.session.add(sa)
+    db.session.commit()
+
+    user = User.query.filter(User.id == args['user_id']).first()
+
+    user.assessments = user.assessments.filter(StandardAttempt.standard_id == standard_id)
+
+    return render_template(
+        "standards/student-updated.html",
+        student=UserSchema().dump(user),
+        name=f"{user.last_name}, {user.first_name}"
+    )
+
 # Attach a standard to a course
 @bp.post("/standards/align")
 def add_standard_to_course():

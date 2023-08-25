@@ -1,0 +1,11 @@
+{% for student in students %}
+<tr>
+	<input type="hidden" name="standard_id" value={{standard_id}} />
+	<input type="hidden" name="user_id" value={{student.id}} />
+	<td>{{student.last_name}}, {{student.first_name}}</td>
+	<td><input type="number" name="score" /></td>
+	<td><textarea name="comments"></textarea></td>
+	<td><button class="btn" hx-post="/standards/{{standard_id}}/attempts" hx-include="closest tr" hx-swap="outerHTML"
+			hx-target="closest tr">Save</td>
+</tr>
+{% endfor %}

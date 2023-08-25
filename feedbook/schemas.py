@@ -7,12 +7,11 @@ class UserLoginSchema(Schema):
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     name = fields.Str()
-    canvas_id = fields.Int(dump_only=True)
     user_type = fields.Str()
     email = fields.Str()
     # enrollments = fields.List(fields.Nested(lambda: CourseSchema(only=("user.course.name", "course.id"))))
     enrollments = fields.Pluck("self", "name", many=True)
-    # scores = fields.List(fields.Nested("StandardAttempt"))
+    assessments = fields.List(fields.Nested("StandardAttemptSchema"))
 
 
 class OutcomeScore(Schema):
