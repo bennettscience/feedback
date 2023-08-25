@@ -1,0 +1,18 @@
+{% extends 'shared/_layout.html' %}
+{% block main_content %}
+<h2>Log in</h2>
+<p>You need to log in to see that page</p>
+<form hx-trigger="submit" hx-post="/login">
+	<label>Email
+		<input type="email" name="email" required />
+	</label>
+	<label>Password
+		<input type="password" name="password" required />
+	</label>
+	<label>Keep me logged in
+		<input type="checkbox" name="remember_me" />
+	</label>
+	<input type="submit" />
+</form>
+<p>Don't have an account? <a href='{{url_for("auth.get_register")}}'>Create an account</a>.
+	{% endblock %}

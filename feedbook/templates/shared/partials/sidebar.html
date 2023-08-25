@@ -12,10 +12,12 @@ this dynamic: 1. HTTP method 2. app endpoint 3. Sidebar position - left or right
     <div id="{{position}}-sidebar-inner">
         {% if position == 'left' %}
         <h3>Your Courses</h3>
+        {% if current_user.usertype_id == 1 %}
         <button class="btn btn-primary" hx-get="/courses/create" hx-trigger="click" hx-target="main" hx-swap="beforeend"
             hx-indicator="#toast">
             Add new course
         </button>
+        {% endif %}
         {% endif %} {%if position == 'right' %}
         <button class="btn-close" _="on click trigger closeModal">
             × close

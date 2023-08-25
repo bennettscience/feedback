@@ -1,12 +1,15 @@
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from htmx_flask import Htmx
 import jinja_partials as partials
 from sqlalchemy import MetaData
 
 db = SQLAlchemy()
+htmx = Htmx()
 login_manager = LoginManager()
 migrate = Migrate()
+
 
 convention={
     "ix": 'ix_%(column_0_label)s',
