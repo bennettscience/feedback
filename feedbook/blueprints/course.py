@@ -1,4 +1,7 @@
-from flask import Blueprint, jsonify, render_template
+import csv
+from io import TextIOWrapper
+
+from flask import Blueprint, jsonify, render_template, request
 from flask_login import current_user, login_required
 from webargs import fields
 from webargs.flaskparser import parser
@@ -51,6 +54,56 @@ def create_course():
         position="left",
         partial="course/partials/course_card.html",
         items=CourseSchema(many=True).dump(courses)
+    )
+
+@bp.get("/courses/<int:course_id>/upload")
+@login_required
+def get_roster_form(course_id):
+    return render_template(
+        "course/right-sidebar.html",
+        position="right",
+        partial="course/partials/roster-upload.html",
+        data=course_id
+    )
+
+@bp.post("/courses/<int:course_id>/upload")
+@login_required
+def roster_upload(course_id):
+    args = parser.parse({
+        "file": fields.Field(
+            validate=lambda file: "csv" == file.filename.split(".")[-1].lower())
+    }, location="files")
+
+    course = current_user.enrollments.filter(Course.id == course_id).first()
+    csv_file = TextIOWrapper(args['file'], encoding="utf-8")
+    reader = csv.reader(csv_file, delimiter=",")
+    for row in reader:
+        user = User(
+            email=row[2],
+            last_name=row[0],
+            first_name=row[1],
+            usertype_id=2
+        )
+        user.set_password(row[3])
+        db.session.add(user)
+
+        user.enroll(course)
+        db.session.commit()
+
+    student_enrollments = course.enrollments.filter(User.usertype_id == 2).order_by('last_name').all()
+    for student in student_enrollments:
+        student.scores = []
+        for standard in course.standards.all():
+            user_score = standard.current_score(student.id)
+            student.scores.append({
+                "standard_id": standard.id,
+                "score": user_score
+            })
+                    
+    return render_template(
+        "course/teacher_index_htmx.html",
+        course=CourseSchema().dump(course),
+        students=student_enrollments
     )
     
 @bp.get("/courses/<int:id>")
