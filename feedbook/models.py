@@ -51,10 +51,8 @@ class Standard(db.Model):
         return self.name
 
     def __get_scores(self, user_id):
-        return [
-            item.score for item in self.attempts.filter(
-                StandardAttempt.user_id == user_id).all()
-        ]
+        scores = self.attempts.filter(StandardAttempt.user_id == user_id).order_by('occurred').all()
+        return [item.score for item in scores]
 
     def current_score(self, user_id):
         """ Average the last attemp with the highest attempt.

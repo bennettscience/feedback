@@ -1,9 +1,9 @@
 <div id="course-details">
     <h1>{{ course.name }}</h1>
     <section class="stored-outcomes">
-        {% for outcome in outcomes %}
-        {{render_partial('outcome/student/outcome_card.html', item=outcome,
-        course_id=course.canvas_id, student_id=current_user.canvas_id)}}
+        {% for standard in course.standards %}
+        {{render_partial('standards/student-standard-card.html', item=standard,
+        course_id=course.id, student_id=current_user.id)}}
         {%endfor%}
     </section>
     <section id="student-details"></section>

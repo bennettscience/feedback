@@ -114,22 +114,28 @@ def roster_upload(course_id):
 def get_single_course(id):
     course = current_user.enrollments.filter(Course.id == id).first()
 
-    # Student scores need to be calculated before sending
-    student_enrollments = course.enrollments.filter(User.usertype_id == 2).order_by('last_name').all()
-    for student in student_enrollments:
-        student.scores = []
-        for standard in course.standards.all():
-            user_score = standard.current_score(student.id)
-            student.scores.append({
-                "standard_id": standard.id,
-                "score": user_score
-            })
+    if current_user.usertype_id == 2:
+        return render_template(
+            "course/student_index.html",
+            course=course
+        )
+    else:
+        # Student scores need to be calculated before sending
+        student_enrollments = course.enrollments.filter(User.usertype_id == 2).order_by('last_name').all()
+        for student in student_enrollments:
+            student.scores = []
+            for standard in course.standards.all():
+                user_score = standard.current_score(student.id)
+                student.scores.append({
+                    "standard_id": standard.id,
+                    "score": user_score
+                })
                     
-    return render_template(
-        "course/teacher_index_htmx.html",
-        course=CourseSchema().dump(course),
-        students=student_enrollments
-    )
+        return render_template(
+            "course/teacher_index_htmx.html",
+            course=CourseSchema().dump(course),
+            students=student_enrollments
+        )
 
 # Create new standard
 @bp.get("/courses/<int:course_id>/standards/create")
@@ -166,7 +172,8 @@ def get_standard_scores_in_course(course_id, standard_id):
         assessments = student.assessments.filter(StandardAttempt.standard_id == standard_id)
         scores.append({
             "last_name": student.last_name,
-            "first_name": student.first_name, 
+            "first_name": student.first_name,
+            "id": student.id, 
             "scores": StandardAttemptSchema(many=True).dump(assessments)
         })
 
@@ -175,6 +182,17 @@ def get_standard_scores_in_course(course_id, standard_id):
         students=scores,
         course_id=course_id,
         standard_id=standard_id
+    )
+
+@bp.get("/courses/<int:course_id>/users/<int:user_id>/results/<int:standard_id>")
+def get_student_results(course_id, user_id, standard_id):
+    from feedbook.models import StandardAttempt
+    from feedbook.schemas import StandardAttemptSchema
+    
+    results = current_user.assessments.filter(StandardAttempt.standard_id == standard_id)
+    return render_template(
+        "standards/student-standard-scores.html",
+        results=results        
     )
 
 # Remove a standard from the course

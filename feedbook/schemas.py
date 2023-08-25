@@ -7,9 +7,10 @@ class UserLoginSchema(Schema):
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     name = fields.Str()
+    last_name = fields.Str()
+    first_name = fields.Str()
     user_type = fields.Str()
     email = fields.Str()
-    # enrollments = fields.List(fields.Nested(lambda: CourseSchema(only=("user.course.name", "course.id"))))
     enrollments = fields.Pluck("self", "name", many=True)
     assessments = fields.List(fields.Nested("StandardAttemptSchema"))
 
@@ -73,3 +74,4 @@ class StandardAttemptSchema(Schema):
     score = fields.Float()
     occurred = fields.DateTime()
     comments = fields.Str()
+    standard = fields.Nested(StandardSchema(exclude=['attempts']))

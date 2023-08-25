@@ -1,0 +1,5 @@
+<div class="item outcome" hx-get="/courses/{{course_id}}/users/{{student_id}}/results/{{item.id}}" hx-swap="innerHTML"
+	hx-target="#student-details">
+	<h3>{{item.name}}</h3>
+	<p>Current score: {{item.current_score(current_user.id)}}</p>
+</div>
