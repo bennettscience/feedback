@@ -17,6 +17,7 @@ flask-migrate==4.0.4
 flask-sqlalchemy==3.0.5
 greenlet==2.0.2
 htmx-flask==0.1.0
+importlib-metadata==6.8.0
 itsdangerous==2.1.2
 jinja-partials==0.1.1
 jinja2==3.1.2
@@ -29,6 +30,8 @@ pathspec==0.11.2
 platformdirs==3.10.0
 python-dotenv==1.0.0
 sqlalchemy==2.0.19
+tomli==2.0.1
 typing-extensions==4.7.1
 webargs==8.3.0
 werkzeug==2.3.6
+zipp==3.16.2
