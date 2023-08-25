@@ -4,7 +4,7 @@
         <button class="btn" hx-get="/courses/{{course.id}}/standards/create" hx-target="main" hx-swap="beforeend">
             + Add Standard
         </button>
-        <button class="btn" hx-get="/courses/{{course.id}}/upload" hx-target="main" hx-swap="beforeend">CSV
+        <button class="btn" hx-get="/courses/{{course.id}}/upload" hx-target="main" hx-swap="beforeend">+ Import
             roster</button>
     </div>
 </div>
@@ -20,8 +20,10 @@
                     trigger keyup 
                 else show <tr /> in .scroller when its textContent contains my value
                 " />
-    <div id="roster-button"></div>
-    <div id="assess-button"></div>
+    <section class="roster-actions--buttons">
+        <div id="roster-button"></div>
+        <div id="assess-button"></div>
+    </section>
 </section>
 <section id="scores">
     {{ render_partial('course/partials/score_table.html', students=students,

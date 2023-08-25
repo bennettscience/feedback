@@ -1,3 +1,8 @@
+<h2>Import roster</h2>
+<p>You can upload a roster of your students to get started. <a
+		href="https://docs.google.com/spreadsheets/d/1dH8RRb_3suilIp96ahTNbwBhEluzemV9TUwnMY2arzM/copy"
+		target="_blank">Make a copy of the CSV template here</a> and then fill it with your student data. Download the
+	sheet as a CSV and then upload.</p>
 <form hx-encoding='multipart/form-data' hx-post='/courses/{{data}}/upload'
 	_='on htmx:xhr:progress(loaded, total) set #progress.value to (loaded/total)*100' hx-target="#course-details"
 	hx-swap="innerHTML">
