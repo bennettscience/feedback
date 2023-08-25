@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, render_template
+from flask_login import current_user
 from webargs import fields
 from webargs.flaskparser import parser
 
@@ -10,7 +11,7 @@ bp = Blueprint("course", __name__)
 
 @bp.get("/courses")
 def get_all_courses():
-    courses = Course.query.all()
+    courses = current_user.enrollments.all()
     return render_template(
         "shared/partials/sidebar.html",
         position="left",
