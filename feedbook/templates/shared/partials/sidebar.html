@@ -12,7 +12,7 @@ this dynamic: 1. HTTP method 2. app endpoint 3. Sidebar position - left or right
     <div id="{{position}}-sidebar-inner">
         {% if position == 'left' %}
         <h3>Your Courses</h3>
-        <button class="btn btn-primary" hx-get="/sync/courses" hx-trigger="click" hx-target="main" hx-swap="beforeend"
+        <button class="btn btn-primary" hx-get="/courses/create" hx-trigger="click" hx-target="main" hx-swap="beforeend"
             hx-indicator="#toast">
             Add new course
         </button>
