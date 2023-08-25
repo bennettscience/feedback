@@ -367,8 +367,9 @@ main {
 
 .course-header .course-actions-container {
     height: auto;
-    width: 200px;
     position: relative;
+    display: flex;
+    gap: 1rem;
 }
 
 .course-header .course-actions-container button {
@@ -603,8 +604,11 @@ td:not(:first-child) {
 .scroller td:not(:first-child):hover {
     background-color: rgba(0, 0, 0, 0.05);
     border-color: rgba(0, 0, 0, 0.25);
+}
+.scroller td.clickable {
     cursor: pointer;
 }
+
 .details-wrap {
     display: table-row;
 }

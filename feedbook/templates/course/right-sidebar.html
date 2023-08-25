@@ -16,7 +16,7 @@ this dynamic: 1. HTTP method 2. app endpoint 3. Sidebar position - left or right
         </button>
         <h2>{{title}}</h2>
         {% endif %}
-        {{ render_partial(partial, data=data) }}
+        {{ render_partial(partial, **data) }}
         {% if items %}
         {% for item in items %} {{ render_partial(partial, item=item, data=data
         )}} {%endfor%}

@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, render_template
-from flask_login import login_required
+from flask_login import current_user, login_required
 from webargs import fields
 from webargs.flaskparser import parser
 
@@ -51,6 +51,32 @@ def get_single_standard(id):
 
     print(StandardSchema().dump(standard))
     return StandardSchema().dump(standard)
+
+@bp.get("/standards/<int:standard_id>/results/<int:user_id>")
+@login_required
+def get_standard_result(standard_id, user_id):
+    from feedbook.schemas import StandardAttemptSchema, UserSchema
+    from feedbook.models import User
+
+    if current_user.usertype_id == 1:
+        student = User.query.filter(User.id == user_id).first()
+        attempt = student.assessments.filter(StandardAttempt.id == standard_id).first()
+    else:
+        attempt = current_user.assessments.query.filter(StandardAttempt.id == standard_id)
+        student = current_user
+    
+    data = {
+        "standard": StandardAttemptSchema().dump(attempt),
+        "student": UserSchema().dump(student)
+    }
+
+    return render_template(
+        "course/right-sidebar.html",
+        position="right",
+        partial="standards/standard-result.html",
+        clickable=True,
+        data=data
+    )
 
 # Add an assessment to a standard
 @bp.post("/standards/<int:standard_id>/attempts")
