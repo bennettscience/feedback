@@ -70,6 +70,6 @@ class StandardSchema(Schema):
 class StandardAttemptSchema(Schema):
     id = fields.Int(dump_only=True)
     # user = fields.Nested(UserSchema)
-    success = fields.Bool()
     score = fields.Float()
     occurred = fields.DateTime()
+    comments = fields.Str()
