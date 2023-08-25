@@ -75,8 +75,11 @@ def roster_upload(course_id):
     }, location="files")
 
     course = current_user.enrollments.filter(Course.id == course_id).first()
+    
     csv_file = TextIOWrapper(args['file'], encoding="utf-8")
     reader = csv.reader(csv_file, delimiter=",")
+    next(reader)
+    
     for row in reader:
         user = User(
             email=row[2],
