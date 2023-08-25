@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, render_template
+from flask_login import login_required
 from webargs import fields
 from webargs.flaskparser import parser
 
@@ -10,6 +11,7 @@ bp = Blueprint("standard", __name__)
 
 # Admin view of all standards
 @bp.get("/standards")
+@login_required
 def all_standards():
     standards = Standard.query.all()
     return render_template(

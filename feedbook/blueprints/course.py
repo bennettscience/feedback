@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, render_template
-from flask_login import current_user
+from flask_login import current_user, login_required
 from webargs import fields
 from webargs.flaskparser import parser
 
@@ -10,6 +10,7 @@ from feedbook.schemas import CourseSchema, StandardListSchema
 bp = Blueprint("course", __name__)
 
 @bp.get("/courses")
+@login_required
 def get_all_courses():
     courses = current_user.enrollments.all()
     return render_template(
@@ -20,6 +21,7 @@ def get_all_courses():
     )
 
 @bp.get("/courses/create")
+@login_required
 def get_create_course_form():
     return render_template(
         "course/right-sidebar.html",
@@ -29,6 +31,7 @@ def get_create_course_form():
     )
 
 @bp.post("/courses")
+@login_required
 def create_course():
     args = parser.parse({
         "name": fields.Str(),
@@ -38,8 +41,10 @@ def create_course():
     db.session.add(course)
     db.session.commit()
 
+    current_user.enroll(course)
+    
     # refresh the course list
-    courses = Course.query.all()
+    courses = current_user.enrollments.all()
     
     return render_template(
         "shared/partials/sidebar.html",
@@ -49,8 +54,9 @@ def create_course():
     )
     
 @bp.get("/courses/<int:id>")
+@login_required
 def get_single_course(id):
-    course = Course.query.filter(Course.id == id).first()
+    course = current_user.enrollments.filter(Course.id == id).first()
 
     # Student scores need to be calculated before sending
     student_enrollments = course.enrollments.filter(User.usertype_id == 2).order_by('last_name').all()
@@ -71,9 +77,10 @@ def get_single_course(id):
 
 # Create new standard
 @bp.get("/courses/<int:course_id>/standards/create")
+@login_required
 def get_create_standard_form(course_id):
     standards = Standard.query.all()
-    course = Course.query.filter(Course.id == course_id).first()
+    course = current_user.enrollments.filter(Course.id == course_id).first()
 
     filtered = [standard for standard in standards if standard not in course.standards]
     
@@ -88,6 +95,7 @@ def get_create_standard_form(course_id):
 
 # Get results for a standard in the course context
 @bp.get("/courses/<int:course_id>/standards/<int:standard_id>/results")
+@login_required
 def get_standard_scores_in_course(course_id, standard_id):
     from feedbook.models import StandardAttempt
     from feedbook.schemas import StandardAttemptSchema
@@ -115,11 +123,13 @@ def get_standard_scores_in_course(course_id, standard_id):
 
 # Remove a standard from the course
 @bp.delete("/courses/<int:course_id>/standards/<int:standard_id>")
+@login_required
 def remove_standard_from_course(course_id, standard_id):
-    course = Course.query.filter(Course.id == course_id).first()
+    if current_user.usertype_id == 2:
+        abort(401)
+    course = current_user.enrollments.filter(Course.id == course_id).first()
     standard = Standard.query.filter(Standard.id == standard_id).first()
     
-    print(standard)
     course.standards.remove(standard)
     db.session.commit()
 
@@ -140,7 +150,10 @@ def remove_standard_from_course(course_id, standard_id):
     )
 
 @bp.get("/courses/<int:course_id>/standards/<int:standard_id>/assess")
+@login_required
 def get_assessment_form(course_id, standard_id):
+    if current_user.usertype_id == 2:
+        abort(401)
     from feedbook.schemas import UserSchema
     course = Course.query.filter(Course.id == course_id).first()
 
