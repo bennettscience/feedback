@@ -30,7 +30,8 @@ def get_create_course_form():
         "course/right-sidebar.html",
         title="Create a new course",
         position="right",
-        partial="shared/forms/create-course.html"
+        partial="shared/forms/create-course.html",
+        data={}
     )
 
 @bp.post("/courses")
