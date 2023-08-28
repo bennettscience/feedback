@@ -64,7 +64,9 @@ def get_roster_form(course_id):
         "course/right-sidebar.html",
         position="right",
         partial="course/partials/roster-upload.html",
-        data=course_id
+        data={
+            "course_id": course_id
+        }
     )
 
 @bp.post("/courses/<int:course_id>/upload")
