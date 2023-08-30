@@ -86,6 +86,7 @@ class StandardAttempt(db.Model):
     standard_id = db.Column(db.ForeignKey("standard.id", onupdate="CASCADE", ondelete="CASCADE"))
     score = db.Column(db.Integer)
     occurred = db.Column(db.DateTime(timezone=True), default=func.now())
+    assignment = db.Column(db.String(32))
     comments = db.Column(db.String(1000))
 
 class User(UserMixin, db.Model):
