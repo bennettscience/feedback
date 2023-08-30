@@ -506,6 +506,38 @@ table {
     overflow-x: scroll;
 }
 
+table#assessment-table, table#student-scores {
+    table-layout: auto;
+}
+table#assessment-table tr {
+    vertical-align: top;
+}
+table#assessment-table td, table#student-scores td {
+    text-align: left;
+}
+table#assessment-table th, td {
+    width: auto;
+}
+table#student-scores th, td {
+    width: auto;
+}
+table#assessment-table th:hover, td:hover {
+    transition: none;
+    cursor: auto;
+}
+table#assessment-table .comment,
+table#student-scores .comment {
+    width: 60%;
+}
+table#assessment-table td textarea {
+    width: 100%;
+    height: 125px;
+}
+table#assessment-table #max-len {
+    float: right;
+    margin-right: 5px;
+}
+
 #mastery-calculation-details {
     margin-bottom: 1.5rem;
     border-collapse: collapse;

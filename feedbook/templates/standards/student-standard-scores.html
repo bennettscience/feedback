@@ -1,15 +1,25 @@
-<table>
-	<thead>
+<table id="student-scores">
+	<thead _="install Sortable">
 		<tr>
-			<th>Date</th>
-			<th>Score</th>
-			<th>Comments</th>
+			<th class="columnheader" role="columnheader">
+				<p>Date</p>
+			</th>
+			<th class="columnheader" role="columnheader">
+				<p>Evidence</p>
+			</th>
+			<th class="columnheader" role="columnheader">
+				<p>Score</p>
+			</th>
+			<th class="columnheader" role="columnheader">
+				<p>Comments</p>
+			</th>
 		</tr>
 	</thead>
 	<tbody>
 		{% for result in results %}
 		<tr>
 			<td>{{result.occurred}}</td>
+			<td>{{result.assignment}}</td>
 			<td>{{result.score}}</td>
 			<td>{{result.comments}}</td>
 		</tr>
