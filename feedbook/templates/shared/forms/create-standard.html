@@ -15,3 +15,10 @@
 	{{render_partial('standards/standard-small.html', item=item, course_id=course_id)}}
 	{% endfor %}
 </section>
+{% if course %}
+<section class="stored-outcomes" hx-swap-oob="innerHTML:#stored-outcomes">
+	{% for standard in course.standards %}
+	{{render_partial('standards/standard-card.html', item=standard,
+	course_id=course.id)}} {%endfor%}
+</section>
+{% endif %}

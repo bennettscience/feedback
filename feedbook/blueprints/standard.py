@@ -37,9 +37,16 @@ def create_standard():
     # Immediately align it to the course
     course = Course.query.filter(Course.id == args['course_id']).first()
     course.standards.append(standard)
-    #TODO: Toast the result
-    return "ok"
+    db.session.commit()
 
+    items = [item for item in Standard.query.all() if item not in course.standards.all()]
+    
+    #TODO: Toast the result
+    return render_template(
+        "shared/forms/create-standard.html",
+        items=StandardSchema(many=True).dump(items),
+        course=course
+    )
 # Get a single standard
 @bp.get("/standards/<int:id>")
 def get_single_standard(id):

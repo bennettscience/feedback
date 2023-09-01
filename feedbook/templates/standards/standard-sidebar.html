@@ -9,13 +9,13 @@ this dynamic: 1. HTTP method 2. app endpoint 3. Sidebar position - left or right
         end
         " {% else %} _="on htmx:load call checkActivePage()" {% endif %} id="{{position}}-sidebar"
 	class="sidebar sidebar--{{ position }} {{'hide' if hide}}">
+	{%if position == 'right' %}
+	<button class="btn-close" _="on click trigger closeModal">
+		× close
+	</button>
+	<h2>{{title}}</h2>
+	{% endif %}
 	<div id="{{position}}-sidebar-inner">
-		{%if position == 'right' %}
-		<button class="btn-close" _="on click trigger closeModal">
-			× close
-		</button>
-		<h2>{{title}}</h2>
-		{% endif %}
 		{{ render_partial(partial, course_id=course_id) }}
 		{% if items %}
 		{% for item in items %} {{ render_partial('standards/standard-small.html', item=item, course_id=course_id

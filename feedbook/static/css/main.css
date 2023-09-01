@@ -423,7 +423,7 @@ main {
     background-color: var(--secondary-color);
 }
 
-.stored-outcomes {
+#stored-outcomes {
     display: flex;
     justify-content: flex-start;
     gap: 15px;
