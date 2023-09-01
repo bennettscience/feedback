@@ -75,3 +75,4 @@ class StandardAttemptSchema(Schema):
     occurred = fields.DateTime()
     comments = fields.Str()
     standard = fields.Nested(StandardSchema(exclude=['attempts']))
+    assignment = fields.Str()

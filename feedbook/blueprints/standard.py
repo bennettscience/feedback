@@ -115,7 +115,7 @@ def add_standard_assessment(standard_id):
 
     return render_template(
         "standards/student-updated.html",
-        student=UserSchema().dump(user),
+        record=StandardAttemptSchema().dump(sa),
         name=f"{user.last_name}, {user.first_name}"
     )
 
