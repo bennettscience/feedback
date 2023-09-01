@@ -172,7 +172,8 @@ def get_standard_scores_in_course(course_id, standard_id):
 
     scores = []
     for student in student_enrollments:
-        assessments = student.assessments.filter(StandardAttempt.standard_id == standard_id)
+        assessments = student.assessments.filter(StandardAttempt.standard_id == standard_id).order_by(StandardAttempt.occurred)
+        
         scores.append({
             "last_name": student.last_name,
             "first_name": student.first_name,
@@ -192,10 +193,11 @@ def get_student_results(course_id, user_id, standard_id):
     from feedbook.models import StandardAttempt
     from feedbook.schemas import StandardAttemptSchema
     
-    results = current_user.assessments.filter(StandardAttempt.standard_id == standard_id)
+    results = current_user.assessments.filter(StandardAttempt.standard_id == standard_id).order_by(StandardAttempt.occurred)
+
     return render_template(
         "standards/student-standard-scores.html",
-        results=results        
+        results=StandardAttemptSchema(many=True).dump(results)        
     )
 
 # Remove a standard from the course

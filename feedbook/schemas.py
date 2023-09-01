@@ -1,4 +1,5 @@
 from marshmallow import fields, Schema
+import marshmallow.utils
 
 class UserLoginSchema(Schema):
     id = fields.Int()
@@ -72,7 +73,7 @@ class StandardAttemptSchema(Schema):
     id = fields.Int(dump_only=True)
     # user = fields.Nested(UserSchema)
     score = fields.Float()
-    occurred = fields.DateTime()
+    occurred = fields.DateTime(format="%Y-%m-%d")
     comments = fields.Str()
     standard = fields.Nested(StandardSchema(exclude=['attempts']))
     assignment = fields.Str()

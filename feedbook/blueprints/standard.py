@@ -62,8 +62,13 @@ def get_single_standard(id):
 @bp.get("/standards/<int:standard_id>/results/<int:user_id>")
 @login_required
 def get_standard_result(standard_id, user_id):
+    from datetime import timedelta
     from feedbook.schemas import StandardAttemptSchema, UserSchema
     from feedbook.models import User
+
+    # Set up the timezone offset
+    # This is a nasty fix
+    diff = timedelta(hours=5)
 
     if current_user.usertype_id == 1:
         student = User.query.filter(User.id == user_id).first()
@@ -72,6 +77,9 @@ def get_standard_result(standard_id, user_id):
         attempt = current_user.assessments.query.filter(StandardAttempt.id == standard_id)
         student = current_user
     
+    # handle the timezone offset
+    # attempt.occurred = attempt.occurred - diff
+
     data = {
         "standard": StandardAttemptSchema().dump(attempt),
         "student": UserSchema().dump(student)
@@ -90,7 +98,7 @@ def get_standard_result(standard_id, user_id):
 def add_standard_assessment(standard_id):
     from feedbook.models import StandardAttempt, User
     from feedbook.schemas import StandardAttemptSchema, UserSchema
-    
+
     args = parser.parse({
         "user_id": fields.Int(),
         "standard_id": fields.Int(),

@@ -1,6 +1,6 @@
 <div id="course-details">
     <h1>{{ course.name }}</h1>
-    <section class="stored-outcomes">
+    <section id="stored-outcomes">
         {% for standard in course.standards %}
         {{render_partial('standards/student-standard-card.html', item=standard,
         course_id=course.id, student_id=current_user.id)}}
