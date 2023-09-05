@@ -61,7 +61,7 @@ class CanvasSyncServiceOutcome(Schema):
 class StandardListSchema(Schema):
     id = fields.Int(dump_only=True)
     name = fields.Str()
-
+    description = fields.Str()
 
 class StandardSchema(Schema):
     id = fields.Int(dump_only=True)

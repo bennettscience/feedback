@@ -57,6 +57,8 @@ def create_course():
         items=CourseSchema(many=True).dump(courses)
     )
 
+# TODO: Enroll a single student
+
 @bp.get("/courses/<int:course_id>/upload")
 @login_required
 def get_roster_form(course_id):

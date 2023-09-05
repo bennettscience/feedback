@@ -350,6 +350,11 @@ main {
     box-shadow: var(--active-shadow);
 }
 
+.outcome p {
+    font-style: italic;
+    font-size: 0.8rem;
+}
+
 .outcome--header {
     display: flex;
     flex-direction: row;
