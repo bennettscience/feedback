@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, render_template
 from flask_login import current_user, login_required
+from htmx_flask import make_response
 from webargs import fields
 from webargs.flaskparser import parser
 
@@ -150,9 +151,11 @@ def edit_single_attempt(standard_id, attempt_id):
 
     attempt = StandardAttempt.query.get(attempt_id)
     attempt.update(args)
-    
-    
-    return StandardAttemptSchema().dump(attempt)
+        
+    return make_response(
+        refresh=True,
+        trigger="closeModal"
+    )
 
 # Attach a standard to a course
 @bp.post("/standards/align")
