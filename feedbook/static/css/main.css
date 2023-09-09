@@ -170,8 +170,15 @@ main {
     box-shadow: var(--shadow-left-border);
 }
 
-#right-sidebar-inner input[type='text'] {
+#right-sidebar-inner input[type='text'], 
+#right-sidebar-inner input[type="number"],
+#right-sidebar-inner textarea {
     width: 100%;
+}
+
+#right-sidebar-inner textarea {
+    display: block;
+    height: 150px;
 }
 
 .sidebar--right.htmx-added {
@@ -696,7 +703,7 @@ td:not(:first-child) {
     align-items: center;
     opacity: 0;
     top: 90%;
-    right: 1.5rem;
+    left: 1.5rem;
     min-width: 250px;
     margin: 0;
     padding: 0;
