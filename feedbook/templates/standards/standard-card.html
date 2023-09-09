@@ -1,8 +1,9 @@
 <div class="item outcome" _="on delete remove me">
 	<h3>{{item.name}}</h3>
 	<p>{{item.description}}</p>
-	<button class="btn" hx-get="/courses/{{course_id}}/standards/{{item.id}}/results" hx-target="#scores"
-		hx-swap="innerHTML" _="on click remove .active from .outcome then add .active to closest .item">Score
+	<button class="btn" hx-get="/courses/{{course_id}}/standards/{{item.id}}/results" hx-push-url="true"
+		hx-target="#scores" hx-swap="innerHTML"
+		_="on click remove .active from .outcome then add .active to closest .item">Score
 		Details</button>
 	<button class="btn" hx-trigger="confirmed" hx-delete="/courses/{{course_id}}/standards/{{item.id}}"
 		hx-target="#course-details" hx-swap="innerHTML" _='on click
