@@ -21,7 +21,6 @@
 	<tbody class="scroller">
 		{% for student in students %}
 		<tr>
-			<input type="hidden" name="standard_id" value={{standard_id}} />
 			<input type="hidden" name="user_id" value={{student.id}} />
 			<td>{{student.last_name}}, {{student.first_name}}</td>
 			<td>

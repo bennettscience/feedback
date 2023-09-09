@@ -101,7 +101,6 @@ def add_standard_assessment(standard_id):
 
     args = parser.parse({
         "user_id": fields.Int(),
-        "standard_id": fields.Int(),
         "score": fields.Int(),
         "assignment": fields.Str(),
         "comments": fields.Str()
@@ -109,7 +108,7 @@ def add_standard_assessment(standard_id):
 
     sa = StandardAttempt(
         user_id=args['user_id'], 
-        standard_id=args['standard_id'], 
+        standard_id=standard_id,
         score=args['score'], 
         assignment=args['assignment'],
         comments=args['comments']
