@@ -59,29 +59,22 @@ def get_single_standard(id):
     print(StandardSchema().dump(standard))
     return StandardSchema().dump(standard)
 
-@bp.get("/standards/<int:standard_id>/results/<int:user_id>")
+@bp.get("/standards/<int:standard_id>/users/<int:user_id>/results/<int:result_id>")
 @login_required
-def get_standard_result(standard_id, user_id):
+def get_standard_result(standard_id, user_id, result_id):
     from datetime import timedelta
     from feedbook.schemas import StandardAttemptSchema, UserSchema
     from feedbook.models import User
 
-    # Set up the timezone offset
-    # This is a nasty fix
-    diff = timedelta(hours=5)
-
     if current_user.usertype_id == 1:
         student = User.query.filter(User.id == user_id).first()
-        attempt = student.assessments.filter(StandardAttempt.id == standard_id).first()
+        attempt = student.assessments.filter(StandardAttempt.id == result_id).first()
     else:
-        attempt = current_user.assessments.query.filter(StandardAttempt.id == standard_id)
+        attempt = current_user.assessments.query.filter(StandardAttempt.id == result_id)
         student = current_user
     
-    # handle the timezone offset
-    # attempt.occurred = attempt.occurred - diff
-
     data = {
-        "standard": StandardAttemptSchema().dump(attempt),
+        "attempt": StandardAttemptSchema().dump(attempt),
         "student": UserSchema().dump(student)
     }
 

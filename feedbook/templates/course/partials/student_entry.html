@@ -1,9 +1,10 @@
 <tr>
     <td>{{student.last_name}}, {{ student.first_name }}</td>
-    {% for standard in student.scores %}
+    {% for attempt in student.scores %}
     <td {% if clickable %} class="clickable" hx-trigger="click"
-        hx-get="/standards/{{standard.id}}/results/{{student.id}}" hx-target="main" hx-swap="beforeend" {% endif %}>
-        {{standard.score}}
+        hx-get="/standards/{{attempt.standard['id']}}/users/{{student.id}}/results/{{attempt.id}}" hx-target="main"
+        hx-swap="beforeend" {% endif %}>
+        {{attempt.score}}
     </td>
     {%endfor%}
 </tr>
