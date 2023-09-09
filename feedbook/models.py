@@ -89,6 +89,11 @@ class StandardAttempt(db.Model):
     assignment = db.Column(db.String(32))
     comments = db.Column(db.String(1000))
 
+    def update(self, data):
+        for key, value in data.items():
+            setattr(self, key, value)
+        db.session.commit()
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     last_name = db.Column(db.String(32), nullable=False)

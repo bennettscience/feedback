@@ -48,9 +48,9 @@ def create_standard():
         course=course
     )
 # Get a single standard
-@bp.get("/standards/<int:id>")
+@bp.get("/standards/<int:standard_id>")
 def get_single_standard(id):
-    standard = Standard.query.filter(Standard.id == id).first()
+    standard = Standard.query.filter(Standard.id == standard_id).first()
     # return render_template(
     #     "standards/single-standard.html",
     #     standard=standard
@@ -58,6 +58,11 @@ def get_single_standard(id):
 
     print(StandardSchema().dump(standard))
     return StandardSchema().dump(standard)
+
+# TODO: Get all results for a single student
+@bp.get("/standards/<int:standard_id>/users/<int:user_id>/results")
+def get_all_results_for_user(standard_id, user_id):
+    pass
 
 @bp.get("/standards/<int:standard_id>/users/<int:user_id>/results/<int:result_id>")
 @login_required
@@ -118,6 +123,36 @@ def add_standard_assessment(standard_id):
         record=StandardAttemptSchema().dump(sa),
         name=f"{user.last_name}, {user.first_name}"
     )
+
+# Edit a single standard attempt
+@bp.get("/standards/<int:standard_id>/attempts/<int:attempt_id>")
+def get_edit_form(standard_id, attempt_id):
+    from feedbook.schemas import StandardListSchema
+
+    standards = Standard.query.all()
+    attempt = StandardAttempt.query.filter(StandardAttempt.id == attempt_id).first()
+
+    return render_template(
+        "shared/forms/edit-standard-attempt.html",
+        attempt=attempt,
+        standards=StandardListSchema(many=True).dump(standards)
+    )
+
+@bp.put("/standards/<int:standard_id>/attempts/<int:attempt_id>")
+def edit_single_attempt(standard_id, attempt_id):
+    from feedbook.schemas import StandardAttemptSchema
+    args = parser.parse({
+        "assignment": fields.String(),
+        "score": fields.Int(),
+        "standard_id": fields.Int(),
+        "comments": fields.String()
+    }, location="form")
+
+    attempt = StandardAttempt.query.get(attempt_id)
+    attempt.update(args)
+    
+    
+    return StandardAttemptSchema().dump(attempt)
 
 # Attach a standard to a course
 @bp.post("/standards/align")
