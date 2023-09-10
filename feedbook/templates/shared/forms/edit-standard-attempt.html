@@ -1,5 +1,5 @@
-<form hx-trigger="submit" hx-put="/standards/{{attempt.standard_id}}/attempts/{{attempt.id}}" hx-swap="innerHTML"
-	hx-target="#right-sidebar-inner" _="on htmx:afterRequest reset() me">
+<form hx-trigger="submit" hx-put="/standards/{{attempt.standard_id}}/attempts/{{attempt.id}}" hx-swap="outerHTML"
+	hx-target="#student_{{attempt.user.id}}">
 	<h2>{{attempt.user.last_name}}, {{attempt.user.first_name}}</h2>
 	<label>Assignment name
 		<input type="text" value="{{attempt.assignment}}" name="assignment" />
@@ -18,7 +18,8 @@
 	<label>Comments
 		<textarea name="comments">{{attempt.comments}}</textarea>
 	</label>
-	<input type="submit" />
+	<button class="btn btn-primary" type="submit">Save</button>
 </form>
 <button hx-get="/standards/{{attempt.standard['id']}}/users/{{attempt.user.id}}/results/{{attempt.id}}"
 	hx-swap="innerHTML" hx-target="#right-sidebar-inner">Cancel</button>
+<button hx-delete="/standards/{{attempt.standard['id']}}/attempts/{{attempt.id}}" hx-swap="none">Delete</button>

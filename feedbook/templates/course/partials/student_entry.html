@@ -1,4 +1,4 @@
-<tr>
+<tr id="student_{{student.id}}">
     <td>{{student.last_name}}, {{ student.first_name }}</td>
     {% for attempt in student.scores %}
     <td {% if clickable %} class="clickable" hx-trigger="click"

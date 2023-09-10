@@ -141,6 +141,7 @@ def get_edit_form(standard_id, attempt_id):
 
 @bp.put("/standards/<int:standard_id>/attempts/<int:attempt_id>")
 def edit_single_attempt(standard_id, attempt_id):
+    from feedbook.models import User
     from feedbook.schemas import StandardAttemptSchema
     args = parser.parse({
         "assignment": fields.String(),
@@ -152,9 +153,27 @@ def edit_single_attempt(standard_id, attempt_id):
     attempt = StandardAttempt.query.get(attempt_id)
     attempt.update(args)
         
+    student = User.query.get(attempt.user_id)
+    student.scores = student.assessments.filter(StandardAttempt.standard_id == standard_id).all()
+
     return make_response(
-        refresh=True,
-        trigger="closeModal"
+        render_template(
+            "course/partials//student_entry.html",
+            student=student,
+            clickable=True
+        ),
+        trigger={"showToast": "Attempt updated", "closeModal": ""}
+    )
+
+# Delete a single standard attempt
+@bp.delete("/standards/<int:standard_id>/attempts/<int:attempt_id>")
+def delete_standard_assessment(standard_id, attempt_id):
+    attempt = StandardAttempt.query.get(attempt_id)
+    db.session.delete(attempt)
+    db.session.commit()
+    
+    return make_response(
+        trigger={"closeModal": "", "showToast": "Attempt deleted"}
     )
 
 # Attach a standard to a course
