@@ -42,7 +42,7 @@ class Standard(db.Model):
         
     attempts = db.relationship(
         "StandardAttempt",
-        backref=backref("standard", cascade='all,delete,delete-orphan', single_parent=True),
+        backref=backref("standard", single_parent=True),
         lazy="dynamic",
         passive_deletes=True
     )
@@ -75,7 +75,7 @@ class Standard(db.Model):
         if len(scores) == 0:
             return None
         else:
-            return round((max(scores) + scores[-1]) / 2, 1)
+            return (max(scores) + scores[-1]) / 2
 
 
 class StandardAttempt(db.Model):
@@ -118,7 +118,7 @@ class User(UserMixin, db.Model):
 
     assessments = db.relationship(
         "StandardAttempt",
-        backref=backref("user", cascade='all,delete,delete-orphan', single_parent=True),
+        backref=backref("user",single_parent=True),
         lazy='dynamic',
         passive_deletes=True
     )
