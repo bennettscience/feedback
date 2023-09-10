@@ -72,7 +72,7 @@ class StandardSchema(Schema):
 class StandardAttemptSchema(Schema):
     id = fields.Int(dump_only=True)
     user = fields.Nested(UserSchema(exclude=['enrollments', 'assessments']))
-    score = fields.Float()
+    score = fields.Int()
     occurred = fields.DateTime(format="%Y-%m-%d")
     comments = fields.Str()
     standard = fields.Nested(StandardSchema(exclude=['attempts']))
