@@ -1,5 +1,6 @@
 <tr id="student_{{student.id}}">
-    <td>{{student.last_name}}, {{ student.first_name }}</td>
+    <td hx-get="{{ url_for('user.get_user', user_id=student.id) }}" hx-target="#course-details" hx-swap="innerHTML">
+        {{student.last_name}}, {{ student.first_name }}</td>
     {% for attempt in student.scores %}
     <td {% if clickable %} class="clickable" hx-trigger="click"
         hx-get="/standards/{{attempt.standard['id']}}/users/{{student.id}}/results/{{attempt.id}}" hx-target="main"

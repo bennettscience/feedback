@@ -14,8 +14,9 @@
 <body _="on keyup[key is 'Escape'] remove .show from <div/>">
     <nav>{% include 'shared/partials/nav.html' %}</nav>
     <main>
+        {% block sidebar %} {% endblock %}
         <section id="course-detail">
-            {% block sidebar %} {% endblock %} {% block main_content %} {%
+            {% block main_content %} {%
             endblock %}
         </section>
         {% include 'shared/partials/toast.html' %}

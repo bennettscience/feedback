@@ -434,7 +434,9 @@ main {
     cursor: pointer;
     background-color: var(--secondary-color);
 }
-
+.student-summary-standard-header {
+    display: flex;
+}
 #stored-outcomes {
     display: flex;
     justify-content: flex-start;
@@ -518,13 +520,17 @@ table {
     overflow-x: scroll;
 }
 
+table.user-summary td {
+    text-align: left;
+}
+
 table#assessment-table, table#student-scores {
     table-layout: auto;
 }
 table#assessment-table tr {
     vertical-align: top;
 }
-table#assessment-table td, table#student-scores td {
+table#assessment-table td, table#student-scores td, {
     text-align: left;
 }
 table#assessment-table th, td {
@@ -569,6 +575,7 @@ th {
     /* Keep the table headers visible under the site navigation */
     position: sticky;
     top: 64px;
+    padding: 0.5rem 0;
 }
 
 th:hover {
