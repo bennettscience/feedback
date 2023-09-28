@@ -436,6 +436,8 @@ main {
 }
 .student-summary-standard-header {
     display: flex;
+    align-items: center;
+    gap: 3rem;
 }
 #stored-outcomes {
     display: flex;
@@ -694,7 +696,7 @@ td:not(:first-child) {
     grid-area: chart;
 }
 .sparkline {
-    fill: var(--hover-color);
+    fill: var(--white);
     stroke: var(--black);
 }
 
