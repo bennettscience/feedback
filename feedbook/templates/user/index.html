@@ -1,6 +1,8 @@
 <h1>Student Details</h1>
 <h2>{{ user.last_name }}, {{ user.first_name }}</h2>
-
+<button hx-get="/users/{{user.id}}/assess?course_id={{course_id}}" hx-target="#form-wrapper" hx-swap="innerHTML">Add
+	assessment</button>
+<div id="form-wrapper"></div>
 {% for k, v in standards.items() %}
 <div class="student-summary-standard-header" _="on load 
         set :myChart to the .sparkline in me 

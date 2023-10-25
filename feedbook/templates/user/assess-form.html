@@ -1,0 +1,22 @@
+<form hx-trigger="submit" hx-post="/users/{{user_id}}/assess">
+	<input type="hidden" value="user_id" />
+	<select name="standard_id">
+		<option>-</option>
+		{% for s in standards %}
+		<option value="{{s.id}}">{{s.name}}</option>
+		{% endfor %}
+	</select>
+	<label>Assignment name
+		<input type="text" name="assignment" />
+	</label>
+	<label>Score
+		<input name="score" type="number" min="0" max="4" />
+	</label>
+	<label>Comment
+		<textarea maxlength=1000 name="comments" _="
+		init put my @maxlength into #max-len end
+		on keyup 
+		put (@maxlength - my value.length) into #max-len"></textarea><span id="max-len"></span>
+	</label>
+	<input type="submit" />
+</form>
