@@ -81,6 +81,20 @@ input[type='text'] {
     line-height: 36px;
 }
 
+#bulk-form {
+    width: 50vw;
+}
+
+#bulk-form input {
+    display: block;
+    width: 100%;
+}
+
+#bulk-form textarea {
+    display: block;
+    width: 100%;
+}
+
 #roster-search {
     width: 50%;
 }

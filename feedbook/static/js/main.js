@@ -74,6 +74,23 @@ function checkActivePage() {
     return
 }
 
+function bulkAddInfo(formData) {
+  let elements = {
+    assignment: document.querySelectorAll("input[name='assignment']"),
+    score: document.querySelectorAll("input[name='score']"),
+    comments: document.querySelectorAll("textarea")
+  }
+  
+  for(let key in formData) {
+    setBulkValue(elements[key], formData[key])
+  }
+  
+}
+
+function setBulkValue(els, val) {
+  els.forEach(el => el.value = val)
+}
+
 // Handle errors from the server
 document.addEventListener('htmx:responseError', (evt) => {
     showToast(evt.detail.xhr.responseText, true)
@@ -97,3 +114,4 @@ window.formatDate = formatDate;
 window.toast = showToast;
 window.cancelToast = cancelToast;
 window.checkActivePage = checkActivePage;
+window.bulkAddInfo = bulkAddInfo;
