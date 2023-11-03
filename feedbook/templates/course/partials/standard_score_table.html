@@ -1,9 +1,32 @@
+<!--
+	This dialog allows for a bulk input of assignment names, scores, and comments.
+	-->
+<dialog _="on load set $dialog to me">
+	<p>Bulk add assignments, scores, and comments</p>.
+	<form id="bulk-form">
+		<label>Score
+			<input name="score" type="number" />
+		</label>
+		<label>Assignment
+			<input name="assignment" type="text" />
+		</label>
+		<label>Comments
+			<textarea name="comments"></textarea>
+		</label>
+	</form>
+	<button class="btn btn-primary"
+		_="on click get (the previous <form />) as Values log it call bulkAddInfo(it) end">Fill</button>
+	<button class="btn" _="on click call $dialog.close()">Close</button>
+</dialog>
 <button class="btn btn-primary" hx-swap-oob="outerHTML:#roster-button" hx-get="/courses/{{course_id}}"
 	hx-target="#course-details" hx-swap="innerHTML">Go
 	back</button>
 <button class="btn" hx-swap-oob="outerHTML:#assess-button"
 	hx-get="/courses/{{course_id}}/standards/{{standard_id}}/assess" hx-target="#course-roster" hx-swap="outerHTML">Add
 	assessment</button>
+<button class="btn" hx-swap-oob="outerHTML:#bulk-button" id="bulk"
+	_="on load set $dialog to the previous <dialog/> end on click call $dialog.showModal()">Bulk
+	add</button>
 <table id="course-roster" _="install Sortable">
 	<thead id="table-head">
 		<tr>
