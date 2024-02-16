@@ -54,7 +54,6 @@ function cancelToast() {
 
 // Listen for toast messaging from the server
 htmx.on('showToast', evt => {
-    console.log('got a toast')
     showToast(evt.detail.value)
 })
 
@@ -64,7 +63,6 @@ function checkActivePage() {
     let path = window.location.pathname;
     if (path.split('/').length > 2) {
         let id = path.split('/')[2];
-        console.log(id)
 
         let el = document.querySelector(`#course-${id}`)
         if(el) {
