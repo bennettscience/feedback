@@ -2,6 +2,10 @@ from collections import defaultdict
 
 from flask import abort, Blueprint, render_template, redirect, abort
 from flask_login import current_user, login_required
+
+from htmx_flask import make_response
+
+from feedbook.extensions import db
 from feedbook.models import User
 from feedbook.schemas import StandardAttemptSchema
 
@@ -24,10 +28,23 @@ def get_user(user_id):
 			}
 		)
 		scores_only[a.standard.name].append(a.score)
-
 	return render_template(
 		"user/index.html",
 		user=user,
 		standards=standards,
 		scores_only=scores_only
 	)
+
+@bp.put("/users/<int:user_id>/status")
+@login_required
+def deactivate_user(user_id):
+	user = User.query.filter(User.id == user_id).first()
+
+	user.active = not user.active;
+	db.session.commit()
+
+	value = "Deactivate" if user.active else "Activate"
+	return make_response(
+		value,
+        trigger={"showToast": "User status updated" }
+    )

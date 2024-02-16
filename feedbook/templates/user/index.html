@@ -1,6 +1,7 @@
-<h1>Student Details</h1>
-<h2>{{ user.last_name }}, {{ user.first_name }}</h2>
-
+<h1>{{ user.last_name }}, {{ user.first_name }}</h1>
+<button class="btn btn-primary" hx-put="/users/{{user.id}}/status" hx-swap="innerHTML">{% if user.active %}Deactivate{%
+	else %}Activate{%
+	endif %}</button>
 {% for k, v in standards.items() %}
 <div class="student-summary-standard-header" _="on load 
         set :myChart to the .sparkline in me 
