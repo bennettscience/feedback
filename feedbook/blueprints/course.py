@@ -90,7 +90,8 @@ def roster_upload(course_id):
             email=row[2],
             last_name=row[0],
             first_name=row[1],
-            usertype_id=2
+            usertype_id=2,
+            active=True
         )
         user.set_password(row[3])
         db.session.add(user)
@@ -98,7 +99,7 @@ def roster_upload(course_id):
         user.enroll(course)
         db.session.commit()
 
-    student_enrollments = course.enrollments.filter(User.usertype_id == 2).order_by('last_name').all()
+    student_enrollments = course.enrollments.filter(User.usertype_id == 2, User.active == True).order_by('last_name').all()
     for student in student_enrollments:
         student.scores = []
         for standard in course.standards.all():
@@ -126,7 +127,9 @@ def get_single_course(id):
         )
     else:
         # Student scores need to be calculated before sending
-        student_enrollments = course.enrollments.filter(User.usertype_id == 2).order_by('last_name').all()
+        student_enrollments = course.enrollments.filter(
+            User.usertype_id == 2,
+            User.active == True).order_by('last_name').all()
         for student in student_enrollments:
             student.scores = []
             for standard in course.standards.all():
@@ -170,7 +173,7 @@ def get_standard_scores_in_course(course_id, standard_id):
     course = Course.query.filter(Course.id== course_id).first()
     standard = Standard.query.filter(Standard.id == standard_id).first()
 
-    student_enrollments = course.enrollments.filter(User.usertype_id == 2).order_by('last_name').all()
+    student_enrollments = course.enrollments.filter(User.usertype_id == 2, User.active == True).order_by('last_name').all()
 
     scores = []
     for student in student_enrollments:

@@ -101,6 +101,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(64), nullable=False, unique=True)
     password_hash = db.Column(db.String(128))
     usertype_id = db.Column(db.Integer, db.ForeignKey("user_type.id"))
+    active = db.Column(db.Boolean, default=True)
 
     enrollments = db.relationship(
         "Course",
