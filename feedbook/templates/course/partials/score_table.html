@@ -31,7 +31,8 @@
     </thead>
     <tbody class="scroller">
         {% for student in students %}
+        {% if student.active %}
         {{render_partial('course/partials/student_entry.html', student=student,
-        course=course)}} {% endfor %}
+        course=course)}}{% endif %} {% endfor %}
     </tbody>
 </table>

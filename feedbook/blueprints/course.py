@@ -1,5 +1,6 @@
 import csv
 from io import TextIOWrapper
+from collections import defaultdict
 
 from flask import Blueprint, jsonify, render_template, request
 from flask_login import current_user, login_required
@@ -128,8 +129,7 @@ def get_single_course(id):
     else:
         # Student scores need to be calculated before sending
         student_enrollments = course.enrollments.filter(
-            User.usertype_id == 2,
-            User.active == True).order_by('last_name').all()
+            User.usertype_id == 2).order_by('last_name').all()
         for student in student_enrollments:
             student.scores = []
             for standard in course.standards.all():
@@ -144,6 +144,40 @@ def get_single_course(id):
             course=CourseSchema().dump(course),
             students=student_enrollments
         )
+
+# Get a single user from a course
+@bp.get("/courses/<int:course_id>/users")
+@login_required
+def get_user(course_id):
+    args = parser.parse({
+        "user_id": fields.Int()
+	}, location="querystring")
+    course = Course.query.filter(Course.id == course_id).first()
+    user = User.query.filter(User.id == args['user_id']).first()
+    standards = defaultdict(list)
+    scores_only = defaultdict(list)
+    
+    for a in user.assessments.all():
+        standards[a.standard.name].append(
+			{
+				'assignment': a.assignment,
+				'score': a.score,
+				'occurred': a.occurred
+			}
+		)
+        scores_only[a.standard.name].append(a.score)
+
+    enrollments = [user for user in course.enrollments if user.usertype_id == 2]
+    
+    
+    return render_template(
+		"user/index.html",
+		user=user,
+		standards=standards,
+		scores_only=scores_only,
+        enrollments=enrollments,
+        course=course
+	)
 
 # Create new standard
 @bp.get("/courses/<int:course_id>/standards/create")

@@ -31,6 +31,7 @@ body {
     Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
 }
 
+/* GENERICS */
 hr {
   border-style: solid;
 }
@@ -82,6 +83,14 @@ input[type='text'] {
   line-height: 36px;
 }
 
+.container--flex {
+  display: flex;
+}
+
+.flex--wide {
+  justify-content: space-between;
+}
+
 #bulk-form {
   width: 50vw;
 }
@@ -129,6 +138,8 @@ video {
 } */
 
 main {
+  position: relative;
+  top: 80px;
   text-align: left;
   padding: 1em;
   /* max-width: 240px; */
@@ -476,33 +487,32 @@ btn:focus {
 
 nav {
   height: 80px;
-  position: sticky;
-  top: -16px;
-  display: block;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   z-index: 1;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
+  background-color: var(--white);
+  border-bottom: 2px solid var(--hover-color);
+}
+
+nav>#user-select {
+  width: 25%;
+  margin-left: 275px;
 }
 
 nav>#nav-inner {
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  height: 64px;
-  background-color: #fff;
-  position: sticky;
-  -webkit-position: sticky;
-  top: 0px;
-  /* compensate for shadow with negative margin */
-  margin-top: -16px;
-  /* content should fall over shadow and cover */
-  z-index: 3;
+  gap: 1.2rem;
 }
 
-nav>#nav-inner:last-child {
+#nav-inner:last-child {
   padding-right: 25px;
 }
 
+/*
 nav::before,
 nav::after {
   content: '';
@@ -542,6 +552,11 @@ table {
 
 table tr:hover {
   background-color: var(--hover-color);
+}
+
+/* Override the user list table style */
+table.user-summary {
+  table-layout: fixed;
 }
 
 table.user-summary td {
@@ -615,8 +630,8 @@ th {
   background-color: var(--secondary-color);
   /* Keep the table headers visible under the site navigation */
   position: sticky;
-  top: 64px;
-  padding: 0.5rem 0;
+  top: 80px;
+  padding: 0.5rem;
 }
 
 th:hover {

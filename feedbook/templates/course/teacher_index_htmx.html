@@ -1,3 +1,12 @@
+<select hx-swap-oob="outerHTML:#user-select" id="user-select" name="user_id"
+    hx-get="{{ url_for('course.get_user', course_id=course.id) }}" hx-trigger="change" hx-swap="innerHTML"
+    hx-target="#course-details">
+    <option>Select a student</option>
+    {% for student in students %}
+    <option value="{{student.id}}">{{student.last_name}}, {{student.first_name}}</option>
+    {% endfor %}
+</select>
+
 <div class="course-header">
     <h1>{{ course.name }}</h1>
     <div class="course-actions-container">
