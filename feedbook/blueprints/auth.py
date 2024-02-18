@@ -28,7 +28,6 @@ def login():
         "remember_me": fields.Bool(load_default=False)
     }, location="form")
 
-    print(args)
     user = User.query.filter(User.email == args['email']).first()
     if user is None or not user.check_password(args['password']):
         return make_response(
@@ -42,48 +41,50 @@ def login():
 
 @bp.get("/register")
 def get_register():
-    return render_template(
-        "shared/forms/register.html"
-    )
+    return "Registrations are not open at this time.", 403
+    # return render_template(
+    #     "shared/forms/register.html"
+    # )
 
 @bp.post("/register")
 def register():
-    args = parser.parse({
-        "email": fields.Str(),
-        "last_name": fields.Str(),
-        "first_name": fields.Str(),
-        "password": fields.Str(),
-        "password_again": fields.Str()
-    }, location="form")
+    abort(403)
+    # args = parser.parse({
+    #     "email": fields.Str(),
+    #     "last_name": fields.Str(),
+    #     "first_name": fields.Str(),
+    #     "password": fields.Str(),
+    #     "password_again": fields.Str()
+    # }, location="form")
 
-    if args['password'] != args['password_again']:
-        return make_response(
-            redirect(url_for('auth.get_register')),
-            trigger={"showToast": "Your passwords do not match."}
-        )
-    user = User.query.filter(User.email == args['email']).first()
-    if user:
-        print(f"{args['email']} already exists")
-        return render_template(
-            "shared/partials/register-form.html", 
-            error="That email is unavailable"
-        )
+    # if args['password'] != args['password_again']:
+    #     return make_response(
+    #         redirect(url_for('auth.get_register')),
+    #         trigger={"showToast": "Your passwords do not match."}
+    #     )
+    # user = User.query.filter(User.email == args['email']).first()
+    # if user:
+    #     print(f"{args['email']} already exists")
+    #     return render_template(
+    #         "shared/partials/register-form.html", 
+    #         error="That email is unavailable"
+    #     )
         
 
-    user = User(
-        email=args['email'], 
-        last_name=args['last_name'], 
-        first_name=args['first_name'],
-        usertype_id=2,
-    )
-    user.set_password(args['password'])
-    db.session.add(user)
-    db.session.commit()
-    login_user(user)
+    # user = User(
+    #     email=args['email'], 
+    #     last_name=args['last_name'], 
+    #     first_name=args['first_name'],
+    #     usertype_id=2,
+    # )
+    # user.set_password(args['password'])
+    # db.session.add(user)
+    # db.session.commit()
+    # login_user(user)
     
-    return make_response(
-        redirect=url_for('home.index')
-        )
+    # return make_response(
+    #     redirect=url_for('home.index')
+    #     )
 
 @bp.get('/logout')
 def logout():
