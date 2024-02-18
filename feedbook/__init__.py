@@ -1,6 +1,7 @@
 from flask import Flask
 from feedbook.extensions import db, htmx, login_manager, migrate, partials
 from feedbook.blueprints import auth, home, course, standard, user
+from feedbook.errors import forbidden, unauthorized
 
 def create_app(config):
 	app = Flask(__name__, static_url_path='/static')
@@ -23,4 +24,7 @@ def create_app(config):
 	app.register_blueprint(standard.bp)
 	app.register_blueprint(user.bp)
 
+	app.register_error_handler(401, unauthorized)
+	app.register_error_handler(403, forbidden)
+	
 	return app
