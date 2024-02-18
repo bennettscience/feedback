@@ -7,6 +7,7 @@ from webargs.flaskparser import parser
 from feedbook.extensions import db
 from feedbook.models import Standard, StandardAttempt
 from feedbook.schemas import StandardSchema, StandardListSchema
+from feedbook.wrappers import restricted
 
 bp = Blueprint("standard", __name__)
 
@@ -22,6 +23,8 @@ def all_standards():
 
 
 @bp.post("/standards")
+@login_required
+@restricted
 def create_standard():
     from feedbook.models import Course
 
@@ -50,6 +53,7 @@ def create_standard():
     )
 # Get a single standard
 @bp.get("/standards/<int:standard_id>")
+@login_required
 def get_single_standard(id):
     standard = Standard.query.filter(Standard.id == standard_id).first()
     # return render_template(
@@ -60,13 +64,10 @@ def get_single_standard(id):
     print(StandardSchema().dump(standard))
     return StandardSchema().dump(standard)
 
-# TODO: Get all results for a single student
-@bp.get("/standards/<int:standard_id>/users/<int:user_id>/results")
-def get_all_results_for_user(standard_id, user_id):
-    pass
 
 @bp.get("/standards/<int:standard_id>/users/<int:user_id>/results/<int:result_id>")
 @login_required
+@restricted
 def get_standard_result(standard_id, user_id, result_id):
     from datetime import timedelta
     from feedbook.schemas import StandardAttemptSchema, UserSchema
@@ -94,6 +95,8 @@ def get_standard_result(standard_id, user_id, result_id):
 
 # Add an assessment to a standard
 @bp.post("/standards/<int:standard_id>/attempts")
+@login_required
+@restricted
 def add_standard_assessment(standard_id):
     from feedbook.models import StandardAttempt, User
     from feedbook.schemas import StandardAttemptSchema, UserSchema
@@ -127,6 +130,8 @@ def add_standard_assessment(standard_id):
 
 # Edit a single standard attempt
 @bp.get("/standards/<int:standard_id>/attempts/<int:attempt_id>")
+@login_required
+@restricted
 def get_edit_form(standard_id, attempt_id):
     from feedbook.schemas import StandardListSchema
 
@@ -140,6 +145,8 @@ def get_edit_form(standard_id, attempt_id):
     )
 
 @bp.put("/standards/<int:standard_id>/attempts/<int:attempt_id>")
+@login_required
+@restricted
 def edit_single_attempt(standard_id, attempt_id):
     from feedbook.models import User
     from feedbook.schemas import StandardAttemptSchema
@@ -167,6 +174,8 @@ def edit_single_attempt(standard_id, attempt_id):
 
 # Delete a single standard attempt
 @bp.delete("/standards/<int:standard_id>/attempts/<int:attempt_id>")
+@login_required
+@restricted
 def delete_standard_assessment(standard_id, attempt_id):
     attempt = StandardAttempt.query.get(attempt_id)
     db.session.delete(attempt)
@@ -178,6 +187,8 @@ def delete_standard_assessment(standard_id, attempt_id):
 
 # Attach a standard to a course
 @bp.post("/standards/align")
+@login_required
+@restricted
 def add_standard_to_course():
     from feedbook.models import Course, User
     from feedbook.schemas import CourseSchema

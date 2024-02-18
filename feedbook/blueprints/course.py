@@ -2,7 +2,7 @@ import csv
 from io import TextIOWrapper
 from collections import defaultdict
 
-from flask import Blueprint, jsonify, render_template, request
+from flask import abort, Blueprint, jsonify, render_template, request
 from flask_login import current_user, login_required
 from webargs import fields
 from webargs.flaskparser import parser
@@ -10,6 +10,7 @@ from webargs.flaskparser import parser
 from feedbook.extensions import db
 from feedbook.models import Course, Standard, User
 from feedbook.schemas import CourseSchema, StandardListSchema
+from feedbook.wrappers import restricted
 
 bp = Blueprint("course", __name__)
 
@@ -26,6 +27,7 @@ def get_all_courses():
 
 @bp.get("/courses/create")
 @login_required
+@restricted
 def get_create_course_form():
     return render_template(
         "course/right-sidebar.html",
@@ -37,6 +39,7 @@ def get_create_course_form():
 
 @bp.post("/courses")
 @login_required
+@restricted
 def create_course():
     args = parser.parse({
         "name": fields.Str(),
@@ -62,6 +65,7 @@ def create_course():
 
 @bp.get("/courses/<int:course_id>/upload")
 @login_required
+@restricted
 def get_roster_form(course_id):
     return render_template(
         "course/right-sidebar.html",
@@ -74,6 +78,7 @@ def get_roster_form(course_id):
 
 @bp.post("/courses/<int:course_id>/upload")
 @login_required
+@restricted
 def roster_upload(course_id):
     args = parser.parse({
         "file": fields.Field(
@@ -121,6 +126,9 @@ def roster_upload(course_id):
 def get_single_course(id):
     course = current_user.enrollments.filter(Course.id == id).first()
 
+    if not course:
+        abort(401)
+    
     if current_user.usertype_id == 2:
         return render_template(
             "course/student_index.html",
@@ -148,6 +156,7 @@ def get_single_course(id):
 # Get a single user from a course
 @bp.get("/courses/<int:course_id>/users")
 @login_required
+@restricted
 def get_user(course_id):
     args = parser.parse({
         "user_id": fields.Int()
@@ -182,6 +191,7 @@ def get_user(course_id):
 # Create new standard
 @bp.get("/courses/<int:course_id>/standards/create")
 @login_required
+@restricted
 def get_create_standard_form(course_id):
     standards = Standard.query.all()
     course = current_user.enrollments.filter(Course.id == course_id).first()
@@ -200,6 +210,7 @@ def get_create_standard_form(course_id):
 # Get results for a standard in the course context
 @bp.get("/courses/<int:course_id>/standards/<int:standard_id>/results")
 @login_required
+@restricted
 def get_standard_scores_in_course(course_id, standard_id):
     from feedbook.models import StandardAttempt
     from feedbook.schemas import StandardAttemptSchema
@@ -242,6 +253,7 @@ def get_student_results(course_id, user_id, standard_id):
 # Remove a standard from the course
 @bp.delete("/courses/<int:course_id>/standards/<int:standard_id>")
 @login_required
+@restricted
 def remove_standard_from_course(course_id, standard_id):
     if current_user.usertype_id == 2:
         abort(401)
@@ -269,6 +281,7 @@ def remove_standard_from_course(course_id, standard_id):
 
 @bp.get("/courses/<int:course_id>/standards/<int:standard_id>/assess")
 @login_required
+@restricted
 def get_assessment_form(course_id, standard_id):
     if current_user.usertype_id == 2:
         abort(401)

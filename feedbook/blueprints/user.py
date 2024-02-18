@@ -9,12 +9,13 @@ from webargs.flaskparser import parser
 from feedbook.extensions import db
 from feedbook.models import Course, StandardAttempt, User
 from feedbook.schemas import StandardAttemptSchema
-
+from feedbook.wrappers import restricted
 
 bp = Blueprint('user', __name__)
 
 @bp.get("/users/<int:user_id>")
 @login_required
+@restricted
 def get_user(user_id):
 	args = parser.parse({
 		"course_id": fields.Int()
@@ -42,6 +43,8 @@ def get_user(user_id):
 	)
 
 @bp.get("/users/<int:user_id>/assess")
+@login_required
+@restricted
 def get_user_assess_form(user_id):
 	# Get each of the standards and return an array to the template
 	args = parser.parse({
@@ -58,6 +61,8 @@ def get_user_assess_form(user_id):
 	)
 
 @bp.post("/users/<int:user_id>/assess")
+@login_required
+@restricted
 def assess_single_user(user_id):
 	args = parser.parse({
 			"standard_id": fields.Int(),
@@ -83,6 +88,7 @@ def assess_single_user(user_id):
 
 @bp.put("/users/<int:user_id>/status")
 @login_required
+@restricted
 def deactivate_user(user_id):
 	user = User.query.filter(User.id == user_id).first()
 
