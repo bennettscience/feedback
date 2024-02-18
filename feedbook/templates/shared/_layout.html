@@ -15,9 +15,10 @@
     <nav>{% include 'shared/partials/nav.html' %}</nav>
     <main>
         {% block sidebar %} {% endblock %}
-        <section id="course-detail">
+        <section class="container">
             {% block main_content %} {%
             endblock %}
+            <div id="course-detail"></div>
         </section>
         {% include 'shared/partials/toast.html' %}
     </main>

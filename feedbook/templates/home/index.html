@@ -3,5 +3,4 @@
 <!-- This loads the active course list and inserts the left-hand sidebar -->
 {% block sidebar %}
 <section hx-target="this" hx-swap="outerHTML" hx-get="/courses" hx-trigger="load"></section>
-<div id="course-details"></div>
 {% endblock %}
