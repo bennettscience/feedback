@@ -1,6 +1,6 @@
 from flask import Flask
 from feedbook.extensions import db, htmx, login_manager, migrate, partials
-from feedbook.blueprints import auth, home, course, standard, user
+from feedbook.blueprints import admin, auth, home, course, standard, user
 from feedbook.errors import forbidden, unauthorized
 
 def create_app(config):
@@ -18,6 +18,7 @@ def create_app(config):
 
 	partials.register_extensions(app)
 
+	app.register_blueprint(admin.bp)
 	app.register_blueprint(auth.bp)
 	app.register_blueprint(home.bp)
 	app.register_blueprint(course.bp)

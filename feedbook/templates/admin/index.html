@@ -1,0 +1,8 @@
+{% extends 'home/index.html'%} {% block main_content %}
+<div class="admin-nav">
+	<h1>Admin</h1>
+	<a hx-get="{{ url_for('standard.index') }}" hx-target="#course-detail" hx-swap="innerHTML"
+		hx-boost="true">Standards</a>
+	<a hx-get="{{ url_for('user.index')}}" hx-target="#course-detail" hx-swap="innerHTML" hx-boost="true">Users</a>
+</div>
+{% endblock %}
