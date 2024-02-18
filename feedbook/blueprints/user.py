@@ -13,33 +13,14 @@ from feedbook.wrappers import restricted
 
 bp = Blueprint('user', __name__)
 
-@bp.get("/users/<int:user_id>")
+@bp.get("/users")
 @login_required
 @restricted
-def get_user(user_id):
-	args = parser.parse({
-		"course_id": fields.Int()
-	}, location="querystring")
-	user = User.query.filter(User.id == user_id).first()
-
-	standards = defaultdict(list)
-	scores_only = defaultdict(list)
-
-	for a in user.assessments.all():
-		standards[a.standard.name].append(
-			{
-				'assignment': a.assignment,
-				'score': a.score,
-				'occurred': a.occurred
-			}
-		)
-		scores_only[a.standard.name].append(a.score)
+def index():
+	users = User.query.all()
 	return render_template(
 		"user/index.html",
-		user=user,
-		standards=standards,
-		scores_only=scores_only,
-		course_id=args["course_id"]
+		users=users
 	)
 
 @bp.get("/users/<int:user_id>/assess")

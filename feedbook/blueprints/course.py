@@ -178,9 +178,8 @@ def get_user(course_id):
 
     enrollments = [user for user in course.enrollments if user.usertype_id == 2]
     
-    
     return render_template(
-		"user/index.html",
+		"user/user-index.html",
 		user=user,
 		standards=standards,
 		scores_only=scores_only,

@@ -14,7 +14,7 @@ bp = Blueprint("standard", __name__)
 # Admin view of all standards
 @bp.get("/standards")
 @login_required
-def all_standards():
+def index():
     standards = Standard.query.all()
     return render_template(
         "standards/index.html",
@@ -34,7 +34,7 @@ def create_standard():
         "course_id": fields.Int()
     }, location="form")
 
-    standard = Standard(name=args["name"], description=args["description"])
+    standard = Standard(name=args["name"], description=args["description"], active=True)
     db.session.add(standard)
     db.session.commit()
 
