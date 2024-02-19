@@ -477,7 +477,7 @@ btn:focus {
   margin-bottom: 25px;
 }
 
-.roster-actions {
+.actions {
   display: flex;
   flex-direction: row;
   justify-content: space-between;

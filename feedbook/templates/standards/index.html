@@ -1,3 +1,9 @@
 {% for standard in standards %}
-<div class="outcome">{{ standard.name }}</div>
+<div class="outcome">
+	<h2>{{ standard.name }}</h2>
+	<p>{{ standard.description }}</p>
+	<div class="actions">
+		<button>{% if standard.active %}Deactivate{% else %}Activate{% endif %}</button>
+	</div>
+</div>
 {% endfor %}
