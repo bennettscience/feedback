@@ -19,7 +19,7 @@
 	<button class="btn" _="on click call $dialog.close()">Close</button>
 </dialog>
 <button class="btn btn-primary" hx-swap-oob="outerHTML:#roster-button" hx-get="/courses/{{course_id}}"
-	hx-target="#course-details" hx-swap="innerHTML">Go
+	hx-target="#course-detail" hx-swap="innerHTML">Go
 	back</button>
 <button class="btn" hx-swap-oob="outerHTML:#assess-button"
 	hx-get="/courses/{{course_id}}/standards/{{standard_id}}/assess" hx-target="#course-roster" hx-swap="outerHTML">Add
