@@ -1,0 +1,15 @@
+
+{
+	"table": "standard_attempt",
+	"records": [
+		{
+			"id": 1,
+			"user_id": 2,
+			"standard_id": 1,
+			"score": 3,
+			"assignment": "Assignment 1",
+			"comments": "This is an example comment."
+
+		}
+	]
+}

@@ -1,9 +1,11 @@
 from flask import Flask
+
+from config import Config
 from feedbook.extensions import db, htmx, login_manager, migrate, partials
 from feedbook.blueprints import admin, auth, home, course, standard, user
 from feedbook.errors import forbidden, unauthorized
 
-def create_app(config):
+def create_app(config=Config):
 	app = Flask(__name__, static_url_path='/static')
 	app.config.from_object(config)
 

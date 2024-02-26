@@ -1,0 +1,31 @@
+[
+  {
+    "table": "user",
+    "records": [
+      {
+        "id": 1,
+        "last_name": "Teacher",
+        "first_name": "Example",
+        "email": "teacher@example.com",
+        "usertype_id": 1,
+        "active": true
+      },
+      {
+        "id": 2,
+        "last_name": "Student 1",
+        "first_name": "Example",
+        "email": "student1@example.com",
+        "usertype_id": 2,
+        "active": true
+      },
+      {
+        "id": 3,
+        "last_name": "Student 2",
+        "first_name": "Example",
+        "email": "student2@example.com",
+        "usertype_id": 2,
+        "active": true
+      }
+    ]
+  }
+]

@@ -1,0 +1,12 @@
+[
+	{
+		"table": "course",
+		"records": [
+			{
+				"id": 1,
+				"name": "Course 1",
+				"active": true
+			}
+		]
+	}
+]
