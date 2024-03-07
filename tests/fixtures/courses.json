@@ -6,6 +6,11 @@
 				"id": 1,
 				"name": "Course 1",
 				"active": true
+			},
+			{
+				"id": 2,
+				"name": "Course 2",
+				"active": true
 			}
 		]
 	}
