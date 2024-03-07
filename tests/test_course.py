@@ -1,7 +1,7 @@
 from feedbook.extensions import db
 
 from tests.loader import Loader
-from tests.utils import TestBase, captured_templates
+from tests.utils import TestBase, captured_templates, get_template_context
 from feedbook.models import Course
 
 class TestUserModel(TestBase):
@@ -12,9 +12,6 @@ class TestUserModel(TestBase):
         # and test client for requests.
         ctx = self.app.app_context()
         ctx.push()
-
-        self.client = self.app.test_client()
-
         fixtures = ["courses.json", "standards.json"]
 
         # Now that we're in context, we can load the database.
@@ -39,3 +36,114 @@ class TestUserModel(TestBase):
 
         c.align(s)
         self.assertEqual(len(c.standards.all()), 1)
+
+
+class TestCourseBlueprint(TestBase):
+    def setUp(self):
+        self.app = self.create()
+
+        # Set up the application context manually to build the database
+        # and test client for requests.
+        ctx = self.app.app_context()
+        ctx.push()
+
+        self.client = self.app.test_client()
+
+        fixtures = [
+            "courses.json", 
+            "course_enrollments.json",
+            "standards.json", 
+            "usertype.json", 
+            "users.json",
+        ]
+
+        # Now that we're in context, we can load the database.
+        self.loader = Loader(self.app, db, fixtures)
+        self.loader.load()
+
+    def tearDown(self):
+        db.drop_all()
+        db.session.close()
+
+    # This may be misleading - get all courses means
+    # get all courses that user is enrolled in.
+    def test_get_all_courses_as_student(self):
+        self.login("student1@example.com")
+
+        with captured_templates(self.app) as templates:
+            resp = self.client.get("/courses")
+            self.assertEqual(resp.status_code, 200)
+            names = [template["template_name"] for template in templates]
+            self.assertIn("shared/partials/sidebar.html", names)
+            self.assertIn("course/partials/course_card.html", names)
+
+            course_context = get_template_context(templates, "course/partials/course_card.html")
+            self.assertEqual(course_context['item']['name'], "Course 1")
+
+    def test_get_create_course_form(self):
+        pass
+
+    def test_post_course(self):
+        pass
+
+    def test_get_roster_form(self):
+        pass
+
+    def test_post_roster_upload(self):
+        pass
+
+    # anonymous users are redirected to login
+    def test_get_single_course_as_anonymous(self):
+        resp = self.client.get("/courses/1")
+        self.assertEqual(resp.status_code, 302)
+
+    # logged in users not enrolled in the course are not allowed
+    def test_get_single_course_not_enrolled(self):
+        self.login("teacher@example.com")
+
+        resp = self.client.get("/courses/2")
+        self.assertEqual(resp.status_code, 401)
+
+    def test_get_single_course_enrolled_as_student(self):
+        self.login("student1@example.com")
+
+        with captured_templates(self.app) as templates:
+            resp = self.client.get("/courses/1")
+
+            self.assertEqual(resp.status_code, 200)            
+
+            names = [template["template_name"] for template in templates]
+            self.assertIn("course/student_index.html", names)
+
+    def test_get_single_course_enrolled_as_teacher(self):
+        self.login("teacher@example.com")
+
+        with captured_templates(self.app) as templates:
+            resp = self.client.get("/courses/1")
+
+            self.assertEqual(resp.status_code, 200)            
+
+            names = [template["template_name"] for template in templates]
+            self.assertIn("course/teacher_index_htmx.html", names)
+            for template in templates:
+                if template["template_name"] == "course/teacher_index_htmx.html":
+                    context = template["context"]
+                    self.assertEqual(len(context["students"]), 1)
+        
+    def test_get_course_users(self):
+        pass
+
+    def test_get_create_standard_form(self):
+        pass
+
+    def test_get_course_standard_scores(self):
+        pass
+
+    def test_get_student_results(self):
+        pass
+
+    def test_delete_student_from_course(self):
+        pass
+
+    def test_get_assessment_form(self):
+        pass     
