@@ -8,4 +8,4 @@ gunicorn.config.py
 .DS_Store
 
 log/
-app.db
+*.db
