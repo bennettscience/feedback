@@ -87,6 +87,10 @@ input[type='text'] {
   display: flex;
 }
 
+.flex--row {
+  flex-direction: row;
+}
+
 .flex--wide {
   justify-content: space-between;
 }
