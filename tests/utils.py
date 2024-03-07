@@ -46,3 +46,7 @@ def captured_templates(app):
         yield recorded
     finally:
         template_rendered.disconnect(record, app)
+
+# Look for an object in the templates based on a template title
+def get_template_context(values: list, template_name: str) -> dict:
+    return next(template["context"] for template in values if template["template_name"] == template_name)
