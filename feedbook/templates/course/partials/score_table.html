@@ -10,6 +10,7 @@
                 </div>
             </th>
             {% for standard in course.standards %}
+            {% if standard.active %}
             <th class="columnheader" role="columnheader">
                 <div class="th-inner-container">
                     <span _="on click 
@@ -26,6 +27,7 @@
                     </div>
                 </div>
             </th>
+            {% endif %}
             {% endfor %}
         </tr>
     </thead>

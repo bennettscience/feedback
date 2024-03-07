@@ -140,7 +140,7 @@ def get_single_course(id):
             User.usertype_id == 2).order_by('last_name').all()
         for student in student_enrollments:
             student.scores = []
-            for standard in course.standards.all():
+            for standard in course.standards.filter(Standard.active == True).all():
                 user_score = standard.current_score(student.id)
                 student.scores.append({
                     "standard_id": standard.id,
@@ -149,7 +149,7 @@ def get_single_course(id):
                     
         return render_template(
             "course/teacher_index_htmx.html",
-            course=CourseSchema().dump(course),
+            course=course,
             students=student_enrollments
         )
 

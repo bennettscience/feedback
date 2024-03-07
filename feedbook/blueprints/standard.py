@@ -21,7 +21,6 @@ def index():
         standards=standards
     )
 
-
 @bp.post("/standards")
 @login_required
 @restricted
@@ -51,6 +50,19 @@ def create_standard():
         items=StandardSchema(many=True).dump(items),
         course=course
     )
+
+# Get data for a single standard
+@bp.get("/standards/<int:standard_id>/stats")
+@login_required
+@restricted
+def get_standard_stats(standard_id):
+    pass
+
+    # Get all the attempts
+    # Sort by class
+    # Graph showing breakdown of average score for each course section
+    
+
 # Get a single standard
 @bp.get("/standards/<int:standard_id>")
 @login_required
@@ -64,7 +76,23 @@ def get_single_standard(id):
     print(StandardSchema().dump(standard))
     return StandardSchema().dump(standard)
 
+# Set the active/inactive status on a single standard
+@bp.put("/standards/<int:standard_id>/status")
+@login_required
+@restricted
+def update_standard_status(standard_id):
+    standard = Standard.query.filter(Standard.id == standard_id).first()
 
+    standard.active = not standard.active
+    db.session.commit()
+
+    value = "Deactivate" if standard.active else "Activate"
+    return make_response(
+        value,
+        trigger={"showToast": "Standard stauts updated"}
+    )
+
+# Get standard results for a single student
 @bp.get("/standards/<int:standard_id>/users/<int:user_id>/results/<int:result_id>")
 @login_required
 @restricted
