@@ -288,7 +288,7 @@ def get_assessment_form(course_id, standard_id):
     course = Course.query.filter(Course.id == course_id).first()
 
     # Get the enrollments, alphabatized to start the loop
-    enrollments = course.enrollments.filter(User.usertype_id == 2).order_by('last_name').all()
+    enrollments = course.enrollments.filter(User.usertype_id == 2, User.active == True).order_by('last_name').all()
 
     return render_template(
         "standards/student-assessment-form.html",
