@@ -39,7 +39,7 @@ def create_standard():
 
     # Immediately align it to the course
     course = Course.query.filter(Course.id == args['course_id']).first()
-    course.standards.append(standard)
+    course.align(standard)
     db.session.commit()
 
     items = [item for item in Standard.query.all() if item not in course.standards.all()]
@@ -229,7 +229,7 @@ def add_standard_to_course():
     standard = Standard.query.filter(Standard.id == args["standard_id"]).first()
     course = Course.query.filter(Course.id == args['course_id']).first()
 
-    course.standards.append(standard) 
+    course.align(standard) 
     db.session.commit()
     
     # Student scores need to be calculated before sending

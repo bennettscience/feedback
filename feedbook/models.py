@@ -34,6 +34,15 @@ class Course(db.Model):
         lazy="dynamic"
     )
 
+    # safely align a standard to a course
+    def align(self, standard):
+        if not self._is_aligned(standard):
+            self.standards.append(standard)
+        return self
+                
+    def _is_aligned(self, standard):
+        return self.standards.filter(course_standards.c.standard_id == standard.id).count() > 0
+
 
 class Standard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
