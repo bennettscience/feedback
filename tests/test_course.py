@@ -4,6 +4,7 @@ from tests.loader import Loader
 from tests.utils import TestBase, captured_templates, get_template_context
 from feedbook.models import Course
 
+
 class TestUserModel(TestBase):
     def setUp(self):
         self.app = self.create()
@@ -28,7 +29,7 @@ class TestUserModel(TestBase):
 
     def test_align_standard(self):
         from feedbook.models import Standard
-        
+
         c = db.session.get(Course, 1)
         s = db.session.get(Standard, 1)
 
@@ -50,10 +51,10 @@ class TestCourseBlueprint(TestBase):
         self.client = self.app.test_client()
 
         fixtures = [
-            "courses.json", 
+            "courses.json",
             "course_enrollments.json",
-            "standards.json", 
-            "usertype.json", 
+            "standards.json",
+            "usertype.json",
             "users.json",
         ]
 
@@ -77,20 +78,68 @@ class TestCourseBlueprint(TestBase):
             self.assertIn("shared/partials/sidebar.html", names)
             self.assertIn("course/partials/course_card.html", names)
 
-            course_context = get_template_context(templates, "course/partials/course_card.html")
-            self.assertEqual(course_context['item']['name'], "Course 1")
+            course_context = get_template_context(
+                templates, "course/partials/course_card.html"
+            )
+            self.assertEqual(course_context["item"]["name"], "Course 1")
 
     def test_get_create_course_form(self):
-        pass
+        self.login("teacher@example.com")
+
+        with captured_templates(self.app) as templates:
+            resp = self.client.get("/courses/create")
+            self.assertEqual(resp.status_code, 200)
+
+            names = [template["template_name"] for template in templates]
+            self.assertIn("shared/forms/create-course.html", names)
 
     def test_post_course(self):
-        pass
+        self.login("teacher@example.com")
+
+        course = {"name": "New Course"}
+
+        with captured_templates(self.app) as templates:
+            resp = self.client.post("/courses", data=course)
+            self.assertEqual(resp.status_code, 200)
+
+            names = [template["template_name"] for template in templates]
+            self.assertIn("course/partials/course_card.html", names)
+
+            # Check for the new course in the returned template
+            resp_context = get_template_context(
+                templates, "shared/partials/sidebar.html"
+            )
+            course_cards = [course["name"] for course in resp_context["items"]]
+            self.assertIn("New Course", course_cards)
 
     def test_get_roster_form(self):
-        pass
+        self.login("teacher@example.com")
+
+        with captured_templates(self.app) as templates:
+            resp = self.client.get("/courses/1/upload")
+            self.assertEqual(resp.status_code, 200)
+
+            names = [template["template_name"] for template in templates]
+            self.assertIn("course/partials/roster-upload.html", names)
 
     def test_post_roster_upload(self):
-        pass
+        # Simulate a file upload with BytesIO
+        from io import BytesIO
+
+        self.login("teacher@example.com")
+
+        # Create a file object to upload to the route
+        file_data = b"last_name,first_name,email,password\nExample,Student3,student3@example.com,abc123"
+
+        with captured_templates(self.app) as templates:
+            resp = self.client.post(
+                "/courses/1/upload",
+                data={"file": (BytesIO(file_data), "test.csv")},
+            )
+            self.assertEqual(resp.status_code, 200)
+
+            names = [template["template_name"] for template in templates]
+            self.assertIn("course/teacher_index_htmx.html", names)
 
     # anonymous users are redirected to login
     def test_get_single_course_as_anonymous(self):
@@ -110,7 +159,7 @@ class TestCourseBlueprint(TestBase):
         with captured_templates(self.app) as templates:
             resp = self.client.get("/courses/1")
 
-            self.assertEqual(resp.status_code, 200)            
+            self.assertEqual(resp.status_code, 200)
 
             names = [template["template_name"] for template in templates]
             self.assertIn("course/student_index.html", names)
@@ -121,7 +170,7 @@ class TestCourseBlueprint(TestBase):
         with captured_templates(self.app) as templates:
             resp = self.client.get("/courses/1")
 
-            self.assertEqual(resp.status_code, 200)            
+            self.assertEqual(resp.status_code, 200)
 
             names = [template["template_name"] for template in templates]
             self.assertIn("course/teacher_index_htmx.html", names)
@@ -129,7 +178,7 @@ class TestCourseBlueprint(TestBase):
                 if template["template_name"] == "course/teacher_index_htmx.html":
                     context = template["context"]
                     self.assertEqual(len(context["students"]), 1)
-        
+
     def test_get_course_users(self):
         pass
 
@@ -146,4 +195,4 @@ class TestCourseBlueprint(TestBase):
         pass
 
     def test_get_assessment_form(self):
-        pass     
+        pass
