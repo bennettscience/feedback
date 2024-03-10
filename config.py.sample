@@ -1,0 +1,32 @@
+import os
+from dotenv import load_dotenv
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+# Load any environment variables
+load_dotenv(os.path.join(basedir, ".env"))
+
+class Config(object):
+    SQLALCHEMY_DATABASE_URI = os.environ.get(
+        "DATABASE_URL"
+    ) or "sqlite:///" + os.path.join(basedir, "app.db")
+    SQLALCHEMY_RECORD_QUERIES = False
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # Set in .env
+    SECRET_KEY = os.environ.get("SECRET_KEY")
+    LOGIN_TOKEN = os.environ.get("LOGIN_TOKEN")
+
+
+class TestConfig(object):
+    FLASK_TESTING = True
+
+    # Load JSON fixtures from this location.
+    FIXTURES_DIR = "tests/fixtures"
+
+    # Run all tests in memory. Keep track of queries for debugging.
+    SQLALCHEMY_DATABASE_URI = "sqlite:///"
+    SQLALCHEMY_RECORD_QUERIES = True
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
+    SECRET_KEY = "mysecret"
+    LOGIN_TOKEN = "mytoken"
