@@ -1,0 +1,9 @@
+<p>{{ assignment.name }}</p>
+<p>Average score: {{ assignment.average_all() }}</p>
+<hr />
+<b>Recent assessments</b>
+{% for attempt in assignment.assessments %}
+<p>
+  {{ attempt.occurred }} | {{ attempt.user.last_name }} | {{ attempt.score}}
+</p>
+{% endfor %}

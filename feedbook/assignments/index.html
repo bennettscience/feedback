@@ -1,0 +1,15 @@
+<div class="container container--flex flex--row">
+  <div>
+    {% for in assignments %}
+    <div class="outcome">
+      <h2>{{ assignment.name }}</h2>
+      <div class="actions">
+        <button>Get data</button>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div>
+    <h1>Right side</h1>
+  </div>
+</div>
