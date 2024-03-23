@@ -53,3 +53,30 @@ class TestUserModel(TestBase):
         course_average = assignment.course_average(course)
 
         self.assertEqual(course_average, 1.5)
+
+
+class TestAssignmentBlueprint(TestBase):
+    def setUp(self):
+        self.app = self.create()
+
+        # Set up the application context manually to build the database
+        # and test client for requests.
+        ctx = self.app.app_context()
+        ctx.push()
+
+        self.client = self.app.test_client()
+
+        fixtures = ["assignments.json"]
+
+        # Now that we're in context, we can load the database.
+        self.loader = Loader(self.app, db, fixtures)
+        self.loader.load()
+
+    def tearDown(self):
+        db.drop_all()
+        db.session.close()
+
+    def test_get_all_assignments(self):
+        resp = self.client.get("/assignments")
+
+        self.assertEqual(resp.status_code, 200)
