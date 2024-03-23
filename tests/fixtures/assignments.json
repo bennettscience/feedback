@@ -1,0 +1,12 @@
+[
+	{
+		"table": "assignment",
+		"records": [
+			{
+				"id": 1,
+				"name": "Assignment 1",
+				"description": "This is an assignment."
+			}
+		]
+	}
+]

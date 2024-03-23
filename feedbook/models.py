@@ -10,6 +10,7 @@ from feedbook.extensions import db, login_manager
 def load_user(id):
     return User.query.get(int(id))
 
+
 class Artifact(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
@@ -21,6 +22,13 @@ class Assignment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
 
+    assessments = db.relationship(
+        "StandardAttempt",
+        backref=backref("assignments"),
+        lazy="dynamic",
+        passive_deletes=True,
+    )
+
 
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -31,7 +39,7 @@ class Course(db.Model):
         "Standard",
         secondary="course_standards",
         backref=backref("standards", lazy="dynamic"),
-        lazy="dynamic"
+        lazy="dynamic",
     )
 
     # safely align a standard to a course
@@ -39,9 +47,12 @@ class Course(db.Model):
         if not self._is_aligned(standard):
             self.standards.append(standard)
         return self
-                
+
     def _is_aligned(self, standard):
-        return self.standards.filter(course_standards.c.standard_id == standard.id).count() > 0
+        return (
+            self.standards.filter(course_standards.c.standard_id == standard.id).count()
+            > 0
+        )
 
 
 class Standard(db.Model):
@@ -49,23 +60,27 @@ class Standard(db.Model):
     name = db.Column(db.String(64), nullable=False)
     description = db.Column(db.String(1000))
     active = db.Column(db.Boolean, default=True)
-            
+
     attempts = db.relationship(
         "StandardAttempt",
         backref=backref("standard", single_parent=True),
         lazy="dynamic",
-        passive_deletes=True
+        passive_deletes=True,
     )
 
     def __repr__(self):
         return self.name
 
     def __get_scores(self, user_id):
-        scores = self.attempts.filter(StandardAttempt.user_id == user_id).order_by('occurred').all()
+        scores = (
+            self.attempts.filter(StandardAttempt.user_id == user_id)
+            .order_by("occurred")
+            .all()
+        )
         return [item.score for item in scores]
 
     def current_score(self, user_id):
-        """ Average the last attemp with the highest attempt.
+        """Average the last attemp with the highest attempt.
         Make sure to score by submission date, not assessed date!
         Example 1:
         scores = [1, 4, 3, 2]
@@ -93,16 +108,20 @@ class StandardAttempt(db.Model):
     user_id = db.Column(
         db.ForeignKey("user.id", onupdate="CASCADE", ondelete="CASCADE")
     )
-    standard_id = db.Column(db.ForeignKey("standard.id", onupdate="CASCADE", ondelete="CASCADE"))
+    standard_id = db.Column(
+        db.ForeignKey("standard.id", onupdate="CASCADE", ondelete="CASCADE")
+    )
     score = db.Column(db.Integer)
     occurred = db.Column(db.DateTime(timezone=True), default=func.now())
     assignment = db.Column(db.String(32))
+    assignment_id = db.Column(db.ForeignKey("assignment.id"))
     comments = db.Column(db.String(1000))
 
     def update(self, data):
         for key, value in data.items():
             setattr(self, key, value)
         db.session.commit()
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -117,21 +136,21 @@ class User(UserMixin, db.Model):
         "Course",
         secondary="user_courses",
         backref=backref("enrollments", lazy="dynamic"),
-        lazy="dynamic"
+        lazy="dynamic",
     )
 
     artifacts = db.relationship(
         "Artifact",
         secondary="user_artifacts",
         backref=backref("artifacts", lazy="subquery"),
-        lazy="dynamic"
+        lazy="dynamic",
     )
 
     assessments = db.relationship(
         "StandardAttempt",
-        backref=backref("user",single_parent=True),
-        lazy='dynamic',
-        passive_deletes=True
+        backref=backref("user", single_parent=True),
+        lazy="dynamic",
+        passive_deletes=True,
     )
 
     def enroll(self, course):
@@ -139,11 +158,15 @@ class User(UserMixin, db.Model):
             self.enrollments.append(course)
             db.session.commit()
         else:
-            raise DuplicateException('{} is already enrolled in {}'.format(self.name, course.name))
-    
+            raise DuplicateException(
+                "{} is already enrolled in {}".format(self.name, course.name)
+            )
+
     def is_enrolled(self, course):
-        return self.enrollments.filter(user_courses.c.course_id == course.id).count() > 0
-    
+        return (
+            self.enrollments.filter(user_courses.c.course_id == course.id).count() > 0
+        )
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
         db.session.commit()
@@ -160,26 +183,59 @@ class UserType(db.Model):
 course_standards = db.Table(
     "course_standards",
     db.Column("id", db.Integer, primary_key=True),
-    db.Column("course_id", db.Integer, db.ForeignKey("course.id", onupdate="CASCADE", ondelete="CASCADE")),
-    db.Column("standard_id", db.Integer, db.ForeignKey("standard.id", onupdate="CASCADE", ondelete="CASCADE"))
+    db.Column(
+        "course_id",
+        db.Integer,
+        db.ForeignKey("course.id", onupdate="CASCADE", ondelete="CASCADE"),
+    ),
+    db.Column(
+        "standard_id",
+        db.Integer,
+        db.ForeignKey("standard.id", onupdate="CASCADE", ondelete="CASCADE"),
+    ),
 )
 
 user_artifacts = db.Table(
-    "user_artifacts", db.Column("id", db.Integer, primary_key=True),
-    db.Column("user_id", db.Integer, db.ForeignKey("user.id", onupdate="CASCADE", ondelete="CASCADE")),
-    db.Column("artifact_id", db.Integer, db.ForeignKey("artifact.id", onupdate="CASCADE", ondelete="CASCADE"))
+    "user_artifacts",
+    db.Column("id", db.Integer, primary_key=True),
+    db.Column(
+        "user_id",
+        db.Integer,
+        db.ForeignKey("user.id", onupdate="CASCADE", ondelete="CASCADE"),
+    ),
+    db.Column(
+        "artifact_id",
+        db.Integer,
+        db.ForeignKey("artifact.id", onupdate="CASCADE", ondelete="CASCADE"),
+    ),
 )
 
 standard_artifact = db.Table(
-    "standard_artifact", db.Column("id", db.Integer, primary_key=True),
-    db.Column("standard_id", db.Integer, db.ForeignKey("standard.id", onupdate="CASCADE", ondelete="CASCADE")),
-    db.Column("artifact_id", db.Integer, db.ForeignKey("artifact.id", onupdate="CASCADE", ondelete="CASCADE"))
+    "standard_artifact",
+    db.Column("id", db.Integer, primary_key=True),
+    db.Column(
+        "standard_id",
+        db.Integer,
+        db.ForeignKey("standard.id", onupdate="CASCADE", ondelete="CASCADE"),
+    ),
+    db.Column(
+        "artifact_id",
+        db.Integer,
+        db.ForeignKey("artifact.id", onupdate="CASCADE", ondelete="CASCADE"),
+    ),
 )
 
-user_courses= db.Table(
+user_courses = db.Table(
     "user_courses",
     db.Column("id", db.Integer, primary_key=True),
-    db.Column("user_id", db.Integer, db.ForeignKey("user.id", onupdate="CASCADE", ondelete="CASCADE")),
-    db.Column("course_id", db.Integer, db.ForeignKey("course.id", onupdate="CASCADE", ondelete="CASCADE"))
+    db.Column(
+        "user_id",
+        db.Integer,
+        db.ForeignKey("user.id", onupdate="CASCADE", ondelete="CASCADE"),
+    ),
+    db.Column(
+        "course_id",
+        db.Integer,
+        db.ForeignKey("course.id", onupdate="CASCADE", ondelete="CASCADE"),
+    ),
 )
-
