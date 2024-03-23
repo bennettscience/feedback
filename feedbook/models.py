@@ -1,3 +1,5 @@
+from statistics import mean
+
 from flask_login import UserMixin
 from sqlalchemy.orm import backref
 from sqlalchemy.sql import func
@@ -28,6 +30,28 @@ class Assignment(db.Model):
         lazy="dynamic",
         passive_deletes=True,
     )
+
+    # Get the average score for an assignment
+    # This returns the average for all classes regardless of when it happened. This will be helpful for looking at assignments across all classes and lay a foundation for an eventual `assignment_type` key.
+    #
+    # Note that this is a straight average, not the weighted average used to calculate student performance.
+    def average_all(self):
+        scores = self.assessments.all()
+        return mean([item.score for item in scores])
+
+    # Get the average score for students in a course
+    # Use the StandardAttempt table as the leftmost join to filter down against the other conditions. Since the attempts do not matter which course they're in, just the user, you need to filter against the user_courses table to get only the desired course.
+    # Only return values for students with the given course.id AND attempts for the assignment with the matching ID.
+    def course_average(self, course):
+        course_attempts = (
+            StandardAttempt.query.join(User)
+            .join(user_courses)
+            .filter(
+                (user_courses.c.course_id == course.id)
+                & (StandardAttempt.assignment_id == self.id)
+            )
+        ).all()
+        return mean([attempt.score for attempt in course_attempts])
 
 
 class Course(db.Model):

@@ -15,8 +15,11 @@ class TestUserModel(TestBase):
         ctx.push()
         fixtures = [
             "assignments.json",
+            "courses.json",
+            "course_enrollments.json",
             "standards.json",
             "standard_assessments.json",
+            "users.json",
         ]
 
         # Now that we're in context, we can load the database.
@@ -31,6 +34,22 @@ class TestUserModel(TestBase):
         assignment = db.session.get(Assignment, 1)
         assessments = assignment.assessments.all()
 
-        self.assertEqual(len(assessments), 1)
+        self.assertEqual(len(assessments), 3)
         self.assertIsInstance(assessments[0], StandardAttempt)
         self.assertEqual(assessments[0].score, 3)
+
+    def get_average_score(self):
+        assignment = db.session.get(Assignment, 1)
+        average = assignment.average_all()
+
+        self.assertEqual(average, 2)
+
+    def test_average_single_course(self):
+        from feedbook.models import Course
+
+        assignment = db.session.get(Assignment, 1)
+        course = db.session.get(Course, 1)
+
+        course_average = assignment.course_average(course)
+
+        self.assertEqual(course_average, 1.5)
