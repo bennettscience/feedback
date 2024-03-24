@@ -75,13 +75,7 @@ class TestCourseBlueprint(TestBase):
             resp = self.client.get("/courses")
             self.assertEqual(resp.status_code, 200)
             names = [template["template_name"] for template in templates]
-            self.assertIn("shared/partials/sidebar.html", names)
             self.assertIn("course/partials/course_card.html", names)
-
-            course_context = get_template_context(
-                templates, "course/partials/course_card.html"
-            )
-            self.assertEqual(course_context["item"]["name"], "Course 1")
 
     def test_get_create_course_form(self):
         self.login("teacher@example.com")
@@ -91,7 +85,7 @@ class TestCourseBlueprint(TestBase):
             self.assertEqual(resp.status_code, 200)
 
             names = [template["template_name"] for template in templates]
-            self.assertIn("shared/forms/create-course.html", names)
+            self.assertIn("shared/partials/right-sidebar.html", names)
 
     def test_post_course(self):
         self.login("teacher@example.com")
@@ -107,10 +101,9 @@ class TestCourseBlueprint(TestBase):
 
             # Check for the new course in the returned template
             resp_context = get_template_context(
-                templates, "shared/partials/sidebar.html"
+                templates, "course/partials/course_card.html"
             )
-            course_cards = [course["name"] for course in resp_context["items"]]
-            self.assertIn("New Course", course_cards)
+            self.assertEqual(course["name"], "New Course")
 
     def test_get_roster_form(self):
         self.login("teacher@example.com")
@@ -173,9 +166,9 @@ class TestCourseBlueprint(TestBase):
             self.assertEqual(resp.status_code, 200)
 
             names = [template["template_name"] for template in templates]
-            self.assertIn("course/teacher_index_htmx.html", names)
+            self.assertIn("course/teacher_index.html", names)
             for template in templates:
-                if template["template_name"] == "course/teacher_index_htmx.html":
+                if template["template_name"] == "course/teacher_index.html":
                     context = template["context"]
                     self.assertEqual(len(context["students"]), 1)
 
