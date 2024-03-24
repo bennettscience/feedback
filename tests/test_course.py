@@ -85,7 +85,7 @@ class TestCourseBlueprint(TestBase):
             self.assertEqual(resp.status_code, 200)
 
             names = [template["template_name"] for template in templates]
-            self.assertIn("shared/partials/right-sidebar.html", names)
+            self.assertIn("course/right-sidebar.html", names)
 
     def test_post_course(self):
         self.login("teacher@example.com")
