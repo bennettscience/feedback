@@ -1,31 +1,71 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
-    <title>{% block title %}OutcomeMaps{%endblock%}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
-    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
-    <link href="https://fonts.googleapis.com/css?family=Inter" rel="stylesheet" />
-    {% block additional_css %} {%endblock%}
-</head>
+    <title>{% block title %}OutcomeMaps{% endblock %}</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/main.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Inter"
+      rel="stylesheet"
+    />
+    {% block additional_css %} {% endblock %}
+  </head>
 
-<body>
-    {% include 'shared/partials/nav.html' %}
+  <body>
+    <nav>{% include 'shared/partials/nav.html' %}</nav>
     <main>
-        {% block sidebar %} {% endblock %} {% block main_content %} {%endblock %}
+      <section id="left-sidebar" class="sidebar sidebar--left">
+        <div id="left-sidebar-inner">
+          {% if not current_user.is_anonymous %}
+          <h3>Your Courses</h3>
+          {% if current_user.usertype_id == 1 %}
+          <button
+            class="btn btn-primary"
+            hx-get="/courses/create"
+            hx-trigger="click"
+            hx-target="main"
+            hx-swap="beforeend"
+            hx-indicator="#toast"
+          >
+            Add new course
+          </button>
+          {% endif %} {% if current_user.enrollments %} {% for item in
+          current_user.enrollments %}
+          <div
+            id="course-{{item.id}}"
+            class="item course-item"
+            hx-get="/courses/{{ item.id }}"
+            hx-trigger="click"
+            hx-target="#course-detail"
+            hx-swap="innerHTML"
+            hx-indicator="#toast"
+            hx-push-url="true"
+            _="on click 
+            remove .active from <div />
+            then add .active to me"
+          >
+            <div class="course-item-inner">
+              <p>{{ item.name }}</p>
+            </div>
+          </div>
+          {% endfor %} {% endif %}
+        </div>
+        {% endif %}
+      </section>
+      {% block main_content %} {% endblock %}
     </main>
-    {% if not current_user.is_anonymous %}
-    {% include 'shared/partials/mobile-create.html' %}
-    {% endif %}
     {% include 'shared/partials/toast.html' %}
-    <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script
+      type="module"
+      src="{{ url_for('static', filename='js/main.js') }}"
+    ></script>
     <script src="https://unpkg.com/htmx.org@1.9.4"></script>
     <script src="https://unpkg.com/hyperscript.org@0.9.11"></script>
     {% block additional_js %} {% endblock %}
-</body>
-
+  </body>
 </html>

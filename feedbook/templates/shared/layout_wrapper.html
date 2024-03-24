@@ -1,0 +1,7 @@
+{% extends '_layout.html' %} {% block main_content %} {% block sidebar %} {%
+endblock %}
+
+<!-- render_partial takes the passed template and extracts the data dict into the template variables -->
+<section id="course-detail">
+  {{ render_partial(partial, **data) }} {% endblock %}
+</section>
