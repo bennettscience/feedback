@@ -38,7 +38,7 @@ def get_create_course_form():
     Returns the form partial inside a right sidebar
     """
     return render_template(
-        "shared/partials/right-sidebar.html",
+        "course/right-sidebar.html",
         title="Create a new course",
         position="right",
         partial="shared/forms/create-course.html",
