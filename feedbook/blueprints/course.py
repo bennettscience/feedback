@@ -10,19 +10,21 @@ from webargs.flaskparser import parser
 from feedbook.extensions import db
 from feedbook.models import Course, Standard, User
 from feedbook.schemas import CourseSchema, StandardListSchema
-from feedbook.wrappers import restricted
+from feedbook.wrappers import templated, restricted
 
 bp = Blueprint("course", __name__)
 
 
+# Called from the sidebar to list the available courses for a user.
 @bp.get("/courses")
 @login_required
 def get_all_courses():
+    """
+    Return active courses for a user.
+    """
     courses = current_user.enrollments.all()
     return render_template(
-        "shared/partials/sidebar.html",
-        position="left",
-        partial="course/partials/course_card.html",
+        "course/partials/course_card.html",
         items=CourseSchema(many=True).dump(courses),
     )
 
@@ -31,8 +33,12 @@ def get_all_courses():
 @login_required
 @restricted
 def get_create_course_form():
+    """
+    Fetch the course creation form.
+    Returns the form partial inside a right sidebar
+    """
     return render_template(
-        "course/right-sidebar.html",
+        "shared/partials/right-sidebar.html",
         title="Create a new course",
         position="right",
         partial="shared/forms/create-course.html",
@@ -57,18 +63,7 @@ def create_course():
 
     current_user.enroll(course)
 
-    # refresh the course list
-    courses = current_user.enrollments.all()
-
-    return render_template(
-        "shared/partials/sidebar.html",
-        position="left",
-        partial="course/partials/course_card.html",
-        items=CourseSchema(many=True).dump(courses),
-    )
-
-
-# TODO: Enroll a single student
+    return render_template("course/partials/course_card.html", course=course)
 
 
 @bp.get("/courses/<int:course_id>/upload")
@@ -137,13 +132,28 @@ def roster_upload(course_id):
 @bp.get("/courses/<int:id>")
 @login_required
 def get_single_course(id):
+    """
+    Return a single course dashboard based on the user type.
+
+    This route returns differently based on the request method. If it is an HTMX request, `render_template` is called normally using **kwargs to set the template context.
+
+    If the route is called from a browser reload, the request data is packed into a `ctx` mapping which renders with a layout wrapper to keep styles intact.
+    """
     course = current_user.enrollments.filter(Course.id == id).first()
 
     if not course:
         abort(401)
 
     if current_user.usertype_id == 2:
-        return render_template("course/student_index.html", course=course)
+        if request.htmx:
+            resp = render_template("course/student_index.html", course=course)
+        else:
+            ctx = {"course": course}
+            resp = render_template(
+                "shared/layout_wrapper.html",
+                partial="course/student_index.html",
+                data=ctx,
+            )
     else:
         # Student scores need to be calculated before sending
         student_enrollments = (
@@ -154,12 +164,19 @@ def get_single_course(id):
             for standard in course.standards.filter(Standard.active == True).all():
                 user_score = standard.current_score(student.id)
                 student.scores.append({"standard_id": standard.id, "score": user_score})
+        if request.htmx:
+            resp = render_template(
+                "course/teacher_index.html", course=course, students=student_enrollments
+            )
+        else:
+            ctx = {"course": course, "students": student_enrollments}
+            resp = render_template(
+                "shared/layout_wrapper.html",
+                partial="course/teacher_index.html",
+                data=ctx,
+            )
 
-        return render_template(
-            "course/teacher_index_htmx.html",
-            course=course,
-            students=student_enrollments,
-        )
+    return resp
 
 
 # Get a single user from a course
