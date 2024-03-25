@@ -2,8 +2,10 @@
     <h1>{{ course.name }}</h1>
     <section id="stored-outcomes">
         {% for standard in course.standards %}
+         {%if standard.active %}
         {{render_partial('standards/student-standard-card.html', item=standard,
         course_id=course.id, student_id=current_user.id)}}
+        {% endif %}
         {%endfor%}
     </section>
     <section id="student-details"></section>
