@@ -1,45 +1,57 @@
 <table id="assessment-table">
-	<thead>
-		<tr>
-			<th class="columnheader" role="columnheader">
-				<p>Name</p>
-			</th>
-			<th class="columnheader" role="columnheader">
-				<p>Assignment Name</p>
-			</th>
-			<th class="columnheader" role="columnheader">
-				<p>Score</p>
-			</th>
-			<th class="columnheader" role="columnheader">
-				<p>Comments</p>
-			</th>
-			<th class="columnheader" role="columnheader">
-				<p>Action</p>
-			</th>
-		</tr>
-	</thead>
-	<tbody class="scroller">
-		{% for student in students %}
-		<tr>
-			<input type="hidden" name="user_id" value={{student.id}} />
-			<td>{{student.last_name}}, {{student.first_name}}</td>
-			<td>
-				<input type="text" name="assignment" />
-			</td>
-			<td>
-				<input type="number" name="score" min="0" max="4" />
-			</td>
-			<td class="comment">
-				<textarea maxlength=1000 name="comments" _="
+  <thead>
+    <tr>
+      <th class="columnheader" role="columnheader">
+        <p>Name</p>
+      </th>
+      <th class="columnheader" role="columnheader">
+        <p>Assignment Name</p>
+      </th>
+      <th class="columnheader" role="columnheader">
+        <p>Score</p>
+      </th>
+      <th class="columnheader" role="columnheader">
+        <p>Comments</p>
+      </th>
+      <th class="columnheader" role="columnheader">
+        <p>Action</p>
+      </th>
+    </tr>
+  </thead>
+  <tbody class="scroller">
+    {% for student in students %}
+    <tr>
+      <input type="hidden" name="user_id" value="{{student.id}}" />
+      <td>{{student.last_name}}, {{student.first_name}}</td>
+      <td>
+        <input type="text" name="assignment" />
+      </td>
+      <td>
+        <input type="number" name="score" min="0" max="1" />
+      </td>
+      <td class="comment">
+        <textarea
+          maxlength="1000"
+          name="comments"
+          _="
 				init put my @maxlength into #max-len end
 				on keyup 
-					put (@maxlength - my value.length) into #max-len"></textarea><span id="max-len"></span>
-			</td>
-			<td>
-				<button class="btn" hx-post="/standards/{{standard_id}}/attempts" hx-include="closest tr"
-					hx-swap="outerHTML" hx-target="closest tr">Save</button>
-			</td>
-		</tr>
-		{% endfor %}
-	</tbody>
+					put (@maxlength - my value.length) into #max-len"
+        ></textarea
+        ><span id="max-len"></span>
+      </td>
+      <td>
+        <button
+          class="btn"
+          hx-post="/standards/{{standard_id}}/attempts"
+          hx-include="closest tr"
+          hx-swap="outerHTML"
+          hx-target="closest tr"
+        >
+          Save
+        </button>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>

@@ -150,6 +150,14 @@ video {
     box-shadow: var(--active-shadow-small);
 } */
 
+.green {
+  background-color: rgba(194, 249, 112, 1);
+}
+
+.red {
+  background-color: rgba(236, 100, 75, 0.5);
+}
+
 main {
   position: relative;
   top: 80px;
@@ -399,10 +407,9 @@ btn:focus {
   box-shadow: var(--active-shadow);
 }
 
-.outcome p {
-  font-style: italic;
-  font-size: 0.8rem;
-}
+/* .outcome p { */
+/* font-size: 0.8rem; */
+/* } */
 
 .outcome--header {
   display: flex;

@@ -162,7 +162,7 @@ def get_single_course(id):
         for student in student_enrollments:
             student.scores = []
             for standard in course.standards.filter(Standard.active == True).all():
-                user_score = standard.current_score(student.id)
+                user_score = standard.is_proficient(student.id)
                 student.scores.append({"standard_id": standard.id, "score": user_score})
         if request.htmx:
             resp = render_template(

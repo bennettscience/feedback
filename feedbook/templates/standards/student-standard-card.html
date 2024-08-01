@@ -1,6 +1,13 @@
-<div class="item outcome" hx-get="/courses/{{course_id}}/users/{{student_id}}/results/{{item.id}}" hx-swap="innerHTML"
-	hx-target="#student-details">
-	<h3>{{item.name}}</h3>
-	<p>{{item.description}}</p>
-	<p>Current score: {{item.current_score(current_user.id)}}</p>
+<div
+  class="item outcome {% if item.is_proficient(current_user.id) %}green{% else %}red{% endif %}"
+  hx-get="/courses/{{course_id}}/users/{{student_id}}/results/{{item.id}}"
+  hx-swap="innerHTML"
+  hx-target="#student-details"
+>
+  <h3>{{item.name}}</h3>
+  <p>{{item.description}}</p>
+  <p>
+    Proficient?: {% if item.is_proficient(current_user.id) %}&#x2713;{% else
+    %}&#x274C;{% endif %}
+  </p>
 </div>
