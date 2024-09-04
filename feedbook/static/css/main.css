@@ -151,11 +151,11 @@ video {
 } */
 
 .green {
-  background-color: rgba(194, 249, 112, 1);
+  background-color: #c8e6c9;
 }
 
 .red {
-  background-color: rgba(236, 100, 75, 0.5);
+  background-color: #f78f8f;
 }
 
 main {
@@ -399,6 +399,7 @@ btn:focus {
 }
 
 .outcome {
+  position: relative;
   width: 250px;
   border-color: var(--secondary-color);
 }
@@ -488,6 +489,17 @@ btn:focus {
   display: flex;
   align-items: center;
   gap: 3rem;
+}
+
+.standard-status {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+}
+
+.standard-status > svg {
+  width: 3rem;
+  height: auto;
 }
 
 #stored-outcomes {
