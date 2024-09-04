@@ -610,6 +610,11 @@ table#student-scores td {
   text-align: left;
 }
 
+table#student-scores td > svg {
+  width: 1rem;
+  height: auto;
+}
+
 table#assessment-table th,
 td {
   width: auto;
