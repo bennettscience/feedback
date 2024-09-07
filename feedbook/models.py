@@ -20,9 +20,15 @@ class Artifact(db.Model):
     narrative = db.Column(db.String(1000))
 
 
+class AssignmentType(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32))
+
+
 class Assignment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
+    assignmenttype_id = db.Column(db.ForeignKey("assignment_type.id"))
 
     assessments = db.relationship(
         "StandardAttempt",
