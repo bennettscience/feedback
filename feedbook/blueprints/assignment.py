@@ -5,7 +5,7 @@ from webargs import fields
 from webargs.flaskparser import parser
 
 from feedbook.extensions import db
-from feedbook.models import Assignment
+from feedbook.models import Assignment, AssignmentType
 from feedbook.wrappers import restricted
 
 bp = Blueprint("assignment", __name__)
@@ -15,7 +15,7 @@ bp = Blueprint("assignment", __name__)
 def index():
     assignments = db.session.scalars(db.select(Assignment)).all()
 
-    return render_template("shared/admin_list.html", items=assignments)
+    return render_template("assignments/index.html", assignments=assignments)
 
 
 @bp.post("/assignments")
@@ -26,12 +26,13 @@ def create_assignment():
         {
             "name": fields.String(),
             "description": fields.String(),
+            "type_id": fields.Int(),
         },
         location="form",
     )
 
     # Assignments don't need to be added to a specific course becuase any assignment can be attached to a standard attempt.
-    assignment = Assignment(name=args["name"])
+    assignment = Assignment(name=args["name"], assignmenttype_id=args["type_id"])
     db.session.add(assignment)
     db.session.commit()
 
@@ -45,12 +46,13 @@ def create_assignment():
 @login_required
 @restricted
 def create_assignment_form():
+    types = AssignmentType.query.all()
     return render_template(
         "course/right-sidebar.html",
         title="Create a new assignment",
         position="right",
         partial="shared/forms/create-assignment.html",
-        data={},
+        data={"types": types},
     )
 
 
@@ -59,3 +61,8 @@ def get_single_assignment(id):
     item = db.session.get(Assignment, id)
 
     return render_template("assignments/assignment_detail.html", assignment=item)
+
+
+# TODO: Score single assignment
+# Get the assignment, attach standards
+# In the scoring table, list by student. Have a yes/no checkbox for each standard attached to the assignment.

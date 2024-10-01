@@ -11,15 +11,14 @@ from feedbook.wrappers import restricted
 
 bp = Blueprint("standard", __name__)
 
+
 # Admin view of all standards
 @bp.get("/standards")
 @login_required
 def index():
     standards = Standard.query.all()
-    return render_template(
-        "standards/index.html",
-        standards=standards
-    )
+    return render_template("standards/index.html", standards=standards)
+
 
 @bp.post("/standards")
 @login_required
@@ -27,29 +26,35 @@ def index():
 def create_standard():
     from feedbook.models import Course
 
-    args = parser.parse({
-        "name": fields.String(),
-        "description": fields.String(),
-        "course_id": fields.Int()
-    }, location="form")
+    args = parser.parse(
+        {
+            "name": fields.String(),
+            "description": fields.String(),
+            "course_id": fields.Int(),
+        },
+        location="form",
+    )
 
     standard = Standard(name=args["name"], description=args["description"], active=True)
     db.session.add(standard)
     db.session.commit()
 
     # Immediately align it to the course
-    course = Course.query.filter(Course.id == args['course_id']).first()
+    course = Course.query.filter(Course.id == args["course_id"]).first()
     course.align(standard)
     db.session.commit()
 
-    items = [item for item in Standard.query.all() if item not in course.standards.all()]
-    
-    #TODO: Toast the result
+    items = [
+        item for item in Standard.query.all() if item not in course.standards.all()
+    ]
+
+    # TODO: Toast the result
     return render_template(
         "shared/forms/create-standard.html",
         items=StandardSchema(many=True).dump(items),
-        course=course
+        course=course,
     )
+
 
 # Get data for a single standard
 @bp.get("/standards/<int:standard_id>/stats")
@@ -61,7 +66,7 @@ def get_standard_stats(standard_id):
     # Get all the attempts
     # Sort by class
     # Graph showing breakdown of average score for each course section
-    
+
 
 # Get a single standard
 @bp.get("/standards/<int:standard_id>")
@@ -76,6 +81,7 @@ def get_single_standard(id):
     print(StandardSchema().dump(standard))
     return StandardSchema().dump(standard)
 
+
 # Set the active/inactive status on a single standard
 @bp.put("/standards/<int:standard_id>/status")
 @login_required
@@ -87,10 +93,8 @@ def update_standard_status(standard_id):
     db.session.commit()
 
     value = "Deactivate" if standard.active else "Activate"
-    return make_response(
-        value,
-        trigger={"showToast": "Standard stauts updated"}
-    )
+    return make_response(value, trigger={"showToast": "Standard stauts updated"})
+
 
 # Get standard results for a single student
 @bp.get("/standards/<int:standard_id>/users/<int:user_id>/results/<int:result_id>")
@@ -107,10 +111,10 @@ def get_standard_result(standard_id, user_id, result_id):
     else:
         attempt = current_user.assessments.query.filter(StandardAttempt.id == result_id)
         student = current_user
-    
+
     data = {
         "attempt": StandardAttemptSchema().dump(attempt),
-        "student": UserSchema().dump(student)
+        "student": UserSchema().dump(student),
     }
 
     return render_template(
@@ -118,8 +122,9 @@ def get_standard_result(standard_id, user_id, result_id):
         position="right",
         partial="standards/standard-result.html",
         clickable=True,
-        data=data
+        data=data,
     )
+
 
 # Add an assessment to a standard
 @bp.post("/standards/<int:standard_id>/attempts")
@@ -129,32 +134,43 @@ def add_standard_assessment(standard_id):
     from feedbook.models import StandardAttempt, User
     from feedbook.schemas import StandardAttemptSchema, UserSchema
 
-    args = parser.parse({
-        "user_id": fields.Int(),
-        "score": fields.Int(),
-        "assignment": fields.Str(),
-        "comments": fields.Str()
-    }, location="form")
+    args = parser.parse(
+        {
+            "user_id": fields.Int(),
+            "score": fields.Int(),
+            "assignment": fields.Str(),
+            "comments": fields.Str(),
+        },
+        location="form",
+    )
 
     sa = StandardAttempt(
-        user_id=args['user_id'], 
+        user_id=args["user_id"],
         standard_id=standard_id,
-        score=args['score'], 
-        assignment=args['assignment'],
-        comments=args['comments']
+        score=args["score"],
+        assignment=args["assignment"],
+        comments=args["comments"],
     )
     db.session.add(sa)
     db.session.commit()
 
-    user = User.query.filter(User.id == args['user_id']).first()
+    user = User.query.filter(User.id == args["user_id"]).first()
 
-    user.assessments = user.assessments.filter(StandardAttempt.standard_id == standard_id)
+    user.assessments = user.assessments.filter(
+        StandardAttempt.standard_id == standard_id
+    )
 
     return render_template(
         "standards/student-updated.html",
         record=StandardAttemptSchema().dump(sa),
-        name=f"{user.last_name}, {user.first_name}"
+        name=f"{user.last_name}, {user.first_name}",
     )
+
+
+# TODO: Bulk upload a CSV of scores
+# Accept a file with a single score in each row to speed up scoring from
+# third party platforms.
+
 
 # Edit a single standard attempt
 @bp.get("/standards/<int:standard_id>/attempts/<int:attempt_id>")
@@ -169,8 +185,9 @@ def get_edit_form(standard_id, attempt_id):
     return render_template(
         "shared/forms/edit-standard-attempt.html",
         attempt=attempt,
-        standards=StandardListSchema(many=True).dump(standards)
+        standards=StandardListSchema(many=True).dump(standards),
     )
+
 
 @bp.put("/standards/<int:standard_id>/attempts/<int:attempt_id>")
 @login_required
@@ -178,27 +195,32 @@ def get_edit_form(standard_id, attempt_id):
 def edit_single_attempt(standard_id, attempt_id):
     from feedbook.models import User
     from feedbook.schemas import StandardAttemptSchema
-    args = parser.parse({
-        "assignment": fields.String(),
-        "score": fields.Int(),
-        "standard_id": fields.Int(),
-        "comments": fields.String()
-    }, location="form")
+
+    args = parser.parse(
+        {
+            "assignment": fields.String(),
+            "score": fields.Int(),
+            "standard_id": fields.Int(),
+            "comments": fields.String(),
+        },
+        location="form",
+    )
 
     attempt = StandardAttempt.query.get(attempt_id)
     attempt.update(args)
-        
+
     student = User.query.get(attempt.user_id)
-    student.scores = student.assessments.filter(StandardAttempt.standard_id == standard_id).all()
+    student.scores = student.assessments.filter(
+        StandardAttempt.standard_id == standard_id
+    ).all()
 
     return make_response(
         render_template(
-            "course/partials//student_entry.html",
-            student=student,
-            clickable=True
+            "course/partials//student_entry.html", student=student, clickable=True
         ),
-        trigger={"showToast": "Attempt updated", "closeModal": ""}
+        trigger={"showToast": "Attempt updated", "closeModal": ""},
     )
+
 
 # Delete a single standard attempt
 @bp.delete("/standards/<int:standard_id>/attempts/<int:attempt_id>")
@@ -208,10 +230,9 @@ def delete_standard_assessment(standard_id, attempt_id):
     attempt = StandardAttempt.query.get(attempt_id)
     db.session.delete(attempt)
     db.session.commit()
-    
-    return make_response(
-        trigger={"closeModal": "", "showToast": "Attempt deleted"}
-    )
+
+    return make_response(trigger={"closeModal": "", "showToast": "Attempt deleted"})
+
 
 # Attach a standard to a course
 @bp.post("/standards/align")
@@ -220,32 +241,27 @@ def delete_standard_assessment(standard_id, attempt_id):
 def add_standard_to_course():
     from feedbook.models import Course, User
     from feedbook.schemas import CourseSchema
-    
-    args = parser.parse({
-        "standard_id": fields.Int(),
-        "course_id": fields.Int()
-    }, location="form")
+
+    args = parser.parse(
+        {"standard_id": fields.Int(), "course_id": fields.Int()}, location="form"
+    )
 
     standard = Standard.query.filter(Standard.id == args["standard_id"]).first()
-    course = Course.query.filter(Course.id == args['course_id']).first()
+    course = Course.query.filter(Course.id == args["course_id"]).first()
 
-    course.align(standard) 
+    course.align(standard)
     db.session.commit()
-    
+
     # Student scores need to be calculated before sending
     student_enrollments = course.enrollments.filter(User.usertype_id == 2).all()
     for student in student_enrollments:
         student.scores = []
         for standard in course.standards.all():
             user_score = standard.current_score(student.id)
-            student.scores.append({
-                "standard_id": standard.id,
-                "score": user_score
-            })
-                    
+            student.scores.append({"standard_id": standard.id, "score": user_score})
+
     return render_template(
         "course/teacher_index_htmx.html",
         course=CourseSchema().dump(course),
-        students=student_enrollments
+        students=student_enrollments,
     )
-
