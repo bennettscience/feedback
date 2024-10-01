@@ -5,9 +5,15 @@
   hx-target="#right-sidebar-inner"
   _="on htmx:afterRequest reset() me"
 >
-  <label
-    >Name
-    <input type="text" name="name" />
-  </label>
+  <label for="assignment-name">Name</label>
+  <input type="text" name="name" id="assignment-name" />
+  <label for="assignment-type">Type</label>
+  <select name="type_id" id="assignment-type">
+    {% for type in types %}
+    <option value="{{type.id}}">{{type.name}}</option>
+    {% endfor %}
+  </select>
+  <label for="description">Description</label>
+  <textarea id="description" name="description"></textarea>
   <input type="submit" />
 </form>

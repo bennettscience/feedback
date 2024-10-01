@@ -1,42 +1,73 @@
-<select hx-swap-oob="outerHTML:#user-select" id="user-select" name="user_id"
-    hx-get="{{ url_for('course.get_user', course_id=course.id) }}" hx-trigger="change" hx-swap="innerHTML"
-    hx-target="#course-detail">
-    <option>Select a student</option>
-    {% for student in students %}
-    <option value="{{student.id}}">{{student.last_name}}, {{student.first_name}}</option>
-    {% endfor %}
+<select
+  hx-swap-oob="outerHTML:#user-select"
+  id="user-select"
+  name="user_id"
+  hx-get="{{ url_for('course.get_user', course_id=course.id) }}"
+  hx-trigger="change"
+  hx-swap="innerHTML"
+  hx-target="#course-detail"
+>
+  <option>Select a student</option>
+  {% for student in students %}
+  <option value="{{student.id}}">
+    {{student.last_name}}, {{student.first_name}}
+  </option>
+  {% endfor %}
 </select>
 
 <div class="course-header">
-    <h1>{{ course.name }}</h1>
-    <div class="course-actions-container">
-        <button class="btn" hx-get="/courses/{{course.id}}/standards/create" hx-target="main" hx-swap="beforeend">
-            + Add Standard
-        </button>
-        <button class="btn" hx-get="/courses/{{course.id}}/upload" hx-target="main" hx-swap="beforeend">+ Import
-            roster</button>
-    </div>
+  <h1>{{ course.name }}</h1>
+  <div class="course-actions-container">
+    <button
+      class="btn"
+      hx-get="/courses/{{course.id}}/standards/create"
+      hx-target="main"
+      hx-swap="beforeend"
+    >
+      + Add Standard
+    </button>
+    <button
+      class="btn"
+      hx-get="/assignments/create"
+      hx-target="main"
+      hx-swap="beforeend"
+    >
+      + Add Assignment
+    </button>
+    <button
+      class="btn"
+      hx-get="/courses/{{course.id}}/upload"
+      hx-target="main"
+      hx-swap="beforeend"
+    >
+      + Import roster
+    </button>
+  </div>
 </div>
 <section id="stored-outcomes">
-    {% for standard in course.standards %}
-    {% if standard.active %}
-    {{render_partial('standards/standard-card.html', item=standard,
-    course_id=course.id)}} {% endif %}{%endfor%}
+  {% for standard in course.standards %} {% if standard.active %}
+  {{render_partial('standards/standard-card.html', item=standard,
+  course_id=course.id)}} {% endif %}{%endfor%}
 </section>
 <section class="actions">
-    <input id="roster-search" type="text" placeholder="Search students..." _="on keyup 
+  <input
+    id="roster-search"
+    type="text"
+    placeholder="Search students..."
+    _="on keyup 
                 if the event's key is 'Escape' 
                     set my value to ' ' 
                     trigger keyup 
                 else show <tr /> in .scroller when its textContent contains my value
-                " />
-    <section class="roster-actions--buttons">
-        <div id="roster-button"></div>
-        <div id="assess-button"></div>
-        <div id="bulk-button"></div>
-    </section>
+                "
+  />
+  <section class="roster-actions--buttons">
+    <div id="roster-button"></div>
+    <div id="assess-button"></div>
+    <div id="bulk-button"></div>
+  </section>
 </section>
 <section id="scores">
-    {{ render_partial('course/partials/score_table.html', students=students,
-    course=course) }}
+  {{ render_partial('course/partials/score_table.html', students=students,
+  course=course) }}
 </section>
