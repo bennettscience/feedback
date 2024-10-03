@@ -1,9 +1,9 @@
 <tr id="student_{{student.id}}">
     <td>{{student.last_name}}, {{ student.first_name }}</a></td>
     {% for attempt in student.scores %}
-    <td {% if clickable %} class="clickable" hx-trigger="click"
+    <td {% if attempt["assessed_on"] %} class="tooltip" data-assignment-name="{{attempt['assessed_on']['name']}}" {% endif %} hx-trigger="click"
         hx-get="/standards/{{attempt.standard['id']}}/users/{{student.id}}/results/{{attempt.id}}" hx-target="main"
-        hx-swap="beforeend" {% endif %}>
+        hx-swap="beforeend" >
         {{attempt.score}}
     </td>
     {%endfor%}
