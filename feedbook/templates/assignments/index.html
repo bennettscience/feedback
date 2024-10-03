@@ -3,9 +3,9 @@
     {% for assignment in assignments %}
     <div class="outcome">
       <h2>{{ assignment.name }}</h2>
-      {% if assignment.alignments %} {% for alignment in assignment.alignments
-      %}
-      <span>{{ alignment.standard.name }}</span>
+      {% if assignment.assessments %} {% for assessment in
+      assignment.assessments %}
+      <span>{{ assessment.standard.name }}</span>
       {% endfor %} {% endif %}
     </div>
     {% endfor %}
