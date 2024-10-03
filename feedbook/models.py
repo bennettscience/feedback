@@ -13,13 +13,6 @@ def load_user(id):
     return User.query.get(int(id))
 
 
-class Artifact(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64))
-    link = db.Column(db.String(128))
-    narrative = db.Column(db.String(1000))
-
-
 class AssignmentType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32))
@@ -32,7 +25,7 @@ class Assignment(db.Model):
 
     assessments = db.relationship(
         "StandardAttempt",
-        backref=backref("assignments"),
+        backref=backref("assessed_on"),
         lazy="dynamic",
         passive_deletes=True,
     )
@@ -169,13 +162,6 @@ class User(UserMixin, db.Model):
         lazy="dynamic",
     )
 
-    artifacts = db.relationship(
-        "Artifact",
-        secondary="user_artifacts",
-        backref=backref("artifacts", lazy="subquery"),
-        lazy="dynamic",
-    )
-
     assessments = db.relationship(
         "StandardAttempt",
         backref=backref("user", single_parent=True),
@@ -222,36 +208,6 @@ course_standards = db.Table(
         "standard_id",
         db.Integer,
         db.ForeignKey("standard.id", onupdate="CASCADE", ondelete="CASCADE"),
-    ),
-)
-
-user_artifacts = db.Table(
-    "user_artifacts",
-    db.Column("id", db.Integer, primary_key=True),
-    db.Column(
-        "user_id",
-        db.Integer,
-        db.ForeignKey("user.id", onupdate="CASCADE", ondelete="CASCADE"),
-    ),
-    db.Column(
-        "artifact_id",
-        db.Integer,
-        db.ForeignKey("artifact.id", onupdate="CASCADE", ondelete="CASCADE"),
-    ),
-)
-
-standard_artifact = db.Table(
-    "standard_artifact",
-    db.Column("id", db.Integer, primary_key=True),
-    db.Column(
-        "standard_id",
-        db.Integer,
-        db.ForeignKey("standard.id", onupdate="CASCADE", ondelete="CASCADE"),
-    ),
-    db.Column(
-        "artifact_id",
-        db.Integer,
-        db.ForeignKey("artifact.id", onupdate="CASCADE", ondelete="CASCADE"),
     ),
 )
 
