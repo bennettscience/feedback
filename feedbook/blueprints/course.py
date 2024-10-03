@@ -8,7 +8,7 @@ from webargs import fields
 from webargs.flaskparser import parser
 
 from feedbook.extensions import db
-from feedbook.models import Course, Standard, User
+from feedbook.models import Assignment, Course, Standard, User
 from feedbook.schemas import CourseSchema, StandardListSchema
 from feedbook.wrappers import restricted
 
@@ -71,6 +71,7 @@ def create_course():
 # TODO: Enroll a single student
 
 
+# Request the upload form
 @bp.get("/courses/<int:course_id>/upload")
 @login_required
 @restricted
@@ -83,6 +84,7 @@ def get_roster_form(course_id):
     )
 
 
+# Process the uploaded CSV file for a new course roster.
 @bp.post("/courses/<int:course_id>/upload")
 @login_required
 @restricted
@@ -134,6 +136,7 @@ def roster_upload(course_id):
     )
 
 
+# Get a single course
 @bp.get("/courses/<int:id>")
 @login_required
 def get_single_course(id):
@@ -149,11 +152,19 @@ def get_single_course(id):
         student_enrollments = (
             course.enrollments.filter(User.usertype_id == 2).order_by("last_name").all()
         )
+
         for student in student_enrollments:
             student.scores = []
             for standard in course.standards.filter(Standard.active == True).all():
                 user_score = standard.current_score(student.id)
-                student.scores.append({"standard_id": standard.id, "score": user_score})
+                student.scores.append(
+                    {
+                        "standard": {
+                            "id": standard.id,
+                        },
+                        "score": user_score,
+                    }
+                )
 
         return render_template(
             "course/teacher_index_htmx.html",
@@ -228,29 +239,39 @@ def get_standard_scores_in_course(course_id, standard_id):
         .all()
     )
 
-    scores = []
+    # Get all the assignment IDs to use as keys for displaying results
+    # in an organized table.
+    assignments = Assignment.query.all()
+    headers = [assignment.name for assignment in assignments]
+
+    # Process student results
+    results = []
     for student in student_enrollments:
         assessments = student.assessments.filter(
             StandardAttempt.standard_id == standard_id
         ).order_by(StandardAttempt.occurred)
 
-        scores.append(
+        results.append(
             {
                 "last_name": student.last_name,
                 "first_name": student.first_name,
                 "id": student.id,
-                "scores": StandardAttemptSchema(many=True).dump(assessments),
+                "scores": assessments,
             }
         )
 
     return render_template(
         "course/partials/standard_score_table.html",
-        students=scores,
+        students=results,
         course_id=course_id,
         standard_id=standard_id,
+        headers=headers,
+        assignments=assignments,
     )
 
 
+# Student view
+# Get current results for a single student in a course.
 @bp.get("/courses/<int:course_id>/users/<int:user_id>/results/<int:standard_id>")
 def get_student_results(course_id, user_id, standard_id):
     from feedbook.models import StandardAttempt
@@ -295,6 +316,7 @@ def remove_standard_from_course(course_id, standard_id):
     )
 
 
+# Assess a standard in a course
 @bp.get("/courses/<int:course_id>/standards/<int:standard_id>/assess")
 @login_required
 @restricted
@@ -312,9 +334,13 @@ def get_assessment_form(course_id, standard_id):
         .all()
     )
 
+    # Get all assignments to add to the assessment form
+    assignments = Assignment.query.all()
+
     return render_template(
         "standards/student-assessment-form.html",
         students=enrollments,
         standard_id=standard_id,
         course_id=course_id,
+        assignments=assignments,
     )

@@ -138,7 +138,7 @@ def add_standard_assessment(standard_id):
         {
             "user_id": fields.Int(),
             "score": fields.Int(),
-            "assignment": fields.Str(),
+            "assignment": fields.Int(),
             "comments": fields.Str(),
         },
         location="form",
@@ -148,7 +148,7 @@ def add_standard_assessment(standard_id):
         user_id=args["user_id"],
         standard_id=standard_id,
         score=args["score"],
-        assignment=args["assignment"],
+        assignment_id=args["assignment"],
         comments=args["comments"],
     )
     db.session.add(sa)
@@ -162,7 +162,7 @@ def add_standard_assessment(standard_id):
 
     return render_template(
         "standards/student-updated.html",
-        record=StandardAttemptSchema().dump(sa),
+        record=sa,
         name=f"{user.last_name}, {user.first_name}",
     )
 
