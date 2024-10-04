@@ -239,11 +239,6 @@ def get_standard_scores_in_course(course_id, standard_id):
         .all()
     )
 
-    # Get all the assignment IDs to use as keys for displaying results
-    # in an organized table.
-    assignments = Assignment.query.all()
-    headers = [assignment.name for assignment in assignments]
-
     # Process student results
     results = []
     for student in student_enrollments:
@@ -265,8 +260,6 @@ def get_standard_scores_in_course(course_id, standard_id):
         students=results,
         course_id=course_id,
         standard_id=standard_id,
-        headers=headers,
-        assignments=assignments,
     )
 
 
