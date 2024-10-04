@@ -837,7 +837,9 @@ td:not(:first-child) {
 .tooltip:before {
   content: attr(data-assignment-name);
   position: absolute;
-  top: -4rem;
+  left: 50%;
+  top: -3rem;
+  transform: translate(-50%);
   width: auto;
   padding: 0.5rem;
   border-radius: 2px;
