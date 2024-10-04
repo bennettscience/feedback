@@ -65,6 +65,26 @@ class Course(db.Model):
         lazy="dynamic",
     )
 
+    assignments = db.relationship(
+        "Assignment",
+        secondary="course_assignments",
+        backref=backref("assignments", lazy="dynamic"),
+        lazy="dynamic",
+    )
+
+    def add_assignment(self, assignment):
+        if not self._has_assignment(assignment):
+            self.assignments.append(assignment)
+        return self
+
+    def _has_assignment(assignment):
+        return (
+            self.assignments.filter(
+                course_assignments.c.assignment_id == assignment.id
+            ).count()
+            > 0
+        )
+
     # safely align a standard to a course
     def align(self, standard):
         if not self._is_aligned(standard):
@@ -208,6 +228,21 @@ course_standards = db.Table(
         "standard_id",
         db.Integer,
         db.ForeignKey("standard.id", onupdate="CASCADE", ondelete="CASCADE"),
+    ),
+)
+
+course_assignments = db.Table(
+    "course_assignments",
+    db.Column("id", db.Integer, primary_key=True),
+    db.Column(
+        "course_id",
+        db.Integer,
+        db.ForeignKey("course.id", onupdate="CASCADE", ondelete="CASCADE"),
+    ),
+    db.Column(
+        "assignment_id",
+        db.Integer,
+        db.ForeignKey("assignment.id", onupdate="CASCADE", ondelete="CASCADE"),
     ),
 )
 
