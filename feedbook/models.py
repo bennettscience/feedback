@@ -77,7 +77,7 @@ class Course(db.Model):
             self.assignments.append(assignment)
         return self
 
-    def _has_assignment(assignment):
+    def _has_assignment(self, assignment):
         return (
             self.assignments.filter(
                 course_assignments.c.assignment_id == assignment.id
