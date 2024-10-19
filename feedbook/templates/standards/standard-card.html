@@ -1,11 +1,24 @@
-<div class="item outcome" _="on delete remove me">
-	<h3>{{item.name}}</h3>
-	<p>{{item.description}}</p>
-	<button class="btn" hx-get="/courses/{{course_id}}/standards/{{item.id}}/results" hx-target="#scores"
-		hx-swap="innerHTML" _="on click remove .active from .outcome then add .active to closest .item">Score
-		Details</button>
-	<button class="btn" hx-trigger="confirmed" hx-delete="/courses/{{course_id}}/standards/{{item.id}}"
-		hx-target="#course-details" hx-swap="innerHTML" _='on click
+<!-- Refactor into a scrollable view with details and actions for each standard -->
+<tr>
+  <td>{{ item.name }}</td>
+  <td>{{ item.course_average(course_id) }}</td>
+  <td>
+    <button
+      class="btn"
+      hx-get="/courses/{{course_id}}/standards/{{item.id}}/results"
+      hx-target="#scores"
+      hx-swap="innerHTML"
+      _="on click remove .active from .outcome then add .active to closest .item"
+    >
+      Score Details
+    </button>
+    <button
+      class="btn"
+      hx-trigger="confirmed"
+      hx-delete="/courses/{{course_id}}/standards/{{item.id}}"
+      hx-target="#course-details"
+      hx-swap="innerHTML"
+      _='on click
                 call Swal.fire({
                     title:"Are you sure?",
                     text: "This will remove the standard and any stored attempts for all students in the course.",
@@ -18,7 +31,11 @@
                 })
                 if result.isConfirmed trigger confirmed
                 end
-                on htmx:afterRequest(detail) if detail.xhr.status is 200 trigger delete'>
-		Delete
-	</button>
-</div>
+                on htmx:afterRequest(detail) if detail.xhr.status is 200 trigger delete'
+    >
+      Delete
+    </button>
+  </td>
+  <!-- <h3>{{item.name}}</h3> -->
+  <!-- <p>{{item.description}}</p> -->
+</tr>

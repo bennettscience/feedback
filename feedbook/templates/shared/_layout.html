@@ -1,33 +1,40 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}OutcomeMaps{%endblock%}</title>
 
-    <link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}" />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename='css/main.css')}}"
+    />
     {% block additional_css %} {%endblock%}
-</head>
+  </head>
 
-<body _="on keyup[key is 'Escape'] remove .show from <div/>">
-    <nav>{% include 'shared/partials/nav.html' %}</nav>
-    <main>
-        {% block sidebar %} {% endblock %}
-        <section class="container">
-            {% block main_content %} {%
-            endblock %}
-            <div id="course-detail"></div>
+  <body _="on keyup[key is 'Escape'] remove .show from <div/>">
+    <div class="box stack">
+      <nav>{% include 'shared/partials/nav.html' %}</nav>
+      <main>
+        <aside>{% block sidebar %} {% endblock %}</aside>
+        <section class="stack" id="detail">
+          {% block main_content %} {% endblock %}
         </section>
         {% include 'shared/partials/toast.html' %}
-    </main>
-    <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+      </main>
+    </div>
+    <script
+      type="module"
+      src="{{ url_for('static', filename='js/main.js') }}"
+    ></script>
     <script src="https://unpkg.com/htmx.org@1.7.0"></script>
-    <script type="text/hyperscript" src="{{url_for('static', filename='hs/sortable._hs') }}"></script>
+    <script
+      type="text/hyperscript"
+      src="{{url_for('static', filename='hs/sortable._hs') }}"
+    ></script>
     <script src="https://unpkg.com/hyperscript.org@0.9.5"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {% block additional_js %} {% endblock %}
-</body>
-
+  </body>
 </html>

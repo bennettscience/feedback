@@ -1,21 +1,22 @@
-<div class="container container--flex flex--row">
-	<div>
-		{% for standard in standards %}
-		<div class="outcome">
-			<h2>{{ standard.name }}</h2>
-			<div class="actions">
-				<button class="btn btn-primary" hx-put="/standards/{{standard.id}}/status" hx-swap="innerHTML">{% if
-					standard.active
-					%}Deactivate{%
-					else %}Activate{%
-					endif %}
-				</button>
-				<button>Get data</button>
-			</div>
-		</div>
-		{% endfor %}
-	</div>
-	<div>
-		<h1>Right side</h1>
-	</div>
+<div class="box flex">
+  <div>
+    {% for standard in standards %}
+    <div class="outcome">
+      <h2>{{ standard.name }}</h2>
+      <div class="actions">
+        <button
+          class="btn btn-primary"
+          hx-put="/standards/{{standard.id}}/status"
+          hx-swap="innerHTML"
+        >
+          {% if standard.active %}Deactivate{% else %}Activate{% endif %}
+        </button>
+        <button>Get data</button>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div>
+    <h1>Right side</h1>
+  </div>
 </div>
