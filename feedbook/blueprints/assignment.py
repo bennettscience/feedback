@@ -5,7 +5,7 @@ from webargs import fields
 from webargs.flaskparser import parser
 
 from feedbook.extensions import db
-from feedbook.models import Assignment, AssignmentType
+from feedbook.models import Assignment, AssignmentType, Course
 from feedbook.wrappers import restricted
 
 bp = Blueprint("assignment", __name__)
@@ -27,6 +27,7 @@ def create_assignment():
             "name": fields.String(),
             "description": fields.String(),
             "type_id": fields.Int(),
+            "courses": fields.List(fields.Int()),
         },
         location="form",
     )
@@ -36,6 +37,12 @@ def create_assignment():
     db.session.add(assignment)
     db.session.commit()
 
+    # Add the assignment to the courses requested
+    for course in args["courses"]:
+        c = Course.query.filter(Course.id == course).first()
+        c.add_assignment(assignment)
+
+    db.session.commit()
     # Return the full list of assignments to the admin page
     assignments = db.session.scalars(db.select(Assignment)).all()
 
@@ -47,12 +54,13 @@ def create_assignment():
 @restricted
 def create_assignment_form():
     types = AssignmentType.query.all()
+    courses = Course.query.all()
     return render_template(
         "course/right-sidebar.html",
         title="Create a new assignment",
         position="right",
         partial="shared/forms/create-assignment.html",
-        data={"types": types},
+        data={"types": types, "courses": courses},
     )
 
 

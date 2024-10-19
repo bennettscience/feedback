@@ -15,5 +15,10 @@
   </select>
   <label for="description">Description</label>
   <textarea id="description" name="description"></textarea>
+  <p>Select courses to add the assignment to:</p>
+  {% for course in courses %}
+  <label>{{ course.name }}<label>
+  <input type="checkbox" name="courses" value="{{course.id}}" />
+  {% endfor %}
   <input type="submit" />
 </form>
