@@ -145,6 +145,20 @@ class Standard(db.Model):
         else:
             return (max(scores) + scores[-1]) / 2
 
+    # Get the average score for students in a course
+    # Use the StandardAttempt table as the leftmost join to filter down against the other conditions. Since the attempts do not matter which course they're in, just the user, you need to filter against the user_courses table to get only the desired course.
+    # Only return values for students with the given course.id AND attempts for the assignment with the matching ID.
+    def course_average(self, course_id):
+        course_attempts = (
+            StandardAttempt.query.join(Standard)
+            .join(course_standards)
+            .filter(
+                (course_standards.c.course_id == course_id)
+                & (StandardAttempt.standard_id == self.id)
+            )
+        ).all()
+        return round(mean([attempt.score for attempt in course_attempts]), 2)
+
 
 class StandardAttempt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
