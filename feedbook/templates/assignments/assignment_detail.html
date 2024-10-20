@@ -1,5 +1,26 @@
-<p>{{ assignment.name }}</p>
-<p>Average score: {{ assignment.average_all() }}</p>
+<div class="course-header">{{ assignment.name }}</div>
+<h2>Alignments</h2>
+<button
+  hx-get="{{ url_for('course.get_alignment_form', course_id=course.id, assignment_id=assignment.id)}}"
+  hx-target="main"
+  hx-swap="beforeend"
+>
+  Align standards
+</button>
+<div class="box flex">
+  {% for standard in assignment.alignments %}
+  <div class="box">
+    <p>{{ standard.name }}</p>
+    <p>{{ standard.desscription }}</p>
+    <button>Assess</button>
+    <button
+      hx-delete="{{ url_for('assignment.remove_standard_alignment', assignment_id=assignment.id, standard_id=standard.id)}}"
+    >
+      Remove
+    </button>
+  </div>
+  {% endfor %}
+</div>
 <hr />
 <b>Recent assessments</b>
 {% for attempt in assignment.assessments %}

@@ -1,0 +1,16 @@
+<form
+  hx-trigger="submit"
+  hx-post="/assignments/{{assignment.id}}/align"
+  hx-swap="innerHTML"
+  hx-target="#right-sidebar-inner"
+  _="on htmx:afterRequest reset() me"
+>
+	<p>Align existing standards to this assignment to assess them on student work.</p>
+  {% for standard in course.standards %}
+	{% if standard not in assignment.alignments %}
+  <label>{{ standard.name }}<label>
+  <input type="checkbox" name="standards" value="{{standard.id}}" />
+	{% endif %}
+  {% endfor %}
+  <input type="submit" />
+</form>

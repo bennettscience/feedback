@@ -45,32 +45,27 @@
   </div>
 </div>
 <section class="box flex" id="standards-list">
-    <table>
-      <thead>
-        <tr>
-          <th>Standard Name</th>
-          <th>Avg Score</th>
-          <th>Actions</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for standard in course.standards %} {% if standard.active %}
-        {{render_partial('standards/standard-card.html', item=standard,
-        course_id=course.id)}} {% endif %}{%endfor%}
-      </tbody>
-    </table>
-  </section>
-  <section class="box wrapper">
-    <h2>Stored Assignments</h2>
-    {% for assignment in course.assignments %}
-    <a href="{{ url_for('assignment.get_single_assignment', id=assignment.id)}}"
-      >{{ assignment.name }}</a
-    >
-    {% endfor %}
-  </section>
+  {% for standard in course.standards %} {% if standard.active %}
+  {{render_partial('standards/standard-card.html', item=standard,
+  course_id=course.id, results=results["standard_{}".format(standard.id)])}} {%
+  endif %}{%endfor%}
 </section>
-<section class="actions">
+<section class="box wrapper">
+  <h2>Stored Assignments</h2>
+  <ol>
+    {% for assignment in course.assignments %}
+    <li>
+      <a
+        hx-get="{{ url_for('course.get_single_assignment', course_id=course.id, assignment_id=assignment.id)}}"
+        hx-target="#detail"
+        hx-swap="innerHTML"
+        >{{ assignment.name }}</a
+      >
+    </li>
+    {% endfor %}
+  </ol>
+</section>
+<!-- <section class="actions">
   <input
     id="roster-search"
     type="text"
@@ -92,3 +87,4 @@
   {{ render_partial('course/partials/score_table.html', students=students,
   course=course) }}
 </section>
+-->
