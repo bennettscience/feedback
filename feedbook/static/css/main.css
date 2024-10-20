@@ -115,18 +115,17 @@ input[type="text"] {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  gap: var(--small);
 }
 
-#standards-list,
-#assignments-list {
-  height: auto;
+.box.flex.wide {
+  justify-content: space-between;
 }
 
-#standards-list,
-#assignments-list {
-  height: 200px;
-  overflow-y: scroll;
+#standards-list > .item {
+  width: 300px;
 }
+
 .container--flex {
   display: flex;
 }
@@ -375,7 +374,7 @@ btn:focus {
 
 .item {
   box-sizing: border-box;
-  padding: 10px 25px;
+  padding: var(--small);
   border: 1px solid transparent;
   border-radius: 3px;
   margin: 10px 0;
@@ -388,6 +387,10 @@ btn:focus {
 
 .item.active {
   border-color: var(--primary-color);
+}
+
+.item.outcome > * + * {
+  margin-top: var(--small);
 }
 
 .item--small {
@@ -874,7 +877,7 @@ td:not(:first-child) {
   left: 50%;
   top: -3rem;
   transform: translate(-50%);
-  width: auto;
+  width: max-content;
   padding: 0.5rem;
   border-radius: 2px;
   background: var(--primary-color);
