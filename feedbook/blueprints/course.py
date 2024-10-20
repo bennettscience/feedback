@@ -148,29 +148,47 @@ def get_single_course(id):
     if current_user.usertype_id == 2:
         return render_template("course/student_index.html", course=course)
     else:
-        # Student scores need to be calculated before sending
-        student_enrollments = (
-            course.enrollments.filter(User.usertype_id == 2).order_by("last_name").all()
-        )
-
-        for student in student_enrollments:
-            student.scores = []
-            for standard in course.standards.filter(Standard.active == True).all():
-                user_score = standard.current_score(student.id)
-                student.scores.append(
-                    {
-                        "standard": {
-                            "id": standard.id,
-                        },
-                        "score": user_score,
-                    }
-                )
+        # prep the standard report
+        results = {}
+        enrollments = course.enrollments.filter(User.usertype_id == 2).all()
+        for standard in course.standards.all():
+            count = 0
+            for student in enrollments:
+                if standard.is_proficient(student.id):
+                    count = count + 1
+            results[f"standard_{standard.id}"] = {
+                "proficient": count,
+                "not_proficient": len(enrollments) - count,
+            }
 
         return render_template(
-            "course/teacher_index_htmx.html",
-            course=course,
-            students=student_enrollments,
+            "course/teacher_index_htmx.html", course=course, results=results
         )
+
+
+@bp.get("/courses/<int:course_id>/assignments/<int:assignment_id>")
+def get_single_assignment(course_id, assignment_id):
+    course = db.session.get(Course, course_id)
+    item = db.session.get(Assignment, assignment_id)
+
+    return render_template(
+        "assignments/assignment_detail.html", course=course, assignment=item
+    )
+
+
+# Align an assignment in a course to a standard
+@bp.get("/courses/<int:course_id>/assignments/<int:assignment_id>/align")
+def get_alignment_form(course_id, assignment_id):
+    course = Course.query.get(course_id)
+    assignment = course.assignments.filter(Assignment.id == assignment_id).first()
+
+    return render_template(
+        "course/right-sidebar.html",
+        title="Align a standard",
+        position="right",
+        partial="shared/forms/create-alignment.html",
+        data={"course": course, "assignment": assignment},
+    )
 
 
 # Get a single user from a course

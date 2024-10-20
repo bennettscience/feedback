@@ -5,7 +5,7 @@ from webargs import fields
 from webargs.flaskparser import parser
 
 from feedbook.extensions import db
-from feedbook.models import Assignment, AssignmentType, Course
+from feedbook.models import Assignment, AssignmentType, Course, Standard
 from feedbook.wrappers import restricted
 
 bp = Blueprint("assignment", __name__)
@@ -64,13 +64,31 @@ def create_assignment_form():
     )
 
 
-@bp.get("/assignments/<int:id>")
-def get_single_assignment(id):
-    item = db.session.get(Assignment, id)
+@bp.post("/assignments/<int:assignment_id>/align")
+@login_required
+@restricted
+def create_standard_alignment(assignment_id):
+    assignment = Assignment.query.get(assignment_id)
+    args = parser.parse({"standards": fields.List(fields.Int())}, location="form")
+    for standard_id in args["standards"]:
+        standard = Standard.query.filter(Standard.id == standard_id).first()
+        if standard:
+            assignment.add_standard(standard)
 
-    return render_template("assignments/assignment_detail.html", assignment=item)
+    return make_response(trigger={"showToast": "Alignments created"})
 
 
-# TODO: Score single assignment
-# Get the assignment, attach standards
+@bp.delete("/assignments/<int:assignment_id>/align/<int:standard_id>")
+@login_required
+@restricted
+def remove_standard_alignment(assignment_id, standard_id):
+    assignment = Assignment.query.filter(Assignment.id == assignment_id).first()
+    standard = Standard.query.filter(Standard.id == standard_id).first()
+
+    assignment.alignments.remove(standard)
+    db.session.commit()
+
+    return make_response(trigger={"showToast": "Alignment removed"})
+
+
 # In the scoring table, list by student. Have a yes/no checkbox for each standard attached to the assignment.
