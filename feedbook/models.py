@@ -1,3 +1,4 @@
+from collections import Counter
 from statistics import mean
 
 from flask_login import UserMixin
@@ -30,6 +31,13 @@ class Assignment(db.Model):
         passive_deletes=True,
     )
 
+    alignments = db.relationship(
+        "Standard",
+        secondary="assignment_standards",
+        backref=backref("assignments", lazy="dynamic"),
+        lazy="dynamic",
+    )
+
     # Get the average score for an assignment
     # This returns the average for all classes regardless of when it happened. This will be helpful for looking at assignments across all classes and lay a foundation for an eventual `assignment_type` key.
     #
@@ -51,6 +59,21 @@ class Assignment(db.Model):
             )
         ).all()
         return mean([attempt.score for attempt in course_attempts])
+
+    # Align the assignment to learning standards. Multiple can be added and assessed at the same time.
+    def add_standard(self, standard):
+        if not self._has_standard(standard):
+            self.alignments.append(standard)
+            db.session.commit()
+        return self
+
+    def _has_standard(self, standard):
+        return (
+            self.alignments.filter(
+                assignment_standards.c.standard_id == standard.id
+            ).count()
+            > 0
+        )
 
 
 class Course(db.Model):
@@ -121,6 +144,11 @@ class Standard(db.Model):
             .all()
         )
         return [item.score for item in scores]
+
+    def is_proficient(self, user_id):
+        scores = self.__get_scores(user_id)
+        counts = Counter(scores)
+        return counts[1] > counts[0]
 
     def current_score(self, user_id):
         """Average the last attemp with the highest attempt.
@@ -229,6 +257,21 @@ class UserType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32))
 
+
+assignment_standards = db.Table(
+    "assignment_standards",
+    db.Column("id", db.Integer, primary_key=True),
+    db.Column(
+        "assignment_id",
+        db.Integer,
+        db.ForeignKey("assignment.id", onupdate="CASCADE", ondelete="CASCADE"),
+    ),
+    db.Column(
+        "standard_id",
+        db.Integer,
+        db.ForeignKey("standard.id", onupdate="CASCADE", ondelete="CASCADE"),
+    ),
+)
 
 course_standards = db.Table(
     "course_standards",
