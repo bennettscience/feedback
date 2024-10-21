@@ -8,7 +8,14 @@ from webargs import fields
 from webargs.flaskparser import parser
 
 from feedbook.extensions import db
-from feedbook.models import Assignment, Course, Standard, User
+from feedbook.models import (
+    course_assignments,
+    Assignment,
+    Course,
+    Standard,
+    StandardAttempt,
+    User,
+)
 from feedbook.schemas import CourseSchema, StandardListSchema
 from feedbook.wrappers import restricted
 
@@ -162,17 +169,57 @@ def get_single_course(id):
             }
 
         return render_template(
-            "course/teacher_index_htmx.html", course=course, results=results
+            "course/teacher_index_htmx.html",
+            course=course,
+            enrollments=enrollments,
+            results=results,
         )
 
 
 @bp.get("/courses/<int:course_id>/assignments/<int:assignment_id>")
 def get_single_assignment(course_id, assignment_id):
-    course = db.session.get(Course, course_id)
-    item = db.session.get(Assignment, assignment_id)
+    from itertools import groupby
+    from operator import attrgetter
+
+    assignment = db.session.get(Assignment, assignment_id)
+    enrollments = [
+        user.id
+        for user in db.session.get(Course, course_id)
+        .enrollments.filter(User.usertype_id == 2)
+        .all()
+    ]
+
+    # Limit the results for the assignment to the curernt course only.
+    query = (
+        StandardAttempt.query.join(Assignment)
+        .join(course_assignments)
+        .filter(
+            (course_assignments.c.course_id == course_id)
+            & (StandardAttempt.assignment_id == assignment_id)
+        )
+        .order_by(StandardAttempt.user_id)
+        .all()
+    )
+
+    # results = [
+    #     {
+    #         "user_{}.format(k)": [
+    #             list(g) for k, g in groupby(query, attrgetter("user_id"))
+    #         ],
+    #     }
+    # ]
+
+    results = defaultdict(list)
+
+    for item in query:
+        if item.user.id in enrollments:
+            results[f"user_{item.user.id}"].append(item)
 
     return render_template(
-        "assignments/assignment_detail.html", course=course, assignment=item
+        "assignments/assignment_detail.html",
+        assignment=assignment,
+        results=results,
+        course_id=course_id,
     )
 
 
@@ -204,7 +251,12 @@ def get_user(course_id):
 
     for a in user.assessments.all():
         standards[a.standard.name].append(
-            {"assignment": a.assignment, "score": a.score, "occurred": a.occurred}
+            {
+                "assignment": a.assignment,
+                "score": a.score,
+                "occurred": a.occurred,
+                "comments": a.comments,
+            }
         )
         scores_only[a.standard.name].append(a.score)
 

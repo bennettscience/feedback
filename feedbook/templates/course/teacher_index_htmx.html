@@ -5,10 +5,10 @@
   hx-get="{{ url_for('course.get_user', course_id=course.id) }}"
   hx-trigger="change"
   hx-swap="innerHTML"
-  hx-target="#course-detail"
+  hx-target="#detail"
 >
   <option>Select a student</option>
-  {% for student in students %}
+  {% for student in enrollments %}
   <option value="{{student.id}}">
     {{student.last_name}}, {{student.first_name}}
   </option>
@@ -59,6 +59,7 @@
         hx-get="{{ url_for('course.get_single_assignment', course_id=course.id, assignment_id=assignment.id)}}"
         hx-target="#detail"
         hx-swap="innerHTML"
+        hx-push-url="true"
         >{{ assignment.name }}</a
       >
     </li>

@@ -1,7 +1,7 @@
 <div class="course-header">{{ assignment.name }}</div>
 <h2>Alignments</h2>
 <button
-  hx-get="{{ url_for('course.get_alignment_form', course_id=course.id, assignment_id=assignment.id)}}"
+  hx-get="{{ url_for('course.get_alignment_form', course_id=course_id, assignment_id=assignment.id)}}"
   hx-target="main"
   hx-swap="beforeend"
 >
@@ -22,9 +22,15 @@
   {% endfor %}
 </div>
 <hr />
-<b>Recent assessments</b>
-{% for attempt in assignment.assessments %}
-<p>
-  {{ attempt.occurred }} | {{ attempt.user.last_name }} | {{ attempt.score}}
-</p>
+{% for k, v in results.items() %}
+<h2>{{ v[0].user.last_name }}</h2>
+<div class="box flex">
+{% for item in v %}
+<div class="box outcome">
+<h3>{{ item.name }}</h3>
+<p>{{ item.score }}</h3>
+<p>{{ item.comments }}</h3>
+</div>
+{% endfor %}
+</div>
 {% endfor %}
