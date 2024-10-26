@@ -22,14 +22,14 @@
   {% endfor %}
 </div>
 <hr />
-{% for k, v in results.items() %}
-<h2>{{ v[0].user.last_name }}</h2>
+{% for student in results %}
+<h2>{{ student["user"].last_name }}, {{ student["user"].first_name }}</h2>
 <div class="box flex">
-{% for item in v %}
+{% for attempt in student["items"] %}
 <div class="box outcome">
-<h3>{{ item.name }}</h3>
-<p>{{ item.score }}</h3>
-<p>{{ item.comments }}</h3>
+<h3>{{ attempt.standard.name }}</h3>
+<p>{{ attempt.score }}</h3>
+<p>{{ attempt.comments }}</h3>
 </div>
 {% endfor %}
 </div>
