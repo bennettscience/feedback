@@ -9,10 +9,9 @@
 </button>
 <div class="box flex">
   {% for standard in assignment.alignments %}
-  <div class="box">
+  <div class="box outcome">
     <p>{{ standard.name }}</p>
-    <p>{{ standard.desscription }}</p>
-    <button>Assess</button>
+    <p>{{ standard.description }}</p>
     <button
       hx-delete="{{ url_for('assignment.remove_standard_alignment', assignment_id=assignment.id, standard_id=standard.id)}}"
     >
@@ -25,12 +24,34 @@
 {% for student in results %}
 <h2>{{ student["user"].last_name }}, {{ student["user"].first_name }}</h2>
 <div class="box flex">
-{% for attempt in student["items"] %}
-<div class="box outcome">
-<h3>{{ attempt.standard.name }}</h3>
-<p>{{ attempt.score }}</h3>
-<p>{{ attempt.comments }}</h3>
+  {% for standard in assignment.alignments %}
+  <div class="box outcome">
+    {% if standard.id in student["includes"] %} {% set attempt=
+    student["items"]|selectattr("standard_id")|list %}
+    <h3>{{ attempt[0].standard.name }}</h3>
+    <p>{{ attempt[0].score }}</p>
+    <p>{{ attempt[0].comments }}</p>
+    {% else %}
+    <h3>{{ standard.name }}</h3>
+    <form>
+      <input type="hidden" name="user_id" value="{{student.user.id}}" />
+      <input type="hidden" name="assignment" value="{{assignment.id}}" />
+      <label for="score">Score:</label>
+      <input type="number" id="score" name="score" min="0" max="1" />
+      <label for="comments">Comments:</label>
+      <textarea name="comments"></textarea>
+      <button
+        class="btn"
+        hx-post="/standards/{{standard.id}}/attempts"
+        hx-swap="innerHTML"
+        hx-target="closest .box.outcome"
+      >
+        Save
+      </button>
+    </form>
+    {% endif %}
+  </div>
+  {% endfor %}
 </div>
-{% endfor %}
-</div>
+
 {% endfor %}

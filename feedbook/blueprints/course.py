@@ -202,15 +202,16 @@ def get_single_assignment(course_id, assignment_id):
     )
 
     # Use a defaultdict class to collect the StandardAttempt objects by
-    # user in a dictionary.  I can't figure out how to add a specific
-    # user key to the dict, so loop it _again_ to add a "user" key
-    # that can be used for sorting in the view.
+    # user in a dictionary.
     results = defaultdict(dict)
 
     for item in query:
         if item.user.id in enrollments:
             results["user_{}".format(item.user.id)].setdefault("items", []).append(item)
             results["user_{}".format(item.user.id)]["user"] = item.user
+            results["user_{}".format(item.user.id)].setdefault("includes", []).append(
+                item.standard_id
+            )
 
     sorted_results = sorted(results.values(), key=lambda item: item["user"].last_name)
 
