@@ -1,28 +1,72 @@
 <table id="student-scores">
-	<thead _="install Sortable">
-		<tr>
-			<th class="columnheader" role="columnheader">
-				<p>Date</p>
-			</th>
-			<th class="columnheader" role="columnheader">
-				<p>Assignment</p>
-			</th>
-			<th class="columnheader" role="columnheader">
-				<p>Score</p>
-			</th>
-			<th class="columnheader" role="columnheader">
-				<p>Comments</p>
-			</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for result in results %}
-		<tr>
-			<td>{{result.occurred}}</td>
-			<td>{{result.assignment}}</td>
-			<td>{{result.score}}</td>
-			<td>{{result.comments}}</td>
-		</tr>
-		{% endfor %}
-	</tbody>
+  <thead _="install Sortable">
+    <tr>
+      <th class="columnheader" role="columnheader">
+        <p>Date</p>
+      </th>
+      <th class="columnheader" role="columnheader">
+        <p>Assignment</p>
+      </th>
+      <th class="columnheader" role="columnheader">
+        <p>Proficient</p>
+      </th>
+      <th class="columnheader" role="columnheader">
+        <p>Comments</p>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for result in results %}
+    <tr>
+      <td>{{result.occurred.strftime('%Y-%m-%d')}}</td>
+      <td>{{result.assessed_on.name}}</td>
+      <td>
+        {% if result.score > 0 %}<svg
+          xmlns="http://www.w3.org/2000/svg"
+          x="0px"
+          y="0px"
+          width="100"
+          height="100"
+          viewBox="0 0 48 48"
+        >
+          <path
+            fill="#c8e6c9"
+            d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"
+          ></path>
+          <path
+            fill="#4caf50"
+            d="M34.586,14.586l-13.57,13.586l-5.602-5.586l-2.828,2.828l8.434,8.414l16.395-16.414L34.586,14.586z"
+          ></path></svg
+        >{% else %}<svg
+          xmlns="http://www.w3.org/2000/svg"
+          x="0px"
+          y="0px"
+          width="100"
+          height="100"
+          viewBox="0 0 40 40"
+        >
+          <path
+            fill="#f78f8f"
+            d="M20,38.5C9.799,38.5,1.5,30.201,1.5,20S9.799,1.5,20,1.5S38.5,9.799,38.5,20S30.201,38.5,20,38.5z"
+          ></path>
+          <path
+            fill="#c74343"
+            d="M20,2c9.925,0,18,8.075,18,18s-8.075,18-18,18S2,29.925,2,20S10.075,2,20,2 M20,1 C9.507,1,1,9.507,1,20s8.507,19,19,19s19-8.507,19-19S30.493,1,20,1L20,1z"
+          ></path>
+          <path
+            fill="#fff"
+            d="M18.5 10H21.5V30H18.5z"
+            transform="rotate(-134.999 20 20)"
+          ></path>
+          <path
+            fill="#fff"
+            d="M18.5 10H21.5V30H18.5z"
+            transform="rotate(-45.001 20 20)"
+          ></path></svg
+        >{% endif %}
+      </td>
+      <td>{{result.comments}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>

@@ -103,6 +103,14 @@ input[type="text"] {
   line-height: 36px;
 }
 
+.green {
+  background-color: #c8e6c9;
+}
+
+.red {
+  background-color: #f78f8f;
+}
+
 .stack > * + * {
   margin-top: var(--small);
 }
@@ -428,17 +436,25 @@ btn:focus {
 }
 
 .outcome {
+  position: relative;
   flex: 1 1 0;
   border: 1px solid var(--secondary-color);
 }
 
-.outcome:hover {
-  box-shadow: var(--active-shadow);
+.outcome > .standard-status {
+  margin: 0;
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
 }
 
-.outcome p {
-  font-style: italic;
-  font-size: 0.8rem;
+.outcome > .standard-status > svg {
+  width: 3rem;
+  height: auto;
+}
+
+.outcome:hover {
+  box-shadow: var(--active-shadow);
 }
 
 .outcome--header {
@@ -626,6 +642,11 @@ table#assessment-table tr {
 table#assessment-table td,
 table#student-scores td {
   text-align: left;
+}
+
+table#student-scores td > svg {
+  width: 1rem;
+  height: auto;
 }
 
 table#assessment-table th,

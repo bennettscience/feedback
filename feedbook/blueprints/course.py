@@ -185,7 +185,7 @@ def get_single_assignment(course_id, assignment_id):
     enrollments = [
         user.id
         for user in db.session.get(Course, course_id)
-        .enrollments.filter(User.usertype_id == 2)
+        .enrollments.filter(User.usertype_id == 2 and User.active == True)
         .all()
     ]
 
@@ -338,16 +338,12 @@ def get_standard_scores_in_course(course_id, standard_id):
 @bp.get("/courses/<int:course_id>/users/<int:user_id>/results/<int:standard_id>")
 def get_student_results(course_id, user_id, standard_id):
     from feedbook.models import StandardAttempt
-    from feedbook.schemas import StandardAttemptSchema
 
     results = current_user.assessments.filter(
         StandardAttempt.standard_id == standard_id
     ).order_by(StandardAttempt.occurred)
 
-    return render_template(
-        "standards/student-standard-scores.html",
-        results=StandardAttemptSchema(many=True).dump(results),
-    )
+    return render_template("standards/student-standard-scores.html", results=results)
 
 
 # Remove a standard from the course
