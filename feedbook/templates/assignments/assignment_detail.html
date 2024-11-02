@@ -1,4 +1,6 @@
-<div class="course-header">{{ assignment.name }}</div>
+<div class="course-header">
+  <h1>{{ assignment.name }}</h1>
+</div>
 <h2>Alignments</h2>
 <button
   hx-get="{{ url_for('course.get_alignment_form', course_id=course_id, assignment_id=assignment.id)}}"
@@ -10,7 +12,7 @@
 <div class="box flex">
   {% for standard in assignment.alignments %}
   <div class="box outcome">
-    <p>{{ standard.name }}</p>
+    <h2>{{ standard.name }}</h2>
     <p>{{ standard.description }}</p>
     <button
       hx-delete="{{ url_for('assignment.remove_standard_alignment', assignment_id=assignment.id, standard_id=standard.id)}}"

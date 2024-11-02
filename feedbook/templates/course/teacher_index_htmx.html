@@ -28,7 +28,7 @@
     </button>
     <button
       class="btn"
-      hx-get="/assignments/create"
+      hx-get="{{ url_for('assignment.create_assignment_form', current_course_id=course.id) }}"
       hx-target="main"
       hx-swap="beforeend"
     >
@@ -50,7 +50,7 @@
   course_id=course.id, results=results["standard_{}".format(standard.id)])}} {%
   endif %}{%endfor%}
 </section>
-<section class="box wrapper">
+<section class="box wrapper" id="assignments-list">
   <h2>Stored Assignments</h2>
   <ol>
     {% for assignment in course.assignments %}
@@ -58,7 +58,7 @@
       <a
         hx-get="{{ url_for('course.get_single_assignment', course_id=course.id, assignment_id=assignment.id)}}"
         hx-target="#detail"
-        hx-swap="innerHTML"
+        hx-swap="innerHTML show:top"
         hx-push-url="true"
         >{{ assignment.name }}</a
       >

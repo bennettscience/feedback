@@ -28,6 +28,7 @@ def create_assignment():
             "description": fields.String(),
             "type_id": fields.Int(),
             "courses": fields.List(fields.Int()),
+            "current_course_id": fields.Int(),
         },
         location="form",
     )
@@ -45,14 +46,23 @@ def create_assignment():
     db.session.commit()
     # Return the full list of assignments to the admin page
     assignments = db.session.scalars(db.select(Assignment)).all()
+    current_course = Course.query.get(args["current_course_id"])
 
-    return make_response(trigger={"showToast": "Assignment added"})
+    return make_response(
+        render_template(
+            "assignments/assignment_list.html",
+            assignments=assignments,
+            course=current_course,
+        ),
+        trigger={"showToast": "Assignment added", "closeModal": True},
+    )
 
 
 @bp.get("/assignments/create")
 @login_required
 @restricted
 def create_assignment_form():
+    args = parser.parse({"current_course_id": fields.Int()}, location="query")
     types = AssignmentType.query.all()
     courses = Course.query.all()
     return render_template(
@@ -60,7 +70,11 @@ def create_assignment_form():
         title="Create a new assignment",
         position="right",
         partial="shared/forms/create-assignment.html",
-        data={"types": types, "courses": courses},
+        data={
+            "types": types,
+            "courses": courses,
+            "course_id": args["current_course_id"],
+        },
     )
 
 

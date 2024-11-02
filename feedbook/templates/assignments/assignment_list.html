@@ -1,0 +1,14 @@
+<h2>Stored Assignments</h2>
+<ol>
+  {% for assignment in assignments %}
+  <li>
+    <a
+      hx-get="{{ url_for('course.get_single_assignment', course_id=course.id, assignment_id=assignment.id)}}"
+      hx-target="#detail"
+      hx-swap="innerHTML show:top"
+      hx-push-url="true"
+      >{{ assignment.name }}</a
+    >
+  </li>
+  {% endfor %}
+</ol>
