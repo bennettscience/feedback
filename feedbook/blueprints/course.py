@@ -182,7 +182,12 @@ def get_single_assignment(course_id, assignment_id):
     from operator import attrgetter
 
     assignment = db.session.get(Assignment, assignment_id)
-    enrollments = [
+    course = db.session.get(Course, course_id)
+    students = course.enrollments.filter(
+        User.usertype_id == 2 and User.active == True
+    ).all()
+
+    enrollment_ids = [
         user.id
         for user in db.session.get(Course, course_id)
         .enrollments.filter(User.usertype_id == 2 and User.active == True)
@@ -205,13 +210,23 @@ def get_single_assignment(course_id, assignment_id):
     # user in a dictionary.
     results = defaultdict(dict)
 
-    for item in query:
-        if item.user.id in enrollments:
-            results["user_{}".format(item.user.id)].setdefault("items", []).append(item)
-            results["user_{}".format(item.user.id)]["user"] = item.user
-            results["user_{}".format(item.user.id)].setdefault("includes", []).append(
-                item.standard_id
+    if not query:
+        for user in students:
+            results["user_{}".format(user.id)]["user"] = user
+            results["user_{}".format(user.id)]["items"] = []
+            results["user_{}".format(user.id)].setdefault("includes", []).append(
+                assignment.alignments.all()
             )
+    else:
+        for item in query:
+            if item.user.id in enrollment_ids:
+                results["user_{}".format(item.user.id)].setdefault("items", []).append(
+                    item
+                )
+                results["user_{}".format(item.user.id)]["user"] = item.user
+                results["user_{}".format(item.user.id)].setdefault(
+                    "includes", []
+                ).append(item.standard_id)
 
     sorted_results = sorted(results.values(), key=lambda item: item["user"].last_name)
 
