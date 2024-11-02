@@ -33,6 +33,13 @@
     <h3>{{ attempt[0].standard.name }}</h3>
     <p>{{ attempt[0].score }}</p>
     <p>{{ attempt[0].comments }}</p>
+    <button
+      hx-get="/assignments/{{attempt[0].assignment_id}}/attempts/{{attempt[0].id}}"
+      hx-target="closest .outcome"
+      hx-swap="innerHTML"
+    >
+      Edit
+    </button>
     {% else %}
     <h3>{{ standard.name }}</h3>
     <form>

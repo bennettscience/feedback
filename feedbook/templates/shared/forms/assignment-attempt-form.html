@@ -1,0 +1,33 @@
+<h2>{{attempt.standard.name}}</h2>
+<form
+  hx-trigger="submit"
+  hx-put="/standards/{{attempt.standard_id}}/attempts/{{attempt.id}}"
+  hx-swap="outerHTML"
+  hx-target="#student_{{attempt.user.id}}"
+>
+  <label for="score">Score:</label>
+  <input
+    type="number"
+    min="0"
+    max="2"
+    value="{{attempt.score}}"
+    name="score"
+    id="score"
+  />
+  <label for="comments">Comments</label>
+  <textarea name="comments" id="comments"> {{attempt.comments}}</textarea>
+  <button class="btn btn-primary" type="submit">Save</button>
+</form>
+<button
+  hx-get="/assignments/{{attempt.assignment_id}}/results/{{attempt.id}}"
+  hx-swap="innerHTML"
+  hx-target="closest .outcome"
+>
+  Cancel
+</button>
+<button
+  hx-delete="/standards/{{attempt.standard['id']}}/attempts/{{attempt.id}}"
+  hx-swap="none"
+>
+  Delete
+</button>

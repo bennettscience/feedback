@@ -1,0 +1,10 @@
+<h3>{{ attempt.standard.name }}</h3>
+<p>{{ attempt.score }}</p>
+<p>{{ attempt.comments }}</p>
+<button
+  hx-get="/assignments/{{attempt.assignment_id}}/attempts/{{attempt.id}}"
+  hx-target="closest .outcome"
+  hx-swap="innerHTML"
+>
+  Edit
+</button>

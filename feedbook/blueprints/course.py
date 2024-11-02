@@ -210,6 +210,11 @@ def get_single_assignment(course_id, assignment_id):
     # user in a dictionary.
     results = defaultdict(dict)
 
+    # TODO: Handle cases where students do not have assessments. Right now,
+    # it only handles cases where there are NONE or if everyone has results.
+    # Change the loop to use the enrollment first and then find matching
+    # results for each user rather than cycling through the results.
+
     if not query:
         for user in students:
             results["user_{}".format(user.id)]["user"] = user

@@ -105,4 +105,28 @@ def remove_standard_alignment(assignment_id, standard_id):
     return make_response(trigger={"showToast": "Alignment removed"})
 
 
+@bp.get("/assignments/<int:assignment_id>/attempts/<int:attempt_id>")
+@login_required
+@restricted
+def get_assignment_edit_form(assignment_id, attempt_id):
+    from feedbook.models import StandardAttempt
+
+    attempt = StandardAttempt.query.filter(StandardAttempt.id == attempt_id).first()
+
+    return render_template(
+        "shared/forms/assignment-attempt-form.html",
+        attempt=attempt,
+    )
+
+
+@bp.get("/assignments/<int:assignment_id>/results/<int:attempt_id>")
+@login_required
+@restricted
+def get_assignment_attempt_result(assignment_id, attempt_id):
+    from feedbook.models import StandardAttempt
+
+    attempt = db.session.get(StandardAttempt, attempt_id)
+    return render_template("assignments/single_attempt.html", attempt=attempt)
+
+
 # In the scoring table, list by student. Have a yes/no checkbox for each standard attached to the assignment.

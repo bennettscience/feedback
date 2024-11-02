@@ -122,7 +122,7 @@ def get_standard_result(standard_id, user_id, result_id):
         position="right",
         partial="standards/standard-result.html",
         clickable=True,
-        data=data,
+        data={"attempt": attempt, "student": student},
     )
 
 
