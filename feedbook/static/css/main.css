@@ -82,7 +82,6 @@ select,
 textarea {
   font-family: inherit;
   font-size: inherit;
-  -webkit-padding: 0.4em 0;
   padding: 0.4em;
   margin: 0 0 0.5em 0;
   box-sizing: border-box;
@@ -144,6 +143,11 @@ input[type="text"] {
 
 .flex--wide {
   justify-content: space-between;
+}
+
+.box.outcome > form > input[type="number"],
+.box.outcome > form > textarea {
+  width: 100%;
 }
 
 #bulk-form {
