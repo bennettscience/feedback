@@ -255,6 +255,10 @@ main {
   box-shadow: var(--shadow-left-border);
 }
 
+#right-sidebar-inner > * + * {
+  margin-top: 0.5rem;
+}
+
 #right-sidebar-inner input[type="text"],
 #right-sidebar-inner input[type="number"],
 #right-sidebar-inner textarea {
