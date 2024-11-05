@@ -13,7 +13,8 @@
     {% block additional_css %} {%endblock%}
 </head>
 
-<body>
+<body
+    _="on keyup[key is 'Escape'] trigger closeModal">
     {% include 'shared/partials/nav.html' %}
     <main>
         {% block sidebar %} {% endblock %} {% block main_content %} {%endblock %}

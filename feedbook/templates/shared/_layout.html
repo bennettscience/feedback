@@ -13,7 +13,7 @@
     {% block additional_css %} {%endblock%}
   </head>
 
-  <body _="on keyup[key is 'Escape'] remove .show from <div/>">
+  <body _="on keyup[key is 'Escape'] trigger closeModal log 'Escape'">
     <div class="box stack">
       <nav>{% include 'shared/partials/nav.html' %}</nav>
       <main>
