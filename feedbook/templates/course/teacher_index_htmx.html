@@ -52,19 +52,30 @@
 </section>
 <section class="box wrapper" id="assignments-list">
   <h2>Stored Assignments</h2>
-  <ol>
-    {% for assignment in course.assignments %}
-    <li>
-      <a
-        hx-get="{{ url_for('course.get_single_assignment', course_id=course.id, assignment_id=assignment.id)}}"
-        hx-target="#detail"
-        hx-swap="innerHTML show:top"
-        hx-push-url="true"
-        >{{ assignment.name }}</a
-      >
-    </li>
-    {% endfor %}
-  </ol>
+  <table>
+    <thead>
+      <tr>
+        <th>Assignment name</th>
+        <th>Avg Score</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for assignment in course.assignments %}
+      <tr>
+        <td>
+          <a
+            hx-get="{{ url_for('course.get_single_assignment', course_id=course.id, assignment_id=assignment.id)}}"
+            hx-target="#detail"
+            hx-swap="innerHTML show:top"
+            hx-push-url="true"
+            >{{ assignment.name }}</a
+          >
+        </td>
+        <td>{{ assignment.course_average(course) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </section>
 <!-- <section class="actions">
   <input
