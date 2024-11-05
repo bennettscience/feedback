@@ -58,7 +58,10 @@ class Assignment(db.Model):
                 & (StandardAttempt.assignment_id == self.id)
             )
         ).all()
-        return mean([attempt.score for attempt in course_attempts])
+        if course_attempts:
+            return round(mean([attempt.score for attempt in course_attempts]), 2)
+        else:
+            return None
 
     # Align the assignment to learning standards. Multiple can be added and assessed at the same time.
     def add_standard(self, standard):
