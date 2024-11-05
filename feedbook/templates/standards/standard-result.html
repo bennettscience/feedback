@@ -2,7 +2,7 @@
 <button class="btn btn-primary" hx-get="/standards/{{attempt.standard['id']}}/attempts/{{attempt.id}}"
 	hx-swap="innerHTML" hx-target="#right-sidebar-inner">Edit</button>
 <h3>Assignment</h3>
-<p>{{attempt.assignment}}</p>
+<p>{{attempt.assessed_on.name}}</p>
 <h3>Occurred</h3>
 <p>{{attempt.occurred}}</p>
 <h3>Score</h3>
