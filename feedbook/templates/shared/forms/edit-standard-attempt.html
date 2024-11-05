@@ -5,23 +5,29 @@
   hx-target="#student_{{attempt.user.id}}"
 >
   <h2>{{attempt.user.last_name}}, {{attempt.user.first_name}}</h2>
-  <label>
-    Assignment name
-    <input type="text" value="{{attempt.assessed_on.name}}" name="assignment" />
-  </label>
-  <label>
-    Score
+  <label for="assignment-select">
+    Assignment name</label>
+    <select name="assignment" id="assignment-select">
+      {% for assignment in assignments %}
+      <option 
+        value="{{ assignment.id }}"
+        {% if attempt.assignment_id == assignment.id %} selected {% endif %}
+        >{{ assignment.name }}</option>
+      {% endfor %}
+    </select>
+  <label for="score">
+    Score</label>
     <input
       type="number"
       min="0"
-      max="4"
+      max="2"
       value="{{attempt.score}}"
       name="score"
+      id="score"
     />
-  </label>
-  <label>
-    Standard
-    <select name="standard_id">
+  <label for="standard">
+    Standard</label>
+    <select name="standard_id" id="standard">
       {% for standard in standards %}
       <!-- prettier-ignore -->
       <option
@@ -34,11 +40,9 @@
       </option>
       {% endfor %}
     </select>
-  </label>
-  <label>
+  <label for="comments">
     Comments
-    <textarea name="comments"> {{attempt.comments}}</textarea>
-  </label>
+    <textarea name="comments" id="comments"> {{attempt.comments}}</textarea>
   <button class="btn btn-primary" type="submit">Save</button>
 </form>
 <button
