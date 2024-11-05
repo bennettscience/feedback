@@ -73,12 +73,7 @@ def get_standard_stats(standard_id):
 @login_required
 def get_single_standard(id):
     standard = Standard.query.filter(Standard.id == standard_id).first()
-    # return render_template(
-    #     "standards/single-standard.html",
-    #     standard=standard
-    # )
 
-    print(StandardSchema().dump(standard))
     return StandardSchema().dump(standard)
 
 
@@ -113,8 +108,8 @@ def get_standard_result(standard_id, user_id, result_id):
         student = current_user
 
     data = {
-        "attempt": StandardAttemptSchema().dump(attempt),
-        "student": UserSchema().dump(student),
+        "attempt": attempt,
+        "student": student,
     }
 
     return render_template(
@@ -178,14 +173,17 @@ def add_standard_assessment(standard_id):
 @restricted
 def get_edit_form(standard_id, attempt_id):
     from feedbook.schemas import StandardListSchema
+    from feedbook.models import Assignment
 
     standards = Standard.query.all()
     attempt = StandardAttempt.query.filter(StandardAttempt.id == attempt_id).first()
+    assignments = Assignment.query.all()
 
     return render_template(
         "shared/forms/edit-standard-attempt.html",
         attempt=attempt,
         standards=StandardListSchema(many=True).dump(standards),
+        assignments=assignments,
     )
 
 
