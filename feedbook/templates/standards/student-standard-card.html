@@ -8,7 +8,6 @@
 <!-- <p>{{item.description}}</p> -->
 <!-- <p>Current score: {{item.current_score(current_user.id)}}</p> -->
 <!-- </div> -->
-
 <div
   class="item outcome {% if item.is_proficient(current_user.id) %}green{% else %}red{% endif %}"
   hx-get="/courses/{{course_id}}/users/{{student_id}}/results/{{item.id}}"
@@ -33,8 +32,8 @@
       <path
         fill="#4caf50"
         d="M34.586,14.586l-13.57,13.586l-5.602-5.586l-2.828,2.828l8.434,8.414l16.395-16.414L34.586,14.586z"
-      ></path></svg
-    >{% else %}<svg
+      ></path>
+    </svg>{% else %}<svg
       xmlns="http://www.w3.org/2000/svg"
       x="0px"
       y="0px"
@@ -59,7 +58,7 @@
         fill="#fff"
         d="M18.5 10H21.5V30H18.5z"
         transform="rotate(-45.001 20 20)"
-      ></path></svg
-    >{% endif %}
+      ></path>
+    </svg>{% endif %}
   </div>
 </div>

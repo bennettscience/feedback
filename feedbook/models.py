@@ -148,11 +148,16 @@ class Standard(db.Model):
         )
         return [item.score for item in scores]
 
-    def is_proficient(self, user_id):
+    def is_proficient(self, user_id) -> bool:
+        """
+            Aug 1 2024
+            Determine if a user is showing mastery on a standard. They must have more 1's than 0's in the book to be proficient. Return the unicode checkmark or x depending on their current progress.
+        """
         scores = self.__get_scores(user_id)
         counts = Counter(scores)
+        # Compare 0's to 1's. If 1's are greater, the user is proficient.
         return counts[1] > counts[0]
-
+    
     def current_score(self, user_id):
         """Average the last attemp with the highest attempt.
         Make sure to score by submission date, not assessed date!

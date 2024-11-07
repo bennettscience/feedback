@@ -1,0 +1,19 @@
+{# Several params are passed in to make this dynamic: 1. HTTP method 2. app
+endpoint 3. Sidebar position - left or right 4. Hidden: bool #}
+<section
+  _="on closeModal
+        add .hide to me
+        then wait 1s
+        then remove me
+        end
+    "
+  id="{{position}}-sidebar"
+  class="sidebar sidebar--right {{'hide' if hide}}"
+>
+  <button class="btn-close" _="on click trigger closeModal">× close</button>
+  <h2>{{title}}</h2>
+  <div id="right-sidebar-inner">
+    {% if items %} {% for item in items%} {{ render_partial(partial, item=item,
+    data=data )}} {%endfor%} {% endif %}
+  </div>
+</section>
