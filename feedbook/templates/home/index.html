@@ -19,7 +19,7 @@
       class="item course-item"
       hx-get="/courses/{{ item.id }}"
       hx-trigger="click"
-      hx-target="#course-detail"
+      hx-target="#detail"
       hx-swap="innerHTML"
       hx-indicator="#toast"
       hx-push-url="true"
@@ -35,5 +35,5 @@
   </div>
 </section>
 {% endblock %} {% block main_content %}
-<section id="course-detail"></section>
+<section id="detail"></section>
 {% endblock %}

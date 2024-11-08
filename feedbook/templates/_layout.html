@@ -16,9 +16,8 @@
     {% block additional_css %} {% endblock %}
   </head>
 
-<body
-    _="on keyup[key is 'Escape'] trigger closeModal">
-    {% include 'shared/partials/nav.html' %}
+  <body _="on keyup[key is 'Escape'] trigger closeModal">
+    <nav>{% include 'shared/partials/nav.html' %}</nav>
     <main>
       <section id="left-sidebar" class="sidebar sidebar--left">
         <div id="left-sidebar-inner">
@@ -42,7 +41,7 @@
             class="item course-item"
             hx-get="/courses/{{ item.id }}"
             hx-trigger="click"
-            hx-target="#course-detail"
+            hx-target="#detail"
             hx-swap="innerHTML"
             hx-indicator="#toast"
             hx-push-url="true"
