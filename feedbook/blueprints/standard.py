@@ -49,10 +49,13 @@ def create_standard():
     ]
 
     # TODO: Toast the result
-    return render_template(
-        "shared/forms/create-standard.html",
-        items=StandardSchema(many=True).dump(items),
-        course=course,
+    return make_response(
+        render_template(
+            "shared/forms/create-standard.html",
+            items=StandardSchema(many=True).dump(items),
+            course=course,
+        ),
+        trigger={"showToast": "Standard created successfully."},
     )
 
 
@@ -160,11 +163,6 @@ def add_standard_assessment(standard_id):
         record=sa,
         name=f"{user.last_name}, {user.first_name}",
     )
-
-
-# TODO: Bulk upload a CSV of scores
-# Accept a file with a single score in each row to speed up scoring from
-# third party platforms.
 
 
 # Edit a single standard attempt
