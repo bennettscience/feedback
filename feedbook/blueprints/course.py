@@ -205,6 +205,8 @@ def get_single_assignment(course_id, assignment_id):
     ]
 
     # Limit the results for the assignment to the curernt course only.
+    # This returns all StandardAttempt records for the current course,
+    # arranged by student ID.
     query = (
         StandardAttempt.query.join(Assignment)
         .join(course_assignments)
@@ -220,11 +222,6 @@ def get_single_assignment(course_id, assignment_id):
     # user in a dictionary.
     results = defaultdict(dict)
 
-    # TODO: Handle cases where students do not have assessments. Right now,
-    # it only handles cases where there are NONE or if everyone has results.
-    # Change the loop to use the enrollment first and then find matching
-    # results for each user rather than cycling through the results.
-
     if not query:
         for user in students:
             results["user_{}".format(user.id)]["user"] = user
@@ -233,15 +230,13 @@ def get_single_assignment(course_id, assignment_id):
                 assignment.alignments.all()
             )
     else:
-        for item in query:
-            if item.user.id in enrollment_ids:
-                results["user_{}".format(item.user.id)].setdefault("items", []).append(
-                    item
-                )
-                results["user_{}".format(item.user.id)]["user"] = item.user
-                results["user_{}".format(item.user.id)].setdefault(
-                    "includes", []
-                ).append(item.standard_id)
+        for user in students:
+            student_results = [item for item in query if item.user.id == user.id]
+            results["user_{}".format(user.id)]["items"] = student_results
+            results["user_{}".format(user.id)]["user"] = user
+            results["user_{}".format(user.id)]["includes"] = [
+                result.standard_id for result in student_results
+            ]
 
     sorted_results = sorted(results.values(), key=lambda item: item["user"].last_name)
 

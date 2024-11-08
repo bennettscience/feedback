@@ -29,7 +29,7 @@
   {% for standard in assignment.alignments %}
   <div class="box outcome">
     {% if standard.id in student["includes"] %} {% set attempt=
-    student["items"]|selectattr("standard_id")|list %}
+    student["items"]|selectattr("standard_id", "equalto", standard.id)|list %}
     <h3>{{ attempt[0].standard.name }}</h3>
     <p>{{ attempt[0].score }}</p>
     <p>{{ attempt[0].comments }}</p>
