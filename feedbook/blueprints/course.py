@@ -354,7 +354,7 @@ def get_standard_scores_in_course(course_id, standard_id):
         "course/partials/standard_score_table.html",
         students=results,
         course_id=course_id,
-        standard_id=standard_id,
+        standard=standard,
     )
 
 
