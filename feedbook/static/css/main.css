@@ -51,6 +51,11 @@ body {
     sans-serif;
 }
 
+dialog {
+  margin: auto;
+  padding: 1em;
+}
+
 /* GENERICS */
 hr {
   border-style: solid;
@@ -575,7 +580,7 @@ btn:focus {
 .actions {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   gap: 3rem;
 }
@@ -732,10 +737,6 @@ th {
   /* Keep the table headers visible under the site navigation */
   top: 80px;
   padding: 1rem;
-}
-
-th:hover {
-  text-decoration: underline;
 }
 
 .th-inner-container {
