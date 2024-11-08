@@ -1,6 +1,6 @@
 <form
   hx-trigger="submit"
-  hx-put="/standards/{{attempt.standard_id}}/attempts/{{attempt.id}}"
+  hx-put="/standards/{{attempt.standard_id}}/attempts/{{attempt.id}}?source=standard"
   hx-swap="outerHTML"
   hx-target="#student_{{attempt.user.id}}"
 >
@@ -29,10 +29,9 @@
     Standard</label>
     <select name="standard_id" id="standard">
       {% for standard in standards %}
-      <!-- prettier-ignore -->
       <option
         value="{{standard.id}}"
-        {% if standard.id == "attempt.standard_id" %}
+        {% if standard.id == attempt.standard_id %}
         selected
         {% endif %}
       >

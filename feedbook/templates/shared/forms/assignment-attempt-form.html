@@ -1,9 +1,9 @@
 <h2>{{attempt.standard.name}}</h2>
 <form
   hx-trigger="submit"
-  hx-put="/standards/{{attempt.standard_id}}/attempts/{{attempt.id}}"
-  hx-swap="outerHTML"
-  hx-target="#student_{{attempt.user.id}}"
+  hx-put="/standards/{{attempt.standard_id}}/attempts/{{attempt.id}}?source=assignment"
+  hx-swap="innerHTML"
+  hx-target="closest .box.outcome"
 >
   <label for="score">Score:</label>
   <input
