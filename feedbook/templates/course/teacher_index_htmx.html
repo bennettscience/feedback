@@ -51,12 +51,23 @@
   endif %}{%endfor%}
 </section>
 <section class="box wrapper" id="assignments-list">
-  <h2>Stored Assignments</h2>
+  <input
+    id="search"
+    type="text"
+    placeholder="Search assignments..."
+    _="on keyup 
+                if the event's key is 'Escape' 
+                    set my value to ' ' 
+                    trigger keyup 
+                else show <tr /> in <tbody /> when its textContent contains my value
+                "
+  />
   <table>
     <thead>
       <tr>
         <th>Assignment name</th>
         <th>Avg Score</th>
+        <th>Alignments</th>
       </tr>
     </thead>
     <tbody>
@@ -72,6 +83,12 @@
           >
         </td>
         <td>{{ assignment.course_average(course) }}</td>
+        <td>
+          {% for item in assignment.alignments %}
+          {{ item.name }}{% if not loop.last %},{% endif %} 
+          {% endfor %}
+        </td>
+        
       </tr>
       {% endfor %}
     </tbody>

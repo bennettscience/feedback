@@ -1,7 +1,6 @@
 <div class="course-header">
   <h1>{{ assignment.name }}</h1>
 </div>
-<h2>Alignments</h2>
 <button
   hx-get="{{ url_for('course.get_alignment_form', course_id=course_id, assignment_id=assignment.id)}}"
   hx-target="main"

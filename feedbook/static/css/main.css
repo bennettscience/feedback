@@ -164,7 +164,7 @@ input[type="text"] {
   width: 100%;
 }
 
-#roster-search {
+#search {
   width: 50%;
 }
 
@@ -726,10 +726,12 @@ thead th:first-child {
 }
 
 th {
-  background-color: var(--secondary-color);
+  position: sticky;
+  background-color: var(--primary-color);
+  color: var(--white);
   /* Keep the table headers visible under the site navigation */
   top: 80px;
-  padding: 0.5rem;
+  padding: 1rem;
 }
 
 th:hover {
@@ -801,12 +803,8 @@ th[data-aligned="True"]:after {
 }
 
 td {
-  padding: 5px;
+  padding: 1rem;
   border: 1px transparent;
-}
-
-td:not(:first-child) {
-  text-align: center;
 }
 
 .scroller td:not(:first-child):hover {
