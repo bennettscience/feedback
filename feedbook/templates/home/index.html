@@ -1,6 +1,39 @@
-{% extends 'shared/_layout.html' %}
-<!-- prettier ignore -->
-<!-- This loads the active course list and inserts the left-hand sidebar -->
-{% block sidebar %}
-<section hx-target="this" hx-swap="outerHTML" hx-get="/courses" hx-trigger="load"></section>
+{% extends '_layout.html' %} {% block sidebar %}
+<section id="left-sidebar" class="sidebar sidebar--left">
+  <div id="left-sidebar-inner">
+    <h3>Your Courses</h3>
+    {% if current_user.usertype_id == 1 %}
+    <button
+      class="btn btn-primary"
+      hx-get="/courses/create"
+      hx-trigger="click"
+      hx-target="main"
+      hx-swap="beforeend"
+      hx-indicator="#toast"
+    >
+      Add new course
+    </button>
+    {% endif %} {% if courses %} {% for item in courses %}
+    <div
+      id="course-{{item.id}}"
+      class="item course-item"
+      hx-get="/courses/{{ item.id }}"
+      hx-trigger="click"
+      hx-target="#course-detail"
+      hx-swap="innerHTML"
+      hx-indicator="#toast"
+      hx-push-url="true"
+      _="on click 
+            remove .active from <div />
+            then add .active to me"
+    >
+      <div class="course-item-inner">
+        <p>{{ item.name }}</p>
+      </div>
+    </div>
+    {% endfor %} {% endif %}
+  </div>
+</section>
+{% endblock %} {% block main_content %}
+<section id="course-detail"></section>
 {% endblock %}
