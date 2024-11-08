@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, render_template
+from flask import Blueprint, jsonify, render_template, request
 from flask_login import current_user, login_required
 from htmx_flask import make_response
 from webargs import fields
@@ -192,6 +192,10 @@ def edit_single_attempt(standard_id, attempt_id):
     from feedbook.models import User
     from feedbook.schemas import StandardAttemptSchema
 
+    # This will accept a query param as well as the form. Parse
+    # the param to return the correct template.
+    query = request.args.get("source")
+
     args = parser.parse(
         {
             "assignment": fields.String(),
@@ -205,15 +209,20 @@ def edit_single_attempt(standard_id, attempt_id):
     attempt = StandardAttempt.query.get(attempt_id)
     attempt.update(args)
 
-    student = User.query.get(attempt.user_id)
-    student.scores = student.assessments.filter(
-        StandardAttempt.standard_id == standard_id
-    ).all()
+    if query == "standard":
+        template = "course/partials/student_entry.html"
+        student = User.query.get(attempt.user_id)
+        student.scores = student.assessments.filter(
+            StandardAttempt.standard_id == standard_id
+        ).all()
+
+        data = {"student": student, "clickable": True}
+    else:
+        template = "assignments/single_attempt.html"
+        data = {"attempt": attempt}
 
     return make_response(
-        render_template(
-            "course/partials//student_entry.html", student=student, clickable=True
-        ),
+        render_template(template, **data),
         trigger={"showToast": "Attempt updated", "closeModal": ""},
     )
 
