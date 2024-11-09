@@ -85,35 +85,10 @@
         <td>{{ assignment.course_average(course) }}</td>
         <td>
           {% for item in assignment.alignments %}
-          {{ item.name }}{% if not loop.last %},{% endif %} 
-          {% endfor %}
+          <span class="box inverted pill">{{ item.name }}</span> {% endfor %}
         </td>
-        
       </tr>
       {% endfor %}
     </tbody>
   </table>
 </section>
-<!-- <section class="actions">
-  <input
-    id="roster-search"
-    type="text"
-    placeholder="Search students..."
-    _="on keyup 
-                if the event's key is 'Escape' 
-                    set my value to ' ' 
-                    trigger keyup 
-                else show <tr /> in .scroller when its textContent contains my value
-                "
-  />
-  <section class="roster-actions--buttons">
-    <div id="roster-button"></div>
-    <div id="assess-button"></div>
-    <div id="bulk-button"></div>
-  </section>
-</section>
-<section id="scores">
-  {{ render_partial('course/partials/score_table.html', students=students,
-  course=course) }}
-</section>
--->
