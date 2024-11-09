@@ -5,12 +5,28 @@
   hx-target="#right-sidebar-inner"
   _="on htmx:afterRequest reset() me"
 >
-	<p>Align existing standards to this assignment to assess them on student work.</p>
+  <p>
+    Align existing standards to this assignment to assess them on student work.
+  </p>
   {% for standard in course.standards %}
-	{% if standard not in assignment.alignments %}
-  <label>{{ standard.name }}<label>
-  <input type="checkbox" name="standards" value="{{standard.id}}" />
-	{% endif %}
+  <span class="box flex form-row">
+    <input
+      type="checkbox"
+      class="align-check"
+      name="standards"
+      id="standard-{{standard.id}}"
+      value="{{standard.id}}"
+      {%
+      if
+      standard
+      in
+      assignment.alignments
+      %}checked{%
+      endif
+      %}
+    />
+    <label for="standard-{{standard.id}}">{{ standard.name }}</label>
+  </span>
   {% endfor %}
   <input type="submit" />
 </form>

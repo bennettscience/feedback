@@ -17,7 +17,10 @@
   --shadow-left-border: rgba(0, 0, 0, 0.1) 0px 10px 25px -5px,
     rgba(0, 0, 0, 0.04) -10px 0px 10px -5px;
 
+  font-size: 16px;
+
   /* sizings */
+  --very-small: 0.25em;
   --small: 1em;
 }
 
@@ -87,11 +90,14 @@ select,
 textarea {
   font-family: inherit;
   font-size: inherit;
-  padding: 0.4em;
-  margin: 0 0 0.5em 0;
-  box-sizing: border-box;
+  padding: var(--very-small);
   border: 1px solid #ccc;
   border-radius: 2px;
+}
+
+input[type="checkbox"] {
+  padding: 0;
+  border: 0;
 }
 
 select {
@@ -105,6 +111,60 @@ input:disabled {
 input[type="text"] {
   height: 36px;
   line-height: 36px;
+}
+
+.form-row {
+  height: auto;
+  margin: 10px;
+  position: relative;
+  width: auto;
+}
+
+.form-row > label {
+  margin: 0;
+}
+
+.align-check {
+  appearance: none;
+}
+
+.align-check::before {
+  content: "";
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.align-check:hover::before {
+  border-color: var(--primary-color);
+}
+
+.align-check:checked::before {
+  background-color: green;
+  opacity: 0.25;
+}
+
+.align-check::after {
+  content: "";
+  display: block;
+  height: 0.5rem;
+  width: 0.5rem;
+  border-radius: 50%;
+  border: 2px solid var(--black);
+  background-color: transparent;
+}
+
+.align-check:checked::after {
+  content: "";
+  background-color: var(--black);
+}
+
+.align-check:checked ~ .form-row {
+  background-color: green;
 }
 
 .green {
@@ -128,10 +188,21 @@ input[type="text"] {
   flex-direction: row;
   flex-wrap: wrap;
   gap: var(--small);
+  align-items: center;
 }
 
 .box.flex.wide {
   justify-content: space-between;
+}
+
+.box.pill {
+  padding: var(--very-small);
+  border-radius: var(--very-small);
+}
+
+.box.inverted {
+  background-color: var(--primary-color);
+  color: var(--white);
 }
 
 #standards-list > .item {
@@ -190,16 +261,6 @@ button:not(:disabled):active {
 button:focus {
   border-color: #666;
 }
-
-/* img,
-video {
-    display: block;
-    box-sizing: border-box;
-    margin-bottom: 1.5rem;
-    padding: 1.5rem;
-    border: 1px solid var(--secondary-color);
-    box-shadow: var(--active-shadow-small);
-} */
 
 .green {
   background-color: #c8e6c9;
