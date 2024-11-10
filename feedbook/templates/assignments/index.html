@@ -1,13 +1,32 @@
-<div class="box flex">
-  <div>
+<h2>All Assignments</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Assignment name</th>
+      <th>Created</th>
+      <th>Type</th>
+      <th>Courses</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody hx-target="closest tr" hx-swap="outerHTML">
     {% for assignment in assignments %}
-    <div class="outcome">
-      <h2>{{ assignment.name }}</h2>
-      {% if assignment.assessments %} {% for assessment in
-      assignment.assessments %}
-      <span>{{ assessment.standard.name }}</span>
-      {% endfor %} {% endif %}
-    </div>
+    <tr>
+      <td>{{ assignment.name }}</td>
+      <td>{{ assignment.created_on }}</td>
+      <td>{{ assignment.type.name }}</td>
+      <td>
+        {% for item in assignment.courses%}
+        <span class="box pill">{{ item.name }}</span> {% endfor %}
+      </td>
+      <td>
+        <button
+          hx-get="{{url_for('assignment.get_assignment_edit_form', assignment_id=assignment.id)}}"
+        >
+          Edit
+        </button>
+      </td>
+    </tr>
     {% endfor %}
-  </div>
-</div>
+  </tbody>
+</table>

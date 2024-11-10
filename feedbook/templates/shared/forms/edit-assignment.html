@@ -1,0 +1,52 @@
+<tr hx-trigger="cancel" hx-get="">
+  <td>
+    <input type="text" name="name" value="{{ assignment.name }}" />
+  </td>
+  <td>
+    <input type="date" name="created_on" value="{{ assignment.created_on }}" />
+  </td>
+  <td>
+    <select name="assignmenttype_id" value>
+      {% for type in types %}
+      <option value="{{ type.id }}">{{ type.name }}</option>
+      {% endfor %}
+    </select>
+  </td>
+  <td>
+    {% for course in assignment.courses %}
+    <span class="box flex form-row">
+      <input
+        type="checkbox"
+        class="align-check"
+        name="courses"
+        id="course-{{course.id}}"
+        value="{{course.id}}"
+        {%
+        if
+        course
+        in
+        assignment.courses
+        %}checked{%
+        endif
+        %}
+      />
+      <label for="course-{{course.id}}">{{ course.name }}</label>
+    </span>
+    {% endfor %}
+  </td>
+  <td>
+    <button
+      class="btn"
+      hx-get="{{ url_for('assignment.get_assignment', assignment_id=assignment.id)}}"
+    >
+      Cancel
+    </button>
+    <button
+      class="btn"
+      hx-put="{{ url_for('assignment.edit_assignment', assignment_id=assignment.id)}}"
+      hx-include="closest tr"
+    >
+      Save
+    </button>
+  </td>
+</tr>

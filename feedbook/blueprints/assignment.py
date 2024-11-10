@@ -13,8 +13,7 @@ bp = Blueprint("assignment", __name__)
 
 @bp.get("/assignments")
 def index():
-    assignments = db.session.scalars(db.select(Assignment)).all()
-
+    assignments = Assignment.query.order_by(Assignment.created_on).all()
     return render_template("assignments/index.html", assignments=assignments)
 
 
@@ -78,6 +77,59 @@ def create_assignment_form():
     )
 
 
+@bp.get("/assignments/<int:assignment_id>")
+@login_required
+@restricted
+def get_assignment(assignment_id):
+    assignment = Assignment.query.filter(Assignment.id == assignment_id).first()
+    return render_template("assignments/single_assignment.html", assignment=assignment)
+
+
+@bp.get("/assignments/<int:assignment_id>/edit")
+@login_required
+@restricted
+def get_assignment_edit_form(assignment_id):
+    assignment = Assignment.query.filter(Assignment.id == assignment_id).first()
+    types = AssignmentType.query.all()
+
+    return render_template(
+        "shared/forms/edit-assignment.html", assignment=assignment, types=types
+    )
+
+
+@bp.put("/assignments/<int:assignment_id>/edit")
+@login_required
+@restricted
+def edit_assignment(assignment_id):
+    args = parser.parse(
+        {
+            "name": fields.String(),
+            "created_on": fields.Date(),
+            "assignmenttype_id": fields.Int(),
+            "courses": fields.List(fields.Int()),
+        },
+        location="form",
+    )
+
+    update_fields = {
+        "name": args["name"],
+        "created_on": args["created_on"],
+        "assignmenttype_id": args["assignmenttype_id"],
+    }
+
+    assignment = Assignment.query.filter(Assignment.id == assignment_id).first()
+    assignment.update(update_fields)
+
+    for course in args["courses"]:
+        c = Course.query.filter(Course.id == course).first()
+        c.add_assignment(assignment)
+
+    return make_response(
+        render_template("assignments/single_assignment.html", assignment=assignment),
+        trigger={"showToast": "Assignment updated"},
+    )
+
+
 @bp.post("/assignments/<int:assignment_id>/align")
 @login_required
 @restricted
@@ -108,7 +160,7 @@ def remove_standard_alignment(assignment_id, standard_id):
 @bp.get("/assignments/<int:assignment_id>/attempts/<int:attempt_id>")
 @login_required
 @restricted
-def get_assignment_edit_form(assignment_id, attempt_id):
+def get_assignment_attempt_edit_form(assignment_id, attempt_id):
     from feedbook.models import StandardAttempt
 
     attempt = StandardAttempt.query.filter(StandardAttempt.id == attempt_id).first()

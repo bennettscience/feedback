@@ -1,23 +1,23 @@
-{% extends 'home/index.html'%} {% block main_content %}
+{% extends '_layout.html'%} {% block main_content %}
 <div class="admin-nav">
   <h1>Admin</h1>
   <a
     hx-get="{{ url_for('standard.index') }}"
-    hx-target="#course-detail"
+    hx-target="#detail"
     hx-swap="innerHTML"
     hx-boost="true"
     >Standards</a
   >
   <a
     hx-get="{{ url_for('user.index')}}"
-    hx-target="#course-detail"
+    hx-target="#detail"
     hx-swap="innerHTML"
     hx-boost="true"
     >Users</a
   >
   <a
     hx-get="{{ url_for('assignment.index')}}"
-    hx-target="#course-detail"
+    hx-target="#detail"
     hx-swap="innerHTML"
     hx-boost="true"
     >Assignments</a
