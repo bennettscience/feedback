@@ -71,7 +71,7 @@
       </tr>
     </thead>
     <tbody>
-      {% for assignment in course.assignments %}
+      {% for assignment in course.assignments|sort(attribute="created_on") %}
       <tr>
         <td>
           <a

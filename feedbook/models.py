@@ -23,6 +23,9 @@ class Assignment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
     assignmenttype_id = db.Column(db.ForeignKey("assignment_type.id"))
+    created_on = db.Column(db.DateTime(timezone=True), default=func.now())
+
+    type = db.relationship("AssignmentType", backref="type")
 
     assessments = db.relationship(
         "StandardAttempt",
@@ -78,6 +81,11 @@ class Assignment(db.Model):
             > 0
         )
 
+    def update(self, data):
+        for key, value in data.items():
+            setattr(self, key, value)
+        db.session.commit()
+
 
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -94,7 +102,7 @@ class Course(db.Model):
     assignments = db.relationship(
         "Assignment",
         secondary="course_assignments",
-        backref=backref("assignments", lazy="dynamic"),
+        backref=backref("courses", lazy="dynamic"),
         lazy="dynamic",
     )
 
@@ -150,14 +158,14 @@ class Standard(db.Model):
 
     def is_proficient(self, user_id) -> bool:
         """
-            Aug 1 2024
-            Determine if a user is showing mastery on a standard. They must have more 1's than 0's in the book to be proficient. Return the unicode checkmark or x depending on their current progress.
+        Aug 1 2024
+        Determine if a user is showing mastery on a standard. They must have more 1's than 0's in the book to be proficient. Return the unicode checkmark or x depending on their current progress.
         """
         scores = self.__get_scores(user_id)
         counts = Counter(scores)
         # Compare 0's to 1's. If 1's are greater, the user is proficient.
         return counts[1] > counts[0]
-    
+
     def current_score(self, user_id):
         """Average the last attemp with the highest attempt.
         Make sure to score by submission date, not assessed date!
