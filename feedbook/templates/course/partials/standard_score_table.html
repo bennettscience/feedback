@@ -2,19 +2,24 @@
 	This dialog allows for a bulk input of assignment names, scores, and comments.
 	-->
 <dialog _="on load set $dialog to me">
-  <p>Bulk add assignments, scores, and comments</p>
-  .
-  <form id="bulk-form">
-    <label for="score">Score</label>
-    <input name="score" id="score" type="number" max="1" />
-    <label for="assignment">Assignment</label>
-    <select id="assignment" name="assignment">
-      {% for assignment in assignments %}
-      <option value="{{ assignment.id }}">{{assignment.name}}</option>
-      {% endfor %}
-    </select>
-    <label for="comments">Comments</label>
-    <textarea name="comments" id="comments"></textarea>
+  <form id="bulk-form" class="stack">
+    <p>Bulk add assignments, scores, and comments</p>
+    <label for="score"
+      >Score
+      <input name="score" id="score" type="number" max="1" />
+    </label>
+    <label for="assignment"
+      >Assignment
+      <select id="assignment" name="assignment">
+        {% for assignment in assignments %}
+        <option value="{{ assignment.id }}">{{assignment.name}}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label for="comments"
+      >Comments
+      <textarea name="comments" id="comments"></textarea>
+    </label>
   </form>
   <button
     class="btn btn-primary"
@@ -25,34 +30,36 @@
   <button class="btn" _="on click call $dialog.close()">Close</button>
 </dialog>
 
-<h1>{{ standard.name }} Results</h1>
-<section class="actions">
-  <section class="roster-actions--buttons">
-    <button
-      class="btn btn-primary"
-      hx-get="/courses/{{course_id}}"
-      hx-target="#detail"
-      hx-swap="innerHTML"
-    >
-      Go back
-    </button>
-    <button
-      class="btn"
-      hx-get="/courses/{{course_id}}/standards/{{standard.id}}/assess"
-      hx-target="#course-roster"
-      hx-swap="outerHTML"
-    >
-      Add assessment
-    </button>
-    <button
-      class="btn"
-      id="bulk"
-      _="on load set $dialog to the previous <dialog/> end on click call $dialog.showModal()"
-    >
-      Bulk add
-    </button>
-  </section>
-</section>
+<div class="box flex wide">
+  <h1>{{ standard.name }} Results</h1>
+  <div class="actions">
+    <div class="roster-actions--buttons">
+      <button
+        class="btn btn-primary"
+        hx-get="/courses/{{course_id}}"
+        hx-target="#detail"
+        hx-swap="innerHTML"
+      >
+        Go back
+      </button>
+      <button
+        class="btn"
+        hx-get="/courses/{{course_id}}/standards/{{standard.id}}/assess"
+        hx-target="#course-roster"
+        hx-swap="outerHTML"
+      >
+        Add assessment
+      </button>
+      <button
+        class="btn"
+        id="bulk"
+        _="on load set $dialog to the previous <dialog/> end on click call $dialog.showModal()"
+      >
+        Bulk add
+      </button>
+    </div>
+  </div>
+</div>
 <table id="course-roster">
   <thead id="table-head">
     <tr>

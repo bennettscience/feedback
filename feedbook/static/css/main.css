@@ -81,7 +81,6 @@ a:visited {
 label {
   display: block;
   font-weight: bold;
-  margin-bottom: 0.5rem;
 }
 
 input,
@@ -175,7 +174,9 @@ input[type="text"] {
   background-color: #f78f8f;
 }
 
-.stack > * + * {
+/* Placeholder for an eventual stack layout item. */
+.stack > * + *,
+section > * + * {
   margin-top: var(--small);
 }
 
