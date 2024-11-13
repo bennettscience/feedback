@@ -189,7 +189,11 @@ section > * + * {
   flex-direction: row;
   flex-wrap: wrap;
   gap: var(--small);
-  align-items: center;
+  align-items: stretch;
+}
+
+.box.flex.column {
+  flex-direction: column;
 }
 
 .box.flex.wide {
@@ -227,13 +231,35 @@ section > * + * {
   width: 100%;
 }
 
-#bulk-form {
+#login-form {
+  margin: 0 auto;
+  border: 1px solid black;
+}
+
+#login-form input {
+  line-height: 1.5;
+}
+
+#bulk-form,
+#login-form {
   width: 50vw;
 }
 
+/* Override margins to make the checkbox look better */
+#login-form .form-row {
+  margin: 10px 0;
+}
+
+#login-form input[type="email"],
+#login-form input[type="password"],
 #bulk-form input {
   display: block;
   width: 100%;
+}
+
+#login-form input[type="checkbox"] {
+  vertical-align: middle;
+  margin-left: 1rem;
 }
 
 #bulk-form textarea {
