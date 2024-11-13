@@ -13,7 +13,7 @@ bp = Blueprint("assignment", __name__)
 
 @bp.get("/assignments")
 def index():
-    assignments = Assignment.query.order_by(Assignment.created_on).all()
+    assignments = Assignment.query.order_by(Assignment.created_on.desc()).all()
     return render_template("assignments/index.html", assignments=assignments)
 
 
