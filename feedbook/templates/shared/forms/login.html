@@ -1,19 +1,23 @@
 {% extends '_layout.html' %} {% block main_content %}
+<div class="box flex column" id="login-form">
 <h2>Log in</h2>
-<p>You need to log in to see that page</p>
-<form hx-trigger="submit" hx-post="/login">
-  <label
+<form class="stack" hx-trigger="submit" hx-post="/login">
+  <label for="email"
     >Email
     <input type="email" name="email" required />
-  </label>
-  <label
+</label>  
+<label for="password"
     >Password
     <input type="password" name="password" required />
-  </label>
-  <label
+</label>
+<span class="box flex form-row">
+<label
+    for="remember_me"
     >Keep me logged in
-    <input type="checkbox" name="remember_me" />
-  </label>
-  <input type="submit" />
+    <input type="checkbox" class="align-check" name="remember_me" />
+</label>
+</span>
+<input type="submit" />
 </form>
+</div>
 {% endblock %}
