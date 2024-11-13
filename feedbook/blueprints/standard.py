@@ -190,7 +190,6 @@ def get_edit_form(standard_id, attempt_id):
 @restricted
 def edit_single_attempt(standard_id, attempt_id):
     from feedbook.models import User
-    from feedbook.schemas import StandardAttemptSchema
 
     # This will accept a query param as well as the form. Parse
     # the param to return the correct template.
@@ -198,7 +197,7 @@ def edit_single_attempt(standard_id, attempt_id):
 
     args = parser.parse(
         {
-            "assignment": fields.String(),
+            "assignment_id": fields.Int(),
             "score": fields.Int(),
             "standard_id": fields.Int(),
             "comments": fields.String(),

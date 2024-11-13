@@ -5,43 +5,44 @@
   hx-target="#student_{{attempt.user.id}}"
 >
   <h2>{{attempt.user.last_name}}, {{attempt.user.first_name}}</h2>
-  <label for="assignment-select">
-    Assignment name</label>
-    <select name="assignment" id="assignment-select">
-      {% for assignment in assignments %}
-      <option 
-        value="{{ assignment.id }}"
-        {% if attempt.assignment_id == assignment.id %} selected {% endif %}
-        >{{ assignment.name }}</option>
-      {% endfor %}
-    </select>
-  <label for="score">
-    Score</label>
-    <input
-      type="number"
-      min="0"
-      max="2"
-      value="{{attempt.score}}"
-      name="score"
-      id="score"
-    />
-  <label for="standard">
-    Standard</label>
-    <select name="standard_id" id="standard">
-      {% for standard in standards %}
-      <option
-        value="{{standard.id}}"
-        {% if standard.id == attempt.standard_id %}
-        selected
-        {% endif %}
-      >
-        {{standard.name}}
-      </option>
-      {% endfor %}
-    </select>
-  <label for="comments">
-    Comments
-    <textarea name="comments" id="comments"> {{attempt.comments}}</textarea>
+  <label for="assignment-select"> Assignment name</label>
+  <select name="assignment_id" id="assignment-select">
+    {% for assignment in assignments %}
+    <!-- prettier ignore -->
+    <option
+      value="{{ assignment.id }}"
+      {% if attempt.assignment_id==assignment.id %}
+      selected
+      {%endif%}
+    >
+      {{ assignment.name }}
+    </option>
+    {% endfor %}
+  </select>
+  <label for="score"> Score</label>
+  <input
+    type="number"
+    min="0"
+    max="2"
+    value="{{attempt.score}}"
+    name="score"
+    id="score"
+  />
+  <label for="standard"> Standard</label>
+  <select name="standard_id" id="standard">
+    {% for standard in standards %}
+    <option
+      value="{{standard.id}}"
+      {% if standard.id==attempt.standard_id %}
+      selected
+      {% endif %}
+    >
+      {{standard.name}}
+    </option>
+    {% endfor %}
+  </select>
+  <label for="comments"> Comments</label>
+  <textarea name="comments" id="comments"> {{attempt.comments}}</textarea>
   <button class="btn btn-primary" type="submit">Save</button>
 </form>
 <button
