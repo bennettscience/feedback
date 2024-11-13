@@ -178,12 +178,13 @@ def get_single_course(id):
                 "not_proficient": len(enrollments) - count,
             }
 
-        return render_template(
+        resp = render_template(
             "course/teacher_index_htmx.html",
             course=course,
             enrollments=enrollments,
             results=results,
         )
+    return resp
 
 
 @bp.get("/courses/<int:course_id>/assignments/<int:assignment_id>")

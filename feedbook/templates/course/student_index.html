@@ -1,9 +1,10 @@
-<div id="course-details">
+<div id="details">
   <h1>{{ course.name }}</h1>
   <section class="box flex" id="standards-list">
     {% for standard in course.standards %}
-    {{render_partial('standards/student-standard-card.html', item=standard,
-    course_id=course.id, student_id=current_user.id)}} {%endfor%}
+    {{ render_partial('standards/student-standard-card.html', item=standard,
+    course_id=course.id, student_id=current_user.id)}} 
+    {%endfor%}
   </section>
   <section id="student-details"></section>
 </div>
