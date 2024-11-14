@@ -1,4 +1,71 @@
-{% extends '_layout.html'%} {% block main_content %}
+{% extends '_layout.html'%}
+{% block sidebar %}
+      <section id="left-sidebar" class="sidebar sidebar--left">
+        <div id="left-sidebar-inner">
+          <a 
+            href="{{ url_for('home.index') }}" 
+            class="item"
+            _="on click 
+            remove .active from <div />
+            then add .active to me"
+            >
+              {% autoescape false %}{{icons["home"]}}{% endautoescape %} 
+              Home
+            </a>
+          {% if not current_user.is_anonymous %}
+            {% if current_user.usertype_id == 1 %}
+              <a 
+                href="{{ url_for('admin.index') }}" 
+                class="item active"
+                _="on click 
+                remove .active from <div />
+                then add .active to me"
+                >
+                  {% autoescape false %}{{icons["admin"]}}{% endautoescape %}
+                  Admin
+              </a>
+            {% endif %}
+            {% if current_user.enrollments %} 
+              {% for item in current_user.enrollments %}
+                <a
+                  id="course-{{item.id}}"
+                  class="item course-item"
+                  hx-get="/courses/{{ item.id }}"
+                  hx-trigger="click"
+                  hx-target="#detail"
+                  hx-swap="innerHTML"
+                  hx-indicator="#toast"
+                  hx-push-url="true"
+                  _="on click 
+                  remove .active from <div />
+                  then add .active to me"
+                >{{ item.name }}</a>
+              {% endfor %} 
+            {% endif %}
+            {% if current_user.usertype_id == 1 %}
+              <button
+                class="btn item"
+                hx-get="/courses/create"
+                hx-trigger="click"
+                hx-target="main"
+                hx-swap="beforeend"
+                hx-indicator="#toast"
+              >{% autoescape false %}
+               {{icons["add"]}}
+               {% endautoescape %}
+                Add new course
+              </button>
+            {% endif %}
+          {% else %}
+            <a href="{{ url_for('auth.get_login')}}" class="item">Login</a>
+          {% endif %}
+        </div>
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('auth.logout')}}" class="item">{% autoescape false %}{{icons["logout"]}}{%endautoescape%}Logout</a>
+        {% endif %}
+      </section>
+{% endblock %} #} 
+{% block main_content %}
 <div class="admin-nav">
   <h1>Admin</h1>
   <a

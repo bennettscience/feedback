@@ -6,6 +6,7 @@ from webargs.flaskparser import parser
 
 from feedbook.blueprints import home
 from feedbook.extensions import db
+from feedbook.static.icons import *
 from feedbook.models import User
 
 bp = Blueprint("auth", __name__)
@@ -91,5 +92,8 @@ def register():
 
 @bp.get("/logout")
 def logout():
+    from feedbook.static.icons import home, login
+
+    icons = {"home": home, "login": login}
     logout_user()
     return redirect(url_for("home.index"))

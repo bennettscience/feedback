@@ -10,5 +10,8 @@ bp = Blueprint("home", __name__)
 @bp.get("/")
 @login_required
 def index():
+    from feedbook.static.icons import home, add, admin, logout
+
     courses = current_user.enrollments.all()
-    return render_template("home/index.html", courses=courses)
+    icons = {"home": home, "add": add, "admin": admin, "logout": logout}
+    return render_template("home/index.html", courses=courses, icons=icons)
