@@ -1,6 +1,7 @@
 :root {
   /* colors, etc*/
   --primary-color: #361d32;
+  --primary-light-1: #433e5e;
   --secondary-color: #dcdcdc;
   --hover-color: #f1e8e6;
   --warn-color: #f55951;
@@ -40,7 +41,6 @@ body {
   color: var(--black);
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
   font-family:
     Arial,
     -apple-system,
@@ -299,7 +299,6 @@ button:focus {
 
 main {
   position: relative;
-  top: 80px;
   text-align: left;
   padding: 1em;
   /* max-width: 240px; */
@@ -326,7 +325,6 @@ main {
   position: fixed;
   top: 0;
 
-  box-sizing: border-box;
   background-color: #fff;
   padding: 15px;
   overflow: auto;
@@ -335,19 +333,43 @@ main {
 
 .sidebar-inner {
   padding: 0 0.75rem;
-  box-sizing: border-box;
 }
 
 .sidebar--left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   left: 0;
   border-right: 1px solid var(--secondary-color);
-  background-color: var(--secondary-color);
+  background-color: var(--primary-color);
+}
+
+#left-sidebar-inner > * + * {
+  margin-top: 0.5rem;
+}
+
+.sidebar--left button {
+  background-color: inherit;
 }
 
 .sidebar--left a {
-  display: block;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sidebar--left button,
+.sidebar--left a {
+  color: var(--secondary-color);
+  padding-left: 1em;
+  border-radius: 0.5rem;
   text-decoration: none;
-  color: var(--black);
+}
+
+.sidebar--left button:hover,
+.sidebar--left a:hover {
+  background-color: var(--primary-light-1);
 }
 
 .sidebar--right {
@@ -377,7 +399,7 @@ main {
 }
 
 .btn {
-  padding: 0.75rem 0.5rem;
+  padding: 0.75rem;
   cursor: pointer;
   /* margin-right: 25px; */
 }
@@ -470,7 +492,6 @@ btn:focus {
   text-align: center;
   border: 1px solid black;
   border-radius: 3px;
-  box-sizing: border-box;
 }
 
 .course-item:hover {
@@ -491,20 +512,16 @@ btn:focus {
 }
 
 .item {
-  box-sizing: border-box;
   padding: var(--small);
-  border: 1px solid transparent;
   border-radius: 3px;
-  margin: 10px 0;
 }
 
 .item:hover {
   cursor: pointer;
-  border-color: var(--primary-color);
 }
 
 .item.active {
-  border-color: var(--primary-color);
+  background-color: var(--primary-light-1);
 }
 
 .item.outcome > * + * {
@@ -512,7 +529,6 @@ btn:focus {
 }
 
 .item--small {
-  box-sizing: border-box;
   border: 1px solid transparent;
   border-radius: 3px;
   padding: 5px 15px;
@@ -952,6 +968,8 @@ td {
 
 #toast {
   position: fixed;
+  /* Allow a click through the toast position */
+  pointer-events: none;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -965,7 +983,6 @@ td {
   transition: all 350ms;
   z-index: 1000;
   border-radius: 3px;
-  box-sizing: border-box;
   background-color: var(--primary-color);
   color: var(--white);
 }
@@ -980,7 +997,7 @@ td {
 
 #toast-action {
   background-color: rgba(255, 255, 255, 0.15);
-  box-sizing: border-box;
+  box-sizing:;
   display: block;
   padding: 1.25rem;
 }
@@ -1075,7 +1092,6 @@ th[role='columnheader']:not(.no-sort) > .th-inner-container:hover:after {
 
 .sync {
   display: inline;
-  box-sizing: border-box;
   border-radius: 0;
   margin-bottom: 0;
   padding: 0;
