@@ -13,6 +13,21 @@
   <div class="box outcome">
     <h2>{{ standard.name }}</h2>
     <p>{{ standard.description }}</p>
+    <label class="form-row"
+      >Bulk score
+      <input
+        type="number"
+        min="0"
+        max="1"
+        _="on blur put my value into .score-{{standard.id}}.value"
+      />
+    </label>
+    <label class="form-row"
+      >Comments
+      <textarea
+        _="on blur put my value into .comments-{{standard.id}}"
+      ></textarea>
+    </label>
     <button
       hx-delete="{{ url_for('assignment.remove_standard_alignment', assignment_id=assignment.id, standard_id=standard.id)}}"
     >
@@ -45,9 +60,15 @@
       <input type="hidden" name="user_id" value="{{student.user.id}}" />
       <input type="hidden" name="assignment" value="{{assignment.id}}" />
       <label for="score">Score:</label>
-      <input type="number" id="score" name="score" min="0" max="1" />
+      <input
+        type="number"
+        class="score-{{standard.id}}"
+        name="score"
+        min="0"
+        max="1"
+      />
       <label for="comments">Comments:</label>
-      <textarea name="comments"></textarea>
+      <textarea name="comments" class="comments-{{standard.id}}"></textarea>
       <button
         class="btn"
         hx-post="/standards/{{standard.id}}/attempts"
