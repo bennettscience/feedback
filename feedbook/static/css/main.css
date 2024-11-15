@@ -587,6 +587,10 @@ btn:focus {
   box-shadow: var(--active-shadow);
 }
 
+.outcome textarea {
+  width: 100%;
+}
+
 .outcome--header {
   display: flex;
   flex-direction: row;
@@ -980,7 +984,7 @@ td {
   align-items: center;
   opacity: 0;
   top: 90%;
-  left: 1.5rem;
+  right: 1.5rem;
   min-width: 250px;
   margin: 0;
   padding: 0;
