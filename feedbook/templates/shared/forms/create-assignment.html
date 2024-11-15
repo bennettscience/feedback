@@ -6,20 +6,35 @@
   _="on htmx:afterRequest reset() me"
 >
   <input type="hidden" name="current_course_id" value="{{course_id}}" />
-  <label for="assignment-name">Name</label>
-  <input type="text" name="name" id="assignment-name" />
-  <label for="assignment-type">Type</label>
-  <select name="type_id" id="assignment-type">
-    {% for type in types %}
-    <option value="{{type.id}}">{{type.name}}</option>
-    {% endfor %}
-  </select>
-  <label for="description">Description</label>
-  <textarea id="description" name="description"></textarea>
+  <label class="form-row" for="assignment-name"
+    >Name
+    <input type="text" name="name" id="assignment-name" />
+  </label>
+  <label class="form-row" for="assignment-type"
+    >Type
+    <select name="type_id" id="assignment-type">
+      {% for type in types %}
+      <option value="{{type.id}}">{{type.name}}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label class="form-row" for="description"
+    >Description
+    <textarea id="description" name="description"></textarea>
+  </label>
   <p>Select courses to add the assignment to:</p>
   {% for course in courses %}
-  <label>{{ course.name }}</label>
-  <input type="checkbox" name="courses" value="{{course.id}}" />
+  <span class="box flex form-row">
+    <label>
+      <input
+        class="align-check"
+        type="checkbox"
+        name="courses"
+        value="{{course.id}}"
+      />
+      {{ course.name }}</label
+    ></span
+  >
   {% endfor %}
   <input type="submit" />
 </form>
