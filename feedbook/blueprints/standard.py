@@ -256,16 +256,6 @@ def add_standard_to_course():
     course.align(standard)
     db.session.commit()
 
-    # Student scores need to be calculated before sending
-    student_enrollments = course.enrollments.filter(User.usertype_id == 2).all()
-    for student in student_enrollments:
-        student.scores = []
-        for standard in course.standards.all():
-            user_score = standard.current_score(student.id)
-            student.scores.append({"standard_id": standard.id, "score": user_score})
-
     return render_template(
-        "course/teacher_index_htmx.html",
-        course=CourseSchema().dump(course),
-        students=student_enrollments,
+        "standards/standard-card.html", item=standard, course_id=args["course_id"]
     )
