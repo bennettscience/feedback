@@ -1,20 +1,3 @@
-<select
-  hx-swap-oob="outerHTML:#user-select"
-  id="user-select"
-  name="user_id"
-  hx-get="{{ url_for('course.get_user', course_id=course.id) }}"
-  hx-trigger="change"
-  hx-swap="innerHTML"
-  hx-target="#detail"
->
-  <option>Select a student</option>
-  {% for student in enrollments %}
-  <option value="{{student.id}}">
-    {{student.last_name}}, {{student.first_name}}
-  </option>
-  {% endfor %}
-</select>
-
 <div class="course-header">
   <h1>{{ course.name }}</h1>
   <div class="course-actions-container">
@@ -44,6 +27,21 @@
     </button>
   </div>
 </div>
+<select
+  id="user-select"
+  name="user_id"
+  hx-get="{{ url_for('course.get_user', course_id=course.id) }}"
+  hx-trigger="change"
+  hx-swap="innerHTML"
+  hx-target="#detail"
+>
+  <option>Select a student</option>
+  {% for student in enrollments %}
+  <option value="{{student.id}}">
+    {{student.last_name}}, {{student.first_name}}
+  </option>
+  {% endfor %}
+</select>
 <section class="box flex" id="standards-list">
   {% for standard in course.standards %} {% if standard.active %}
   {{render_partial('standards/standard-card.html', item=standard,
@@ -71,7 +69,8 @@
       </tr>
     </thead>
     <tbody>
-      {% for assignment in course.assignments | sort(attribute="created_on", reverse=True)%}
+      {% for assignment in course.assignments | sort(attribute="created_on",
+      reverse=True)%}
       <tr>
         <td>
           <a
