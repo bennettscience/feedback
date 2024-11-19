@@ -697,65 +697,6 @@ btn:focus {
   gap: 3rem;
 }
 
-nav {
-  height: 80px;
-  width: 100%;
-  position: fixed;
-  top: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 1;
-  background-color: var(--white);
-  border-bottom: 2px solid var(--hover-color);
-}
-
-nav > #user-select {
-  width: 25%;
-  margin-left: 225px;
-}
-
-nav > #nav-inner {
-  display: flex;
-  gap: 1.2rem;
-}
-
-#nav-inner:last-child {
-  padding-right: 25px;
-}
-
-/*
-nav::before,
-nav::after {
-  content: '';
-  display: block;
-  height: 16px;
-  position: sticky;
-  -webkit-position: sticky;
-}
-
-nav::before {
-  top: 48px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 5px,
-    rgba(0, 0, 0, 0.04) 0px 0px 10px 5px;
-  z-index: 1;
-}
-
-nav::after {
-  background: linear-gradient(#fff, rgba(255, 255, 255, 0.3));
-  top: 0;
-  z-index: 2;
-}
-
-.nav-item {
-  display: block;
-  padding: 0 10px;
-}
-
-
-/* Nav shadow on <main> scroll */
-/* https://stijndewitt.com/2018/06/12/pure-css-drop-shadow-on-scroll/ */
-
 table {
   width: 100%;
   border-collapse: collapse;
@@ -847,7 +788,7 @@ th {
   background-color: var(--primary-color);
   color: var(--white);
   /* Keep the table headers visible under the site navigation */
-  top: 80px;
+  top: 0px;
   padding: 1rem;
 }
 
@@ -894,22 +835,6 @@ th[data-aligned="True"]:after {
   position: absolute;
 }
 
-.th-inner-container .outcome-actions.show {
-  height: auto;
-  opacity: 1;
-  display: block;
-}
-
-.th-inner-container .outcome-actions span {
-  display: block;
-  padding: 1rem;
-}
-
-.th-inner-container .outcome-actions span:hover {
-  cursor: pointer;
-  background-color: var(--secondary-color);
-}
-
 .scroller {
   max-width: 100%;
   overflow: auto;
@@ -918,6 +843,10 @@ th[data-aligned="True"]:after {
 td {
   padding: 1rem;
   border: 1px transparent;
+}
+
+.scroller td:not(:first-child) {
+  text-align: center;
 }
 
 .scroller td:not(:first-child):hover {
@@ -1005,7 +934,6 @@ td {
 
 #toast-action {
   background-color: rgba(255, 255, 255, 0.15);
-  box-sizing:;
   display: block;
   padding: 1.25rem;
 }
@@ -1069,34 +997,6 @@ td {
 th[role="columnheader"]:not(.no-sort) {
   cursor: pointer;
 }
-
-/* th[role='columnheader']:not(.no-sort) > .th-inner-container:after {
-    content: '';
-    border-width: 4px 4px 0;
-    border-style: solid;
-    border-color: var(--black) transparent;
-    visibility: hidden;
-    opacity: 0;
-    -ms-user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    user-select: none;
-}
-
-th[aria-sort='ascending']:not(.no-sort) > .th-inner-container:after {
-    border-top: none;
-    border-width: 0 4px 4px;
-}
-
-th[aria-sort]:not(.no-sort) > .th-inner-container:after {
-    visibility: visible;
-    opacity: 0.4;
-}
-
-th[role='columnheader']:not(.no-sort) > .th-inner-container:hover:after {
-    visibility: visible;
-    opacity: 1;
-} */
 
 .sync {
   display: inline;
