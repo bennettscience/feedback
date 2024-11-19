@@ -195,7 +195,7 @@ def get_single_assignment(course_id, assignment_id):
     assignment = db.session.get(Assignment, assignment_id)
     course = db.session.get(Course, course_id)
     students = course.enrollments.filter(
-        User.usertype_id == 2 and User.active == True
+        User.usertype_id == 2, User.active == True
     ).all()
 
     enrollment_ids = [
