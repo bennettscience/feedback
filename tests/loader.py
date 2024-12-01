@@ -26,7 +26,6 @@ class Loader(object):
         for filename in self.fixtures:
             filepath = os.path.join(self.app.config["FIXTURES_DIR"], filename)
             with open(filepath) as file_in:
-                print("Processing {}".format(filename))
                 self.data = json.load(file_in)
                 self.load_from_file()
 

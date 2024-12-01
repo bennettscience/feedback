@@ -1,20 +1,15 @@
-<div
+<a
   id="course-{{item.id}}"
   class="item course-item"
-  hx-get="/courses/{{ item.id}}"
+  hx-get="/courses/{{ item.id }}"
   hx-trigger="click"
   hx-target="#detail"
   hx-swap="innerHTML"
   hx-indicator="#toast"
   hx-push-url="true"
   _="on click 
-            remove .active from <div />
+            remove .active from <a />
             then add .active to me"
 >
-  <div
-    class="course-item-inner"
-    title="{{item.standards|length}} standards{%if item.standards|length == 0 or item.standards|length > 1%}s{%endif%} set up"
-  >
-    <p>{{ item.name }}</p>
-  </div>
-</div>
+  {{ item.name }}
+</a>

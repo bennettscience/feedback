@@ -16,6 +16,9 @@ bp = Blueprint("standard", __name__)
 @bp.get("/standards")
 @login_required
 def index():
+    """
+    Get all standards in the database.
+    """
     standards = Standard.query.all()
     return render_template("standards/index.html", standards=standards)
 
@@ -24,6 +27,10 @@ def index():
 @login_required
 @restricted
 def create_standard():
+    """
+    Create a new standard
+    Standards are course agnostic and can be created in the database. The course context _calling_ the created standard is immediately added as an association.
+    """
     from feedbook.models import Course
 
     args = parser.parse(
@@ -48,36 +55,26 @@ def create_standard():
         item for item in Standard.query.all() if item not in course.standards.all()
     ]
 
-    # TODO: Toast the result
     return make_response(
         render_template(
             "shared/forms/create-standard.html",
-            items=StandardSchema(many=True).dump(items),
+            items=items,
             course=course,
         ),
         trigger={"showToast": "Standard created successfully."},
     )
 
 
-# Get data for a single standard
-@bp.get("/standards/<int:standard_id>/stats")
+# Get a single standard
+# 11/2024 - Not in use
+@bp.get("/standards/<int:standard_id>")
 @login_required
-@restricted
-def get_standard_stats(standard_id):
-    pass
-
+def get_single_standard(id):  # pragma: no cover
+    # TODO: Add in stats
     # Get all the attempts
     # Sort by class
     # Graph showing breakdown of average score for each course section
-
-
-# Get a single standard
-@bp.get("/standards/<int:standard_id>")
-@login_required
-def get_single_standard(id):
-    standard = Standard.query.filter(Standard.id == standard_id).first()
-
-    return StandardSchema().dump(standard)
+    pass
 
 
 # Set the active/inactive status on a single standard
@@ -85,13 +82,17 @@ def get_single_standard(id):
 @login_required
 @restricted
 def update_standard_status(standard_id):
+    """
+    Update the status of the standard.
+
+    """
     standard = Standard.query.filter(Standard.id == standard_id).first()
 
     standard.active = not standard.active
     db.session.commit()
 
     value = "Deactivate" if standard.active else "Activate"
-    return make_response(value, trigger={"showToast": "Standard stauts updated"})
+    return make_response(value, trigger={"showToast": "Standard status updated."})
 
 
 # Get standard results for a single student
@@ -99,21 +100,16 @@ def update_standard_status(standard_id):
 @login_required
 @restricted
 def get_standard_result(standard_id, user_id, result_id):
+    """
+    Get a single result for a student.
+
+    Returns the sidebar template with the <StandardAttempt> data.
+    """
     from datetime import timedelta
-    from feedbook.schemas import StandardAttemptSchema, UserSchema
     from feedbook.models import User
 
-    if current_user.usertype_id == 1:
-        student = User.query.filter(User.id == user_id).first()
-        attempt = student.assessments.filter(StandardAttempt.id == result_id).first()
-    else:
-        attempt = current_user.assessments.query.filter(StandardAttempt.id == result_id)
-        student = current_user
-
-    data = {
-        "attempt": attempt,
-        "student": student,
-    }
+    student = User.query.filter(User.id == user_id).first()
+    attempt = student.assessments.filter(StandardAttempt.id == result_id).first()
 
     return render_template(
         "course/right-sidebar.html",
@@ -129,6 +125,11 @@ def get_standard_result(standard_id, user_id, result_id):
 @login_required
 @restricted
 def add_standard_assessment(standard_id):
+    """
+    Add a StandardAttempt record for a student
+
+    Generic attempt record for a user_id on a standard_id. Can be posted from the course context or the assignment context.
+    """
     from feedbook.models import StandardAttempt, User
     from feedbook.schemas import StandardAttemptSchema, UserSchema
 
@@ -170,6 +171,9 @@ def add_standard_assessment(standard_id):
 @login_required
 @restricted
 def get_edit_form(standard_id, attempt_id):
+    """
+    Get the edit form to update a StandardAttempt record for a student.
+    """
     from feedbook.schemas import StandardListSchema
     from feedbook.models import Assignment
 
@@ -180,7 +184,7 @@ def get_edit_form(standard_id, attempt_id):
     return render_template(
         "shared/forms/edit-standard-attempt.html",
         attempt=attempt,
-        standards=StandardListSchema(many=True).dump(standards),
+        standards=standards,
         assignments=assignments,
     )
 
@@ -189,6 +193,9 @@ def get_edit_form(standard_id, attempt_id):
 @login_required
 @restricted
 def edit_single_attempt(standard_id, attempt_id):
+    """
+    Update a StandardAttempt record for a student.
+    """
     from feedbook.models import User
 
     # This will accept a query param as well as the form. Parse
@@ -205,19 +212,19 @@ def edit_single_attempt(standard_id, attempt_id):
         location="form",
     )
 
-    attempt = StandardAttempt.query.get(attempt_id)
+    attempt = db.session.get(StandardAttempt, attempt_id)
     attempt.update(args)
 
     if query == "standard":
-        template = "course/partials/student_entry.html"
-        student = User.query.get(attempt.user_id)
+        template = "course/partials/student-entry.html"
+        student = db.session.get(User, attempt.user_id)
         student.scores = student.assessments.filter(
             StandardAttempt.standard_id == standard_id
         ).all()
 
         data = {"student": student, "clickable": True}
     else:
-        template = "assignments/single_attempt.html"
+        template = "assignments/single-attempt.html"
         data = {"attempt": attempt}
 
     return make_response(
@@ -231,10 +238,15 @@ def edit_single_attempt(standard_id, attempt_id):
 @login_required
 @restricted
 def delete_standard_assessment(standard_id, attempt_id):
-    attempt = StandardAttempt.query.get(attempt_id)
+    """
+    Remove a single StandardAttempt from the database.
+    """
+    attempt = db.session.get(StandardAttempt, attempt_id)
     db.session.delete(attempt)
     db.session.commit()
 
+    # The closeModal event doesn't need a specific value in the template,
+    # so just pass it an empty string to fire.
     return make_response(trigger={"closeModal": "", "showToast": "Attempt deleted"})
 
 

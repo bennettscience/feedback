@@ -1,0 +1,15 @@
+[
+	{
+		"table": "assignment_type",
+		"records": [
+			{
+				"id": 1,
+				"name": "Classwork"
+			},
+			{
+				"id": 2,
+				"name": "Assessment"
+			}
+		]
+	}
+]

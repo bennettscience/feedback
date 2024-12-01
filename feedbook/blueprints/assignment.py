@@ -13,6 +13,9 @@ bp = Blueprint("assignment", __name__)
 
 @bp.get("/assignments")
 def index():
+    """
+    Get a list of all assignments.
+    """
     assignments = Assignment.query.order_by(Assignment.created_on.desc()).all()
     return render_template("assignments/index.html", assignments=assignments)
 
@@ -21,6 +24,9 @@ def index():
 @login_required
 @restricted
 def create_assignment():
+    """
+    Create a new assignment.
+    """
     args = parser.parse(
         {
             "name": fields.String(),
@@ -45,11 +51,11 @@ def create_assignment():
     db.session.commit()
     # Return the full list of assignments to the admin page
     assignments = db.session.scalars(db.select(Assignment)).all()
-    current_course = Course.query.get(args["current_course_id"])
+    current_course = db.session.get(Course, args["current_course_id"])
 
     return make_response(
         render_template(
-            "assignments/assignment_list.html",
+            "assignments/assignment-list.html",
             assignments=assignments,
             course=current_course,
         ),
@@ -61,6 +67,9 @@ def create_assignment():
 @login_required
 @restricted
 def create_assignment_form():
+    """
+    Get the form to create a new assignment.
+    """
     args = parser.parse({"current_course_id": fields.Int()}, location="query")
     types = AssignmentType.query.all()
     courses = Course.query.all()
@@ -81,8 +90,11 @@ def create_assignment_form():
 @login_required
 @restricted
 def get_assignment(assignment_id):
+    """
+    Get a single assignment
+    """
     assignment = Assignment.query.filter(Assignment.id == assignment_id).first()
-    return render_template("assignments/single_assignment.html", assignment=assignment)
+    return render_template("assignments/single-assignment.html", assignment=assignment)
 
 
 @bp.get("/assignments/<int:assignment_id>/edit")
@@ -101,6 +113,9 @@ def get_assignment_edit_form(assignment_id):
 @login_required
 @restricted
 def edit_assignment(assignment_id):
+    """
+    Edit an assignment's details
+    """
     args = parser.parse(
         {
             "name": fields.String(),
@@ -111,21 +126,16 @@ def edit_assignment(assignment_id):
         location="form",
     )
 
-    update_fields = {
-        "name": args["name"],
-        "created_on": args["created_on"],
-        "assignmenttype_id": args["assignmenttype_id"],
-    }
-
     assignment = Assignment.query.filter(Assignment.id == assignment_id).first()
-    assignment.update(update_fields)
+    assignment.update(args)
 
-    for course in args["courses"]:
-        c = Course.query.filter(Course.id == course).first()
-        c.add_assignment(assignment)
+    if args.get("courses"):
+        for course in args["courses"]:
+            c = Course.query.filter(Course.id == course).first()
+            c.add_assignment(assignment)
 
     return make_response(
-        render_template("assignments/single_assignment.html", assignment=assignment),
+        render_template("assignments/single-assignment.html", assignment=assignment),
         trigger={"showToast": "Assignment updated"},
     )
 
@@ -134,7 +144,10 @@ def edit_assignment(assignment_id):
 @login_required
 @restricted
 def create_standard_alignment(assignment_id):
-    assignment = Assignment.query.get(assignment_id)
+    """
+    Attach a standard to an assignment.
+    """
+    assignment = db.session.get(Assignment, assignment_id)
     args = parser.parse({"standards": fields.List(fields.Int())}, location="form")
     for standard_id in args["standards"]:
         standard = Standard.query.filter(Standard.id == standard_id).first()
@@ -148,6 +161,9 @@ def create_standard_alignment(assignment_id):
 @login_required
 @restricted
 def remove_standard_alignment(assignment_id, standard_id):
+    """
+    Remove a standard from an assignment.
+    """
     assignment = Assignment.query.filter(Assignment.id == assignment_id).first()
     standard = Standard.query.filter(Standard.id == standard_id).first()
 
@@ -161,6 +177,9 @@ def remove_standard_alignment(assignment_id, standard_id):
 @login_required
 @restricted
 def get_assignment_attempt_edit_form(assignment_id, attempt_id):
+    """
+    Get the edit form to update Assignment details.
+    """
     from feedbook.models import StandardAttempt
 
     attempt = StandardAttempt.query.filter(StandardAttempt.id == attempt_id).first()
@@ -175,10 +194,10 @@ def get_assignment_attempt_edit_form(assignment_id, attempt_id):
 @login_required
 @restricted
 def get_assignment_attempt_result(assignment_id, attempt_id):
+    """
+    Get a specific StandardAttempt record for a given assignment.
+    """
     from feedbook.models import StandardAttempt
 
     attempt = db.session.get(StandardAttempt, attempt_id)
-    return render_template("assignments/single_attempt.html", attempt=attempt)
-
-
-# In the scoring table, list by student. Have a yes/no checkbox for each standard attached to the assignment.
+    return render_template("assignments/single-attempt.html", attempt=attempt)

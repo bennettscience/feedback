@@ -21,28 +21,31 @@
     >
       {% autoescape false %}{{icons["admin"]}}{% endautoescape %} Admin
     </a>
-    {% endif %} {% if current_user.enrollments %} {% for item in
-    current_user.enrollments %}
-    <a
-      id="course-{{item.id}}"
-      class="item course-item"
-      hx-get="/courses/{{ item.id }}"
-      hx-trigger="click"
-      hx-target="#detail"
-      hx-swap="innerHTML"
-      hx-indicator="#toast"
-      hx-push-url="true"
-      _="on click 
+    {% endif %} {% if current_user.enrollments %}
+    <div class="courses">
+      {% for item in current_user.enrollments %}
+      <a
+        id="course-{{item.id}}"
+        class="item course-item"
+        hx-get="/courses/{{ item.id }}"
+        hx-trigger="click"
+        hx-target="#detail"
+        hx-swap="innerHTML"
+        hx-indicator="#toast"
+        hx-push-url="true"
+        _="on click 
                   remove .active from <a />
                   then add .active to me"
-      >{{ item.name }}</a
-    >
-    {% endfor %} {% endif %} {% if current_user.usertype_id == 1 %}
+        >{{ item.name }}</a
+      >
+      {% endfor %}
+    </div>
+    {% endif %} {% if current_user.usertype_id == 1 %}
     <button
       class="btn item"
       hx-get="/courses/create"
       hx-trigger="click"
-      hx-target="main"
+      hx-target=".courses"
       hx-swap="beforeend"
       hx-indicator="#toast"
     >

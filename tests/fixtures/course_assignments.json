@@ -1,0 +1,12 @@
+[
+	{
+		"table": "course_assignments",
+		"records": [
+			{
+				"id": 1,
+				"course_id": 1,
+				"assignment_id": 1
+			}
+		]
+	}
+]

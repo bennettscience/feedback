@@ -14,5 +14,9 @@ bp = Blueprint("admin", __name__)
 @login_required
 @restricted
 def index():
+    """
+    Load the main admin panel. Reload the sidebar because
+    this extends the main layout right now.
+    """
     icons = {"home": home, "add": add, "admin": admin, "logout": logout}
     return render_template("admin/index.html", icons=icons)

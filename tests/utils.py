@@ -50,8 +50,13 @@ def captured_templates(app):
 
 # Look for an object in the templates based on a template title
 def get_template_context(values: list, template_name: str) -> dict:
-    return next(
-        template["context"]
-        for template in values
-        if template["template_name"] == template_name
-    )
+    try:
+        result = next(
+            template["context"]
+            for template in values
+            if template["template_name"] == template_name
+        )
+    except StopIteration:
+        result = "{} not found".format(template_name)
+
+    return result

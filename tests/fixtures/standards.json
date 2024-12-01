@@ -7,6 +7,18 @@
 				"name": "Standard 1",
 				"description": "This is a standard.",
 				"active": true
+			},
+			{
+				"id": 2,
+				"name": "Standard 2",
+				"description": "This is a second standard.",
+				"active": true
+			},
+			{
+				"id": 3,
+				"name": "Standard 3",
+				"description": "This is a third standard.",
+				"active": true
 			}
 		]
 	}

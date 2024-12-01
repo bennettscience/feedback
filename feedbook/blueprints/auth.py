@@ -15,7 +15,7 @@ bp = Blueprint("auth", __name__)
 @bp.get("/login")
 def get_login():
     if current_user.is_authenticated:
-        return redirect(url_for(home.index))
+        return redirect(url_for("home.index"))
 
     return render_template("shared/forms/login.html")
 
@@ -33,9 +33,12 @@ def login():
 
     user = User.query.filter(User.email == args["email"]).first()
     if user is None or not user.check_password(args["password"]):
-        return make_response(
-            redirect="/login",
-            trigger={"showToast": "Username or password incorrect"},
+        return (
+            make_response(
+                redirect="/login",
+                trigger={"showToast": "Username or password incorrect"},
+            ),
+            401,
         )
 
     login_user(user, remember=args["remember_me"])
@@ -44,12 +47,13 @@ def login():
 
 @bp.get("/register")
 def get_register():
-    return "Registrations are not open at this time.", 403
+    return make_response("Registrations are not open at this time."), 403
     # return render_template(
     #     "shared/forms/register.html"
     # )
 
 
+# pragma: no cover
 @bp.post("/register")
 def register():
     abort(403)

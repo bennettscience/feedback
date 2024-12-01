@@ -10,3 +10,4 @@ gunicorn.config.py
 log/
 *.db
 app.*
+.coverage

@@ -22,20 +22,6 @@ from feedbook.wrappers import templated, restricted
 bp = Blueprint("course", __name__)
 
 
-# Called from the sidebar to list the available courses for a user.
-@bp.get("/courses")
-@login_required
-def get_all_courses():
-    """
-    Return active courses for a user.
-    """
-    courses = current_user.enrollments.all()
-    return render_template(
-        "course/partials/course_card.html",
-        items=CourseSchema(many=True).dump(courses),
-    )
-
-
 @bp.get("/courses/create")
 @login_required
 @restricted
@@ -70,7 +56,7 @@ def create_course():
 
     current_user.enroll(course)
 
-    return render_template("course/partials/course_card.html", course=course)
+    return render_template("course/partials/course_card.html", item=course)
 
 
 # Request the upload form
@@ -132,7 +118,7 @@ def roster_upload(course_id):
             student.scores.append({"standard_id": standard.id, "score": user_score})
 
     return render_template(
-        "course/teacher_index_htmx.html",
+        "course/teacher-index-htmx.html",
         course=CourseSchema().dump(course),
         students=student_enrollments,
     )
@@ -179,7 +165,7 @@ def get_single_course(id):
             }
 
         resp = render_template(
-            "course/teacher_index_htmx.html",
+            "course/teacher-index-htmx.html",
             course=course,
             enrollments=enrollments,
             results=results,
@@ -189,6 +175,12 @@ def get_single_course(id):
 
 @bp.get("/courses/<int:course_id>/assignments/<int:assignment_id>")
 def get_single_assignment(course_id, assignment_id):
+    """
+    Get the data for a single assignment from the course context.
+
+    Assignments are course agnostic, this route allows for the assignment
+    data to be loaded with the current student roster.
+    """
     from itertools import groupby
     from operator import attrgetter
 
@@ -205,7 +197,7 @@ def get_single_assignment(course_id, assignment_id):
         .all()
     ]
 
-    # Limit the results for the assignment to the curernt course only.
+    # Limit the results for the assignment to the current course only.
     # This returns all StandardAttempt records for the current course,
     # arranged by student ID.
     query = (
@@ -252,7 +244,7 @@ def get_single_assignment(course_id, assignment_id):
 # Align an assignment in a course to a standard
 @bp.get("/courses/<int:course_id>/assignments/<int:assignment_id>/align")
 def get_alignment_form(course_id, assignment_id):
-    course = Course.query.get(course_id)
+    course = db.session.get(Course, course_id)
     assignment = course.assignments.filter(Assignment.id == assignment_id).first()
 
     return render_template(
@@ -377,8 +369,6 @@ def get_student_results(course_id, user_id, standard_id):
 @login_required
 @restricted
 def remove_standard_from_course(course_id, standard_id):
-    if current_user.usertype_id == 2:
-        abort(401)
     course = current_user.enrollments.filter(Course.id == course_id).first()
     standard = Standard.query.filter(Standard.id == standard_id).first()
 
@@ -395,7 +385,7 @@ def remove_standard_from_course(course_id, standard_id):
             student.scores.append({"standard_id": standard.id, "score": user_score})
 
     return render_template(
-        "course/teacher_index_htmx.html",
+        "course/teacher-index-htmx.html",
         course=CourseSchema().dump(course),
         students=student_enrollments,
     )
@@ -406,10 +396,11 @@ def remove_standard_from_course(course_id, standard_id):
 @login_required
 @restricted
 def get_assessment_form(course_id, standard_id):
-    if current_user.usertype_id == 2:
-        abort(401)
-    from feedbook.schemas import UserSchema
+    """
+    Get the assessment form for a standard in a course
 
+    Calls the assessment form for a single standard in a course context. The form includes all active student enrollments for the course.
+    """
     course = Course.query.filter(Course.id == course_id).first()
 
     # Get the enrollments, alphabatized to start the loop

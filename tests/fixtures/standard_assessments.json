@@ -6,7 +6,7 @@
 				"id": 1,
 				"user_id": 2,
 				"standard_id": 1,
-				"score": 3,
+				"score": 1,
 				"assignment": "Assignment 1",
 				"comments": "This is an example comment.",
 				"assignment_id": 1
@@ -24,7 +24,7 @@
 				"id": 3,
 				"user_id": 3,
 				"standard_id": 1,
-				"score": 3,
+				"score": 1,
 				"assignment": "Assignment 1",
 				"comments": "This is an example comment.",
 				"assignment_id": 1

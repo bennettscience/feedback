@@ -10,8 +10,8 @@ from feedbook.extensions import db, login_manager
 
 
 @login_manager.user_loader
-def load_user(id):
-    return User.query.get(int(id))
+def load_user(id):  # pragma: no cover
+    return db.session.get(User, int(id))
 
 
 class AssignmentType(db.Model):
@@ -47,7 +47,7 @@ class Assignment(db.Model):
     # Note that this is a straight average, not the weighted average used to calculate student performance.
     def average_all(self):
         scores = self.assessments.all()
-        return mean([item.score for item in scores])
+        return round(mean([item.score for item in scores]), 2)
 
     # Get the average score for students in a course
     # Use the StandardAttempt table as the leftmost join to filter down against the other conditions. Since the attempts do not matter which course they're in, just the user, you need to filter against the user_courses table to get only the desired course.
@@ -83,7 +83,10 @@ class Assignment(db.Model):
 
     def update(self, data):
         for key, value in data.items():
-            setattr(self, key, value)
+            if key == "courses":
+                continue
+            else:
+                setattr(self, key, value)
         db.session.commit()
 
 
@@ -155,6 +158,12 @@ class Standard(db.Model):
             .all()
         )
         return [item.score for item in scores]
+
+    def __has_proficient_override(self, user_id) -> bool:  # pragma: no cover
+        """
+        Check for an override on proficiency from a specific user. Returns True and overrides the is_proficient calculation for a specific user.
+        """
+        pass
 
     def is_proficient(self, user_id) -> bool:
         """
@@ -252,8 +261,8 @@ class User(UserMixin, db.Model):
             self.enrollments.append(course)
             db.session.commit()
         else:
-            raise DuplicateException(
-                "{} is already enrolled in {}".format(self.name, course.name)
+            raise Exception(
+                "{} is already enrolled in {}".format(self.first_name, course.name)
             )
 
     def is_enrolled(self, course):

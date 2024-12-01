@@ -5,6 +5,7 @@ from tests.utils import TestBase, captured_templates
 from feedbook.models import User, UserType
 from feedbook.wrappers import restricted
 
+
 class TestWrappers(TestBase):
     def setUp(self):
         self.app = self.create()
@@ -39,3 +40,6 @@ class TestWrappers(TestBase):
         @restricted
         def test2_to_wrap():
             assert user2 is Student
+
+    def test_templated_wrapper(self):
+        pass

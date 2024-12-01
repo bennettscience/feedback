@@ -75,7 +75,7 @@
   </thead>
   <tbody class="scroller">
     {% for student in students %}
-    {{render_partial('course/partials/student_entry.html', student=student,
+    {{render_partial('course/partials/student-entry.html', student=student,
     course=course, clickable=True)}} {% endfor %}
   </tbody>
 </table>
