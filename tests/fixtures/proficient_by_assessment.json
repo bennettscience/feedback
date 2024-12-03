@@ -1,0 +1,36 @@
+[
+	{
+		"table": "assignment",
+		"records": [
+			{
+				"name": "Assignment 1",
+				"assignmenttype_id": 1
+			},
+			{
+				"name": "Assignment 2",
+				"assignmenttype_id": 2
+			}
+		]
+	},
+	{
+		"table": "standard_attempt",
+		"records": [
+			{
+				"user_id": 2,
+				"standard_id": 1,
+				"score": 0,
+				"assignment": "Assignment 1",
+				"comments": "This is an example comment.",
+				"assignment_id": 1
+			},
+			{
+				"user_id": 2,
+				"standard_id": 1,
+				"score": 1,
+				"assignment": "Assignment 2",
+				"comments": "This is an example comment.",
+				"assignment_id": 2
+			}
+		]
+	}
+]

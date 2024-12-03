@@ -60,6 +60,10 @@ dialog {
 }
 
 /* GENERICS */
+.bold {
+  font-weight: 800;
+}
+
 hr {
   border-style: solid;
 }
@@ -182,6 +186,7 @@ section > * + * {
 
 .box {
   padding: var(--small);
+  flex: 1 1 0;
 }
 
 .box.flex {
@@ -207,6 +212,14 @@ section > * + * {
 .box.pill {
   padding: var(--very-small);
   border-radius: var(--very-small);
+}
+
+.item .box.pill {
+  text-align: center;
+}
+
+.item > .box {
+  padding: 0;
 }
 
 .box.inverted {
@@ -291,14 +304,6 @@ button:not(:disabled):active {
 
 button:focus {
   border-color: #666;
-}
-
-.green {
-  background-color: #c8e6c9;
-}
-
-.red {
-  background-color: #f78f8f;
 }
 
 main {

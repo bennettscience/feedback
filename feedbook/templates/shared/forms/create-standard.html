@@ -1,24 +1,30 @@
-<form hx-trigger="submit" hx-post="/standards" hx-swap="innerHTML" hx-target="#right-sidebar-inner"
-	_="on htmx:afterRequest reset() me">
-	<label>Title
-		<input type="text" name="name" />
-	</label>
-	<label>Description
-		<input type="text" name="description" />
-	</label>
-	<input type="hidden" name="course_id" value="{{course_id}}" />
-	<input type="submit" />
+<form
+  hx-trigger="submit"
+  hx-post="/standards"
+  hx-swap="innerHTML"
+  hx-target="#right-sidebar-inner"
+  _="on htmx:afterRequest reset() me"
+>
+  <label
+    >Title
+    <input type="text" name="name" />
+  </label>
+  <label
+    >Description
+    <input type="text" name="description" />
+  </label>
+  <input type="hidden" name="course_id" value="{{course_id}}" />
+  <input type="submit" />
 </form>
 <p>...or import an existing standard.</p>
 <section id="standards-available">
-	{% for item in items %}
-	{{render_partial('standards/standard-small.html', item=item, course_id=course_id)}}
-	{% endfor %}
+  {% for item in items %} {{render_partial('standards/standard-small.html',
+  item=item, course_id=course_id, results=results)}} {% endfor %}
 </section>
 {% if course %}
 <section class="stored-outcomes" hx-swap-oob="innerHTML:#stored-outcomes">
-	{% for standard in course.standards %}
-	{{render_partial('standards/standard-card.html', item=standard,
-	course_id=course.id)}} {%endfor%}
+  {% for standard in course.standards %}
+  {{render_partial('standards/standard-card.html', item=standard,
+  course_id=course.id, results=results) }} {%endfor%}
 </section>
 {% endif %}

@@ -2,6 +2,11 @@
 <div class="item outcome" _="on delete remove me">
   <h3>{{item.name}}</h3>
   <p>{{item.description}}</p>
+  <div class="box flex">
+    <p class="box pill green">{{results.proficient}}</p>
+    <p class="box pill red">{{results.not_proficient}}</p>
+    <p>Average: {{ item.course_average(course_id) }}</p>
+  </div>
   <button
     class="btn"
     hx-get="/courses/{{course_id}}/standards/{{item.id}}/results"

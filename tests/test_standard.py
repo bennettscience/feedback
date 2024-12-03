@@ -14,6 +14,7 @@ class TestStandardModel(TestBase):
         ctx = self.app.app_context()
         ctx.push()
         fixtures = [
+            "assignment_types.json",
             "standards.json",
             "standard_assessments.json",
             "course_standards.json",
@@ -38,15 +39,20 @@ class TestStandardModel(TestBase):
         results = standard._Standard__get_scores(2)
         self.assertEqual(results, [1, 0])
 
-    # check for a matching proficient override for a student
-    def test_has_proficient_override(self):
-        pass
-
-    # calculate student proficiency
+    # calculate student proficiency on scores alone
     def test_is_proficient(self):
         standard = db.session.get(Standard, 1)
         result = standard.is_proficient(2)
         self.assertFalse(result)
+
+    # Calculate proficiency when one assessment is a test
+    def test_is_proficient_by_assessment(self):
+        self.loader.insert(["proficient_by_assessment.json"])
+        self.loader.load()
+
+        standard = db.session.get(Standard, 1)
+        result = standard.is_proficient(2)
+        self.assertTrue(result)
 
     # calculate the score for a given standard
     def test_current_score(self):

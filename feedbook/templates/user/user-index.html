@@ -3,11 +3,10 @@
 	%}Deactivate{%
 	else %}Activate{%
 	endif %}</button>
-{% for k, v in standards.items() %}
-<div class="student-summary-standard-header" _="on load 
-        set :myChart to the .sparkline in me 
-        then call sparkline(:myChart[0], {{ scores_only[k] }}) end">
-	<h2>{{k}}</h2>
+{% for key, values in standards.items() %}
+<div class="student-summary-standard-header {% if values['is_proficient'] %}green{% else %}red{% endif %}">
+	<h2>{{key}}</h2>
+	<p>Proficient? <span class="bold">{{ values["is_proficient"] }}</span></p>
 	<svg class="sparkline" width="150" height="20" stroke-width="2"></svg>
 </div>
 <table class="user-summary">
@@ -22,12 +21,12 @@
 		</tr>
 	</thead>
 	<tbody>
-		{% for item in v %}
+		{% for entry in values["assessments"] %}
 		<tr>
-			<td>{{item.occurred}}</td>
-			<td>{{item.assignment}}</td>
-			<td>{{item.score}}</td>
-			<td>{{item.comments}}</td>
+			<td>{{entry["occurred"]}}</td>
+			<td>{{entry["assignment"].name}}</td>
+			<td>{{entry["score"]}}</td>
+			<td>{{entry["comments"]}}</td>
 		</tr>
 		{% endfor %}
 		</tr>

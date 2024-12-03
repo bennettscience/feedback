@@ -264,13 +264,14 @@ def get_user(course_id):
     args = parser.parse({"user_id": fields.Int()}, location="querystring")
     course = Course.query.filter(Course.id == course_id).first()
     user = User.query.filter(User.id == args["user_id"]).first()
-    standards = defaultdict(list)
+    standards = defaultdict(dict)
     scores_only = defaultdict(list)
 
     for a in user.assessments.all():
-        standards[a.standard.name].append(
+        standards[a.standard.name]["is_proficient"] = a.standard.is_proficient(user.id)
+        standards[a.standard.name].setdefault("assessments", []).append(
             {
-                "assignment": a.assignment,
+                "assignment": a.assessed_on,
                 "score": a.score,
                 "occurred": a.occurred,
                 "comments": a.comments,

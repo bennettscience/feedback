@@ -55,11 +55,15 @@ def create_standard():
         item for item in Standard.query.all() if item not in course.standards.all()
     ]
 
+    # The template expects a results object, so send something empty along because there is no data right now.
+    results = {"proficient": 0, "not_proficient": 0}
+
     return make_response(
         render_template(
             "shared/forms/create-standard.html",
             items=items,
             course=course,
+            results=results,
         ),
         trigger={"showToast": "Standard created successfully."},
     )
@@ -268,6 +272,11 @@ def add_standard_to_course():
     course.align(standard)
     db.session.commit()
 
+    results = {"proficient": 0, "not_proficient": 0}
+
     return render_template(
-        "standards/standard-card.html", item=standard, course_id=args["course_id"]
+        "standards/standard-card.html",
+        item=standard,
+        course_id=args["course_id"],
+        results=results,
     )
