@@ -141,15 +141,17 @@ def get_single_course(id):
         abort(401)
 
     if current_user.usertype_id == 2:
-        if request.htmx:
-            resp = render_template("course/student_index.html", course=course)
-        else:
-            ctx = {"course": course}
-            resp = render_template(
-                "shared/layout_wrapper.html",
-                partial="course/student_index.html",
-                data=ctx,
-            )
+        template = "course/student_index.html"
+        resp_data = {"course": course}
+        # if request.htmx:
+        #     resp = render_template("course/student_index.html", course=course)
+        # else:
+        #     ctx = {"course": course}
+        #     resp = render_template(
+        #         "shared/layout_wrapper.html",
+        #         partial="course/student_index.html",
+        #         data=ctx,
+        #     )
     else:
         # prep the standard report
         results = {}
@@ -164,12 +166,34 @@ def get_single_course(id):
                 "not_proficient": len(enrollments) - count,
             }
 
+        template = "course/teacher-index-htmx.html"
+        resp_data = {"course": course, "enrollments": enrollments, "results": results}
+        # resp = render_template(
+        #     "course/teacher-index-htmx.html",
+        #     course=course,
+        #     enrollments=enrollments,
+        #     results=results,
+        # )
+
+    # Handle reload requests by passing this through the wrapper
+    if request.htmx:
+        resp = render_template(template, **resp_data)
+    else:
+        # The sidebar is part of the template, so it needs to be rebult
+        # if the page is reloaded.
+        from feedbook.static.icons import add, admin, home, logout
+
+        resp_data["icons"] = {
+            "add": add,
+            "admin": admin,
+            "home": home,
+            "logout": logout,
+        }
+
         resp = render_template(
-            "course/teacher-index-htmx.html",
-            course=course,
-            enrollments=enrollments,
-            results=results,
+            "shared/layout_wrapper.html", partial=template, data=resp_data
         )
+
     return resp
 
 

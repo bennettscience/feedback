@@ -19,8 +19,9 @@
 
   <body _="on keyup[key is 'Escape'] trigger closeModal">
     <main>
-      {% block sidebar %} {% endblock %} {% block main_content %} {% endblock %}
+      {% block sidebar %} {% endblock %} {% block main_content %}
       <section id="detail"></section>
+      {% endblock %}
     </main>
     {% include 'shared/partials/toast.html' %}
     <script
