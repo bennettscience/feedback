@@ -2,7 +2,7 @@
   /* colors, etc*/
   --primary-color: #361d32;
   --primary-light-1: #433e5e;
-  --secondary-color: #dcdcdc;
+  --secondary-color: #ece5f7;
   --hover-color: #f1e8e6;
   --warn-color: #f55951;
   --success-color: #00915b;
@@ -601,21 +601,24 @@ btn:focus {
 }
 
 .course-header {
+  display: grid;
+  grid-template-rows: auto auto;
+  grid-template-areas: "title" "actions";
+}
+
+.course-header .course-actions-container {
+  grid-area: actions;
+  height: auto;
+  position: relative;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  gap: 1.5rem;
-}
-
-.course-header .course-actions-container {
-  height: auto;
-  position: relative;
-  display: flex;
   gap: 1rem;
 }
 
 .course-header .course-actions-container button {
+  flex: 1 1 40ch;
   display: block;
   margin: 0 auto;
   background-color: var(--primary-color);

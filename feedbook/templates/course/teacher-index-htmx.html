@@ -1,6 +1,21 @@
 <div class="course-header">
   <h1>{{ course.name }}</h1>
   <div class="course-actions-container">
+    <select
+      id="user-select"
+      name="user_id"
+      hx-get="{{ url_for('course.get_user', course_id=course.id) }}"
+      hx-trigger="change"
+      hx-swap="innerHTML"
+      hx-target="#context-detail"
+    >
+      <option>Select a student</option>
+      {% for student in enrollments %}
+      <option value="{{student.id}}">
+        {{student.last_name}}, {{student.first_name}}
+      </option>
+      {% endfor %}
+    </select>
     <button
       class="btn"
       hx-get="/courses/{{course.id}}/standards/create"
@@ -27,67 +42,55 @@
     </button>
   </div>
 </div>
-<select
-  id="user-select"
-  name="user_id"
-  hx-get="{{ url_for('course.get_user', course_id=course.id) }}"
-  hx-trigger="change"
-  hx-swap="innerHTML"
-  hx-target="#detail"
->
-  <option>Select a student</option>
-  {% for student in enrollments %}
-  <option value="{{student.id}}">
-    {{student.last_name}}, {{student.first_name}}
-  </option>
-  {% endfor %}
-</select>
-<section class="box flex" id="standards-list">
-  {% for standard in course.standards %} {% if standard.active %}
-  {{render_partial('standards/standard-card.html', item=standard,
-  course_id=course.id, results=results["standard_{}".format(standard.id)])}} {%
-  endif %}{%endfor%}
-</section>
-<section class="box wrapper" id="assignments-list">
-  <input
-    id="search"
-    type="text"
-    placeholder="Search assignments..."
-    _="on keyup 
+<div id="context-detail" class="stack">
+  <section class="box flex" id="standards-list">
+    {% for standard in course.standards %} {% if standard.active %}
+    {{render_partial('standards/standard-card.html', item=standard,
+    course_id=course.id, results=results["standard_{}".format(standard.id)])}}
+    {% endif %}{%endfor%}
+  </section>
+  <section class="box wrapper" id="assignments-list">
+    <h2>Assignments</h2>
+    <input
+      id="search"
+      type="text"
+      placeholder="Search assignments..."
+      _="on keyup 
                 if the event's key is 'Escape' 
                     set my value to ' ' 
                     trigger keyup 
                 else show <tr /> in <tbody /> when its textContent contains my value
                 "
-  />
-  <table>
-    <thead>
-      <tr>
-        <th>Assignment name</th>
-        <th>Avg Score</th>
-        <th>Alignments</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for assignment in course.assignments | sort(attribute="created_on",
-      reverse=True)%}
-      <tr>
-        <td>
-          <a
-            hx-get="{{ url_for('course.get_single_assignment', course_id=course.id, assignment_id=assignment.id)}}"
-            hx-target="#detail"
-            hx-swap="innerHTML show:top"
-            hx-push-url="true"
-            >{{ assignment.name }}</a
-          >
-        </td>
-        <td>{{ assignment.course_average(course) }}</td>
-        <td>
-          {% for item in assignment.alignments %}
-          <span class="box inverted pill">{{ item.name }}</span> {% endfor %}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</section>
+    />
+    <table>
+      <thead>
+        <tr>
+          <th>Assignment name</th>
+          <th>Avg Score</th>
+          <th>Alignments</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for assignment in course.assignments | sort(attribute="created_on",
+        reverse=True)%}
+        <tr>
+          <td>
+            <a
+              hx-get="{{ url_for('course.get_single_assignment', course_id=course.id, assignment_id=assignment.id)}}"
+              hx-target="#context-detail"
+              hx-swap="innerHTML show:top"
+              hx-push-url="true"
+              >{{ assignment.name }}</a
+            >
+          </td>
+          <td>{{ assignment.course_average(course) }}</td>
+          <td>
+            {% for item in assignment.alignments %}
+            <span class="box inverted pill">{{ item.name }}</span> {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
