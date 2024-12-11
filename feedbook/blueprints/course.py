@@ -293,7 +293,6 @@ def get_user(course_id):
     course = Course.query.filter(Course.id == course_id).first()
     user = User.query.filter(User.id == args["user_id"]).first()
     standards = defaultdict(dict)
-    scores_only = defaultdict(list)
 
     for a in user.assessments.all():
         standards[a.standard.name]["is_proficient"] = a.standard.is_proficient(user.id)
@@ -305,7 +304,6 @@ def get_user(course_id):
                 "comments": a.comments,
             }
         )
-        scores_only[a.standard.name].append(a.score)
 
     enrollments = [user for user in course.enrollments if user.usertype_id == 2]
 
@@ -313,7 +311,6 @@ def get_user(course_id):
     resp_data = {
         "user": user,
         "standards": standards,
-        "scores_only": scores_only,
         "enrollments": enrollments,
         "course": course,
     }
@@ -336,15 +333,6 @@ def get_user(course_id):
         )
 
     return resp
-
-    # return render_template(
-    #     "user/user-index.html",
-    #     user=user,
-    #     standards=standards,
-    #     scores_only=scores_only,
-    #     enrollments=enrollments,
-    #     course=course,
-    # )
 
 
 # Create new standard
@@ -422,12 +410,6 @@ def get_standard_scores_in_course(course_id, standard_id):
         )
 
     return resp
-    # return render_template(
-    #     "course/partials/standard_score_table.html",
-    #     students=results,
-    #     course_id=course_id,
-    #     standard=standard,
-    # )
 
 
 # Student view
@@ -460,7 +442,6 @@ def get_student_results(course_id, user_id, standard_id):
         )
 
     return resp
-    # return render_template("standards/student-standard-scores.html", results=results)
 
 
 # Remove a standard from the course
