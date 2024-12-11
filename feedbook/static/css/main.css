@@ -212,9 +212,6 @@ section > * + * {
 .box.pill {
   padding: var(--very-small);
   border-radius: var(--very-small);
-}
-
-.item .box.pill {
   text-align: center;
 }
 

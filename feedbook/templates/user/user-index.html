@@ -3,11 +3,14 @@
 	%}Deactivate{%
 	else %}Activate{%
 	endif %}</button>
-{% for key, values in standards.items() %}
-<div class="student-summary-standard-header {% if values['is_proficient'] %}green{% else %}red{% endif %}">
-	<h2>{{key}}</h2>
-	<p>Proficient? <span class="bold">{{ values["is_proficient"] }}</span></p>
-	<svg class="sparkline" width="150" height="20" stroke-width="2"></svg>
+	<div class="box flex">
+	{% for key, values in standards.items() %}
+	<a class="box pill {% if values['is_proficient'] %}green{% else %}red{% endif %}" href="#{{key}}">{{key}}</a>
+	{% endfor %}
+	</div>
+{% for key, values in standards.items()|sort(attribute="0", reverse=True) %}
+<div class="student-summary-standard-header">
+	<h2 id="{{key}}">{{key}}</h2>
 </div>
 <table class="user-summary">
 	<thead>
