@@ -143,15 +143,6 @@ def get_single_course(id):
     if current_user.usertype_id == 2:
         template = "course/student_index.html"
         resp_data = {"course": course}
-        # if request.htmx:
-        #     resp = render_template("course/student_index.html", course=course)
-        # else:
-        #     ctx = {"course": course}
-        #     resp = render_template(
-        #         "shared/layout_wrapper.html",
-        #         partial="course/student_index.html",
-        #         data=ctx,
-        #     )
     else:
         # prep the standard report
         results = {}
@@ -168,12 +159,6 @@ def get_single_course(id):
 
         template = "course/teacher-index-htmx.html"
         resp_data = {"course": course, "enrollments": enrollments, "results": results}
-        # resp = render_template(
-        #     "course/teacher-index-htmx.html",
-        #     course=course,
-        #     enrollments=enrollments,
-        #     results=results,
-        # )
 
     # Handle reload requests by passing this through the wrapper
     if request.htmx:
@@ -257,12 +242,31 @@ def get_single_assignment(course_id, assignment_id):
 
     sorted_results = sorted(results.values(), key=lambda item: item["user"].last_name)
 
-    return render_template(
-        "assignments/assignment_detail.html",
-        assignment=assignment,
-        results=sorted_results,
-        course_id=course_id,
-    )
+    template = ("assignments/assignment-detail.html",)
+    resp_data = {
+        "assignment": assignment,
+        "results": sorted_results,
+        "course_id": course_id,
+    }
+
+    if request.htmx:
+        resp = render_template(template, **resp_data)
+    else:
+        # The sidebar is part of the template, so it needs to be rebult
+        # if the page is reloaded.
+        from feedbook.static.icons import add, admin, home, logout
+
+        resp_data["icons"] = {
+            "add": add,
+            "admin": admin,
+            "home": home,
+            "logout": logout,
+        }
+        resp = render_template(
+            "shared/layout_wrapper.html", partial=template, data=resp_data
+        )
+
+    return resp
 
 
 # Align an assignment in a course to a standard
@@ -305,14 +309,42 @@ def get_user(course_id):
 
     enrollments = [user for user in course.enrollments if user.usertype_id == 2]
 
-    return render_template(
-        "user/user-index.html",
-        user=user,
-        standards=standards,
-        scores_only=scores_only,
-        enrollments=enrollments,
-        course=course,
-    )
+    template = "user/user-index.html"
+    resp_data = {
+        "user": user,
+        "standards": standards,
+        "scores_only": scores_only,
+        "enrollments": enrollments,
+        "course": course,
+    }
+
+    if request.htmx:
+        resp = render_template(template, **resp_data)
+    else:
+        # The sidebar is part of the template, so it needs to be rebult
+        # if the page is reloaded.
+        from feedbook.static.icons import add, admin, home, logout
+
+        resp_data["icons"] = {
+            "add": add,
+            "admin": admin,
+            "home": home,
+            "logout": logout,
+        }
+        resp = render_template(
+            "shared/layout_wrapper.html", partial=template, data=resp_data
+        )
+
+    return resp
+
+    # return render_template(
+    #     "user/user-index.html",
+    #     user=user,
+    #     standards=standards,
+    #     scores_only=scores_only,
+    #     enrollments=enrollments,
+    #     course=course,
+    # )
 
 
 # Create new standard
@@ -368,12 +400,34 @@ def get_standard_scores_in_course(course_id, standard_id):
             }
         )
 
-    return render_template(
-        "course/partials/standard_score_table.html",
-        students=results,
-        course_id=course_id,
-        standard=standard,
-    )
+    template = "course/partials/standard-score-table.html"
+    resp_data = {"students": results, "course_id": course_id, "standard": standard}
+
+    if request.htmx:
+        resp = render_template(template, **resp_data)
+    else:
+        # The sidebar is part of the template, so it needs to be rebult
+        # if the page is reloaded.
+        from feedbook.static.icons import add, admin, home, logout
+
+        resp_data["icons"] = {
+            "add": add,
+            "admin": admin,
+            "home": home,
+            "logout": logout,
+        }
+
+        resp = render_template(
+            "shared/layout_wrapper.html", partial=template, data=resp_data
+        )
+
+    return resp
+    # return render_template(
+    #     "course/partials/standard_score_table.html",
+    #     students=results,
+    #     course_id=course_id,
+    #     standard=standard,
+    # )
 
 
 # Student view
@@ -386,7 +440,27 @@ def get_student_results(course_id, user_id, standard_id):
         StandardAttempt.standard_id == standard_id
     ).order_by(StandardAttempt.occurred)
 
-    return render_template("standards/student-standard-scores.html", results=results)
+    template = "standards/student-standard-scores.html"
+    resp_data = {"results": results}
+    if request.htmx:
+        resp = render_template(template, **resp_data)
+    else:
+        # The sidebar is part of the template, so it needs to be rebult
+        # if the page is reloaded.
+        from feedbook.static.icons import add, admin, home, logout
+
+        resp_data["icons"] = {
+            "add": add,
+            "admin": admin,
+            "home": home,
+            "logout": logout,
+        }
+        resp = render_template(
+            "shared/layout_wrapper.html", partial=template, data=resp_data
+        )
+
+    return resp
+    # return render_template("standards/student-standard-scores.html", results=results)
 
 
 # Remove a standard from the course
