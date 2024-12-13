@@ -1,7 +1,9 @@
 <div
   class="item outcome {% if item.is_proficient(current_user.id) %}green{% else %}red{% endif %}"
   hx-get="{{ url_for('course.get_student_results', course_id=course_id, user_id=student_id, standard_id=item.id)}}"
-  {# hx-get="/courses/{{course_id}}/users/{{student_id}}/results/{{item.id}}" #} 
+  {#
+  hx-get="/courses/{{course_id}}/users/{{student_id}}/results/{{item.id}}"
+  #}
   hx-swap="innerHTML"
   hx-target="#student-details"
 >
@@ -23,8 +25,8 @@
       <path
         fill="#4caf50"
         d="M34.586,14.586l-13.57,13.586l-5.602-5.586l-2.828,2.828l8.434,8.414l16.395-16.414L34.586,14.586z"
-      ></path>
-    </svg>{% else %}<svg
+      ></path></svg
+    >{% else %}<svg
       xmlns="http://www.w3.org/2000/svg"
       x="0px"
       y="0px"
@@ -49,7 +51,7 @@
         fill="#fff"
         d="M18.5 10H21.5V30H18.5z"
         transform="rotate(-45.001 20 20)"
-      ></path>
-    </svg>{% endif %}
+      ></path></svg
+    >{% endif %}
   </div>
 </div>

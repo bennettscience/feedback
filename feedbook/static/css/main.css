@@ -179,8 +179,7 @@ input[type="text"] {
 }
 
 /* Placeholder for an eventual stack layout item. */
-.stack > * + *,
-section > * + * {
+.stack > * + * {
   margin-top: var(--small);
 }
 
