@@ -225,7 +225,6 @@ class Standard(db.Model):
         # attempts, why care about the test at all?
         # Is having both the key? How to reconcile students who don't _need_
         # to do all the practice?
-        breakpoint()
         if result["has_assessment"] is None and result["scores"]:
             return True
         elif result["has_assessment"]:
