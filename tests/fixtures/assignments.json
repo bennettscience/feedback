@@ -5,7 +5,8 @@
 			{
 				"id": 1,
 				"name": "Assignment 1",
-				"description": "This is an assignment."
+				"description": "This is an assignment.",
+				"assignmenttype_id": 1
 			}
 		]
 	}

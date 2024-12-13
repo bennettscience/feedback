@@ -3,12 +3,21 @@
 		"table": "assignment",
 		"records": [
 			{
-				"name": "Assignment 1",
+				"name": "Classwork",
 				"assignmenttype_id": 1
 			},
 			{
-				"name": "Assignment 2",
+				"name": "Assessment",
 				"assignmenttype_id": 2
+			}
+		]
+	},
+	{
+		"table": "assignment_standards",
+		"records": [
+			{
+				"assignment_id": 2,
+				"standard_id": 1
 			}
 		]
 	},

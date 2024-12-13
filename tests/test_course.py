@@ -187,7 +187,7 @@ class TestCourseBlueprint(TestBase):
             self.assertEqual(resp.status_code, 200)
 
             names = [template["template_name"] for template in templates]
-            self.assertIn("assignments/assignment_detail.html", names)
+            self.assertIn("assignments/assignment-detail.html", names)
 
     def test_get_create_standard_form(self):
         self.login("teacher@example.com")
@@ -208,7 +208,7 @@ class TestCourseBlueprint(TestBase):
             self.assertEqual(resp.status_code, 200)
 
             names = [template["template_name"] for template in templates]
-            self.assertIn("course/partials/standard_score_table.html", names)
+            self.assertIn("course/partials/standard-score-table.html", names)
 
     def test_get_student_results(self):
         self.login("teacher@example.com")
@@ -258,7 +258,7 @@ class TestCourseBlueprint(TestBase):
             self.assertEqual(resp.status_code, 200)
 
             context = get_template_context(
-                templates, "assignments/assignment_detail.html"
+                templates, "assignments/assignment-detail.html"
             )
 
             self.assertIsInstance(context["assignment"], Assignment)
