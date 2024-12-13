@@ -177,29 +177,26 @@ class Standard(db.Model):
         # checking student scores.
         # This is NOT a great solution to the problem of displaying progress
         # on skills before a test, but it's the best I can come up with for now.
-        has_assessment = self.assignments.filter(
-            Assignment.assignmenttype_id == 2
-        ).all()
+        # has_assessment = self.assignments.filter(
+        #     Assignment.assignmenttype_id == 2
+        # ).all()
 
-        if has_assessment:
-            query = (
-                self.attempts.join(Assignment)
-                .filter(
-                    Assignment.assignmenttype_id == 2,
-                    StandardAttempt.score == 1,
-                    StandardAttempt.user_id == user_id,
-                )
-                .order_by("occurred")
-                .all()
+        query = (
+            self.attempts.join(Assignment)
+            .filter(
+                Assignment.assignmenttype_id == 2,
+                StandardAttempt.score == 1,
+                StandardAttempt.user_id == user_id,
             )
+            .order_by("occurred")
+            .all()
+        )
 
-            # If ANY results come back, then return true
-            if len(query) > 0:
-                return True
-            else:
-                return False
+        # If ANY results come back, then return true
+        if len(query) > 0:
+            return True
         else:
-            return None
+            return False
 
     def is_proficient(self, user_id) -> bool:
         """
@@ -225,9 +222,9 @@ class Standard(db.Model):
         # attempts, why care about the test at all?
         # Is having both the key? How to reconcile students who don't _need_
         # to do all the practice?
-        if result["has_assessment"] is None and result["scores"]:
+        if result["has_assessment"]:
             return True
-        elif result["has_assessment"]:
+        elif result["scores"]:
             return True
         else:
             return False
