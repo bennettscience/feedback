@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, render_template, request
+from flask import Blueprint, current_app, jsonify, render_template, request
 from flask_login import current_user, login_required
 from htmx_flask import make_response
 from webargs import fields
@@ -46,10 +46,15 @@ def create_standard():
     db.session.add(standard)
     db.session.commit()
 
+    current_app.logger.info(
+        f"Standard {standard.name} created by User {current_user.id}"
+    )
     # Immediately align it to the course
     course = Course.query.filter(Course.id == args["course_id"]).first()
     course.align(standard)
     db.session.commit()
+
+    current_app.logger.info(f"Standard {standard.id} added to Course {course.id}")
 
     items = [
         item for item in Standard.query.all() if item not in course.standards.all()
@@ -94,6 +99,10 @@ def update_standard_status(standard_id):
 
     standard.active = not standard.active
     db.session.commit()
+
+    current_app.logger.info(
+        f"Standard {standard.id} set to {standard.active} by User {current_user.id}"
+    )
 
     value = "Deactivate" if standard.active else "Activate"
     return make_response(value, trigger={"showToast": "Standard status updated."})

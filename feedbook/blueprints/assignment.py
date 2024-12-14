@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, render_template
+from flask import Blueprint, current_app, jsonify, render_template
 from flask_login import current_user, login_required
 from htmx_flask import make_response
 from webargs import fields
@@ -43,10 +43,17 @@ def create_assignment():
     db.session.add(assignment)
     db.session.commit()
 
+    current_app.logger.info(
+        f"Assignment {assignment.id} created by User {current_user.id}"
+    )
+
     # Add the assignment to the courses requested
     for course in args["courses"]:
-        c = Course.query.filter(Course.id == course).first()
-        c.add_assignment(assignment)
+        course = Course.query.filter(Course.id == course).first()
+        course.add_assignment(assignment)
+        current_app.logger.info(
+            f"Assignment {assignment.id} added to Course {course.id}"
+        )
 
     db.session.commit()
     # Return the full list of assignments to the admin page
@@ -128,6 +135,8 @@ def edit_assignment(assignment_id):
 
     assignment = Assignment.query.filter(Assignment.id == assignment_id).first()
     assignment.update(args)
+
+    current_app.logger.info(f"Assignment {assignment.id} updated: {args}")
 
     if args.get("courses"):
         for course in args["courses"]:

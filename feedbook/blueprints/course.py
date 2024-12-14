@@ -2,7 +2,7 @@ import csv
 from io import TextIOWrapper
 from collections import defaultdict
 
-from flask import abort, Blueprint, jsonify, render_template, request
+from flask import abort, Blueprint, current_app, jsonify, render_template, request
 from flask_login import current_user, login_required
 from webargs import fields
 from webargs.flaskparser import parser
@@ -143,6 +143,7 @@ def get_single_course(id):
     if current_user.usertype_id == 2:
         template = "course/student_index.html"
         resp_data = {"course": course}
+        current_app.logger.info(f"{current_user.id} opened {course.name}")
     else:
         # prep the standard report
         results = {}
@@ -164,6 +165,7 @@ def get_single_course(id):
     if request.htmx:
         resp = render_template(template, **resp_data)
     else:
+        current_app.logger.info(f"{current_user.id} refreshed the page")
         # The sidebar is part of the template, so it needs to be rebult
         # if the page is reloaded.
         from feedbook.static.icons import add, admin, home, logout
@@ -418,6 +420,12 @@ def get_standard_scores_in_course(course_id, standard_id):
 def get_student_results(course_id, user_id, standard_id):
     from feedbook.models import StandardAttempt
 
+    if current_user.usertype_id != 1 and current_user.id != user_id:
+        current_app.logger.info(
+            f"User {current_user.id} requested results for {user_id}"
+        )
+        abort(403)
+
     results = current_user.assessments.filter(
         StandardAttempt.standard_id == standard_id
     ).order_by(StandardAttempt.occurred)
@@ -440,7 +448,9 @@ def get_student_results(course_id, user_id, standard_id):
         resp = render_template(
             "shared/layout_wrapper.html", partial=template, data=resp_data
         )
-
+    current_app.logger.info(
+        f"User {current_user.id} accessed information for standard {standard_id}"
+    )
     return resp
 
 
@@ -455,6 +465,9 @@ def remove_standard_from_course(course_id, standard_id):
     course.standards.remove(standard)
     db.session.commit()
 
+    current_app.logger.info(
+        f"User {current_user.id} removed {standard.name} from {course.name}"
+    )
     student_enrollments = (
         course.enrollments.filter(User.usertype_id == 2).order_by("last_name").all()
     )

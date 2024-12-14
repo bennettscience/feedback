@@ -1,4 +1,8 @@
-from flask import Flask
+import os
+import logging
+from logging.handlers import RotatingFileHandler
+
+from flask import Flask, has_request_context, request
 
 from config import Config
 from feedbook.extensions import db, htmx, login_manager, migrate, partials
@@ -6,9 +10,37 @@ from feedbook.blueprints import admin, assignment, auth, home, course, standard,
 from feedbook.errors import forbidden, unauthorized
 
 
+class RequestFormatter(logging.Formatter):
+    def format(self, record):
+        if has_request_context():
+            record.url = request.url
+            record.remote_addr = request.remote_addr
+        else:
+            record.url = None
+            record.remote_addr = None
+
+        return super().format(record)
+
+
 def create_app(config=Config):
     app = Flask(__name__, static_url_path="/static")
     app.config.from_object(config)
+    if not app.debug and not app.testing:
+        if not os.path.exists("logs"):
+            os.mkdir("logs")
+
+        formatter = RequestFormatter(
+            "[%(asctime)s] %(remote_addr)s requested %(url)s\n"
+            "%(levelname)s in %(module)s: %(message)s"
+        )
+        file_handler = RotatingFileHandler(
+            "logs/feedback.log", maxBytes=10240, backupCount=10
+        )
+        file_handler.setFormatter(formatter)
+        file_handler.setLevel(logging.INFO)
+        app.logger.addHandler(file_handler)
+        app.logger.setLevel(logging.INFO)
+        app.logger.info("Starting application")
 
     from feedbook import models
 
