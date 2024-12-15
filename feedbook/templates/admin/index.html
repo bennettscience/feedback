@@ -84,5 +84,36 @@
       >Assignments</a
     >
   </div>
+  <canvas id="chart"></canvas>
+  <script>
+    let data = {{ status|safe }}
+    const ctx = document.getElementById("chart").getContext("2d");
+    const chart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: data[0].results.map(item => item.name),
+        datasets: [
+          {
+            label: data[0].course,
+            data: data[0].results.map((item) => item.avg),
+            fill: false,
+          },
+          {
+            label: data[1].course,
+            data: data[1].results.map((item) => item.avg),
+            fill: false,
+          },
+          {
+            label: data[2].course,
+            data: data[2].results.map((item) => item.avg),
+            fill: false,
+          },
+        ],
+      },
+      options: {
+        tension: 0.1,
+      }
+    });
+  </script>
 </section>
 {% endblock %}
