@@ -257,13 +257,14 @@ class Standard(db.Model):
     # Only return values for students with the given course.id AND attempts for the assignment with the matching ID.
     def course_average(self, course_id):
         course_attempts = (
-            StandardAttempt.query.join(Standard)
-            .join(course_standards)
+            StandardAttempt.query.join(User, StandardAttempt.user_id == User.id)
+            .join(user_courses)
             .filter(
-                (course_standards.c.course_id == course_id)
+                (user_courses.c.course_id == course_id)
                 & (StandardAttempt.standard_id == self.id)
             )
-        ).all()
+            .all()
+        )
         if course_attempts:
             return round(mean([attempt.score for attempt in course_attempts]), 2)
         else:
