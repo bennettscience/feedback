@@ -5,7 +5,7 @@ from logging.handlers import RotatingFileHandler
 from flask import Flask, has_request_context, request
 
 from config import Config
-from feedbook.extensions import db, htmx, login_manager, migrate, partials
+from feedbook.extensions import cache, db, htmx, login_manager, migrate, partials
 from feedbook.blueprints import admin, assignment, auth, home, course, standard, user
 from feedbook.errors import forbidden, unauthorized
 
@@ -44,6 +44,7 @@ def create_app(config=Config):
 
     from feedbook import models
 
+    cache.init_app(app, {"CACHE_TYPE": "SimpleCache", "CACHE_DEFAULT_TIMEOUT": 300})
     db.init_app(app)
     htmx.init_app(app)
     migrate.init_app(app, db, render_as_batch=True)
