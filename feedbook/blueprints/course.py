@@ -156,6 +156,7 @@ def get_single_course(id):
             results[f"standard_{standard.id}"] = {
                 "proficient": count,
                 "not_proficient": len(enrollments) - count,
+                "average": round(count / len(enrollments), 2),
             }
 
         template = "course/teacher-index-htmx.html"
