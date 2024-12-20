@@ -159,11 +159,15 @@ class Standard(db.Model):
         )
         return [item.score for item in scores]
 
-    def __has_proficient_override(self, user_id) -> bool:  # pragma: no cover
+    def __has_proficient_override(self, user) -> bool:
         """
         Check for an override on proficiency from a specific user. Returns True and overrides the is_proficient calculation for a specific user.
         """
-        pass
+        query = self.students.filter(user_standards.c.user_id == user.id).count()
+        if query > 0:
+            return True
+        else:
+            return False
 
     def __has_assessment_proficient(self, user_id) -> bool:
         """
@@ -197,6 +201,14 @@ class Standard(db.Model):
             return True
         else:
             return False
+
+    def add_proficient_override(self, user):
+        if not self.__has_proficient_override(user):
+            self.students.append(user)
+        else:
+            raise Exception("Student already has already shown proficiency.")
+
+        return self
 
     def is_proficient(self, user_id) -> bool:
         """
@@ -313,6 +325,13 @@ class User(UserMixin, db.Model):
         passive_deletes=True,
     )
 
+    proficiencies = db.relationship(
+        "Standard",
+        secondary="user_standards",
+        backref=backref("students", lazy="dynamic"),
+        lazy="dynamic",
+    )
+
     def enroll(self, course):
         if not self.is_enrolled(course):
             self.enrollments.append(course)
@@ -397,5 +416,20 @@ user_courses = db.Table(
         "course_id",
         db.Integer,
         db.ForeignKey("course.id", onupdate="CASCADE", ondelete="CASCADE"),
+    ),
+)
+
+user_standards = db.Table(
+    "user_standards",
+    db.Column("id", db.Integer, primary_key=True),
+    db.Column(
+        "user_id",
+        db.Integer,
+        db.ForeignKey("user.id", onupdate="CASCADE", ondelete="CASCADE"),
+    ),
+    db.Column(
+        "standard_id",
+        db.Integer,
+        db.ForeignKey("standard.id", onupdate="CASCADE", ondelete="CASCADE"),
     ),
 )
