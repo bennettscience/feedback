@@ -252,7 +252,7 @@ class Standard(db.Model):
         else:
             return False
 
-    def current_score(self, user_id):
+    def current_score(self, user):
         """Average the last attemp with the highest attempt.
         Make sure to score by submission date, not assessed date!
         Example 1:
@@ -269,7 +269,7 @@ class Standard(db.Model):
         Returns:
             float: average
         """
-        scores = self._get_scores(user_id)
+        scores = self._get_scores(user.id)
         if len(scores) == 0:
             return None
         else:

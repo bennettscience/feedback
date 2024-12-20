@@ -114,7 +114,7 @@ def roster_upload(course_id):
     for student in student_enrollments:
         student.scores = []
         for standard in course.standards.all():
-            user_score = standard.current_score(student.id)
+            user_score = standard.current_score(student)
             student.scores.append({"standard_id": standard.id, "score": user_score})
 
     return render_template(
@@ -475,7 +475,7 @@ def remove_standard_from_course(course_id, standard_id):
     for student in student_enrollments:
         student.scores = []
         for standard in course.standards.all():
-            user_score = standard.current_score(student.id)
+            user_score = standard.current_score(student)
             student.scores.append({"standard_id": standard.id, "score": user_score})
 
     return render_template(

@@ -2,7 +2,7 @@ from feedbook.extensions import db
 
 from tests.loader import Loader
 from tests.utils import TestBase, captured_templates, get_template_context
-from feedbook.models import Course, Standard, StandardAttempt
+from feedbook.models import Course, Standard, StandardAttempt, User
 
 
 class TestStandardModel(TestBase):
@@ -18,6 +18,7 @@ class TestStandardModel(TestBase):
             "standards.json",
             "standard_assessments.json",
             "course_standards.json",
+            "users.json",
         ]
 
         # Now that we're in context, we can load the database.
@@ -35,14 +36,17 @@ class TestStandardModel(TestBase):
 
     # return list of scores
     def test_get_scores(self):
+        user = db.session.get(User, 2)
         standard = db.session.get(Standard, 1)
-        results = standard._Standard__get_scores(2)
+        # _get_scores requires the user ID, not the entire user.
+        results = standard._get_scores(user.id)
         self.assertEqual(results, [1, 0])
 
     # calculate student proficiency on scores alone
     def test_is_proficient(self):
+        user = db.session.get(User, 2)
         standard = db.session.get(Standard, 1)
-        result = standard.is_proficient(2)
+        result = standard.is_proficient(user)
         self.assertFalse(result)
 
     # Calculate proficiency when one assessment is a test
@@ -50,14 +54,16 @@ class TestStandardModel(TestBase):
         self.loader.insert(["proficient_by_assessment.json"])
         self.loader.load()
 
+        user = db.session.get(User, 2)
         standard = db.session.get(Standard, 1)
-        result = standard.is_proficient(2)
+        result = standard.is_proficient(user)
         self.assertTrue(result)
 
     # calculate the score for a given standard
     def test_current_score(self):
+        user = db.session.get(User, 2)
         standard = db.session.get(Standard, 1)
-        result = standard.current_score(2)
+        result = standard.current_score(user)
         self.assertEqual(result, 0.5)
 
     # show the course average on proficiency
@@ -80,6 +86,7 @@ class TestStandardBlueprint(TestBase):
 
         fixtures = [
             "assignments.json",
+            "assignment_types.json",
             "courses.json",
             "standards.json",
             "standard_assessments.json",
