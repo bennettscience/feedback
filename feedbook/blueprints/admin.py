@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 from htmx_flask import make_response
 
 from feedbook.extensions import cache, db
-from feedbook.models import Course, Standard, User
+from feedbook.models import Course, Standard, User, user_courses
 from feedbook.static.icons import *
 from feedbook.wrappers import restricted
 
@@ -11,7 +11,6 @@ bp = Blueprint("admin", __name__)
 
 
 @bp.get("/admin")
-@cache.cached()
 @login_required
 @restricted
 def index():
@@ -25,27 +24,19 @@ def index():
     # For each course, build an array of all of the standards
     for course in courses:
         standard_results = []
-        enrollments = course.enrollments.filter(User.usertype_id == 2).all()
+        enrollments = course.enrollments.filter(User.usertype_id == 2).count()
         for standard in course.standards.all():
-            count = 0
-            total = len(enrollments)
-            for student in enrollments:
-                if standard.is_proficient(student.id):
-                    count = count + 1
-            standard_results.append(
-                {"name": standard.name, "avg": round(count / total, 2)}
+            # Filter the students array on the standard and count how many
+            # are in the current course through the user_courses table
+            count = (
+                standard.students.join(user_courses)
+                .filter(user_courses.c.course_id == course.id)
+                .count()
             )
-        #     results[f"standard_{standard.id}"] = {
-        #         "proficient": count,
-        #         "not_proficient": len(enrollments) - count,
-        #         "average": round(count / len(enrollments), 2),
-        #     }
-        # standard_results = []
-        # standards = course.standards.all()
-        # for standard in standards:
-        #     standard_results.append(
-        #         {"name": standard.name, "avg": standard.course_average(course.id)}
-        #     )
+            # Divide that count by the enrollment length variable
+            standard_results.append(
+                {"name": standard.name, "avg": round(count / enrollments, 2)}
+            )
         data.append({"course": course.name, "results": standard_results})
 
     icons = {"home": home, "add": add, "admin": admin, "logout": logout}
