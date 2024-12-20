@@ -166,16 +166,18 @@ def add_standard_assessment(standard_id):
     db.session.add(sa)
     db.session.commit()
 
-    user = User.query.filter(User.id == args["user_id"]).first()
-
-    user.assessments = user.assessments.filter(
-        StandardAttempt.standard_id == standard_id
-    )
+    # If the assignment is a test, add a record on the
+    # student proficiencies
+    if sa.assessed_on.type.name == "Assessment":
+        sa.standard.add_proficient_override(sa.user)
+        current_app.logger.info(
+            "Added proficiency record on {} for {}".format(sa.standard, args["user_id"])
+        )
 
     return render_template(
         "standards/student-updated.html",
         record=sa,
-        name=f"{user.last_name}, {user.first_name}",
+        name=f"{sa.user.last_name}, {sa.user.first_name}",
     )
 
 
