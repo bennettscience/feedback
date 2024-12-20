@@ -13,7 +13,7 @@ function formatDate(target, strDate) {
   return new Intl.DateTimeFormat("en", formats[target]).format(date);
 }
 
-function showToast(msg = "Loading...", timeout = 5000, err = false) {
+function showToast(msg = "Loading...", err = false) {
   const toast = document.querySelector(`#toast`);
   // Handle message objects from hyperscript
   // For non-template returns, the backend will also return JSON with
@@ -31,11 +31,10 @@ function showToast(msg = "Loading...", timeout = 5000, err = false) {
   toast.classList.add("show");
   setTimeout(() => {
     toast.classList.remove("show");
-    toast.children[0].innerText = "Loading...";
     if (err) {
       toast.classList.remove("error");
     }
-  }, timeout);
+  }, 5000);
 }
 
 function cancelToast() {
@@ -46,8 +45,9 @@ function cancelToast() {
 }
 
 // Listen for toast messaging from the server
-htmx.on("showToast", (evt) => {
-  showToast(evt.detail.value);
+htmx.on("showToast", (event) => {
+  let { msg, err } = event.detail;
+  showToast(msg, err);
 });
 
 // TODO: Doesn't run after hard refresh?

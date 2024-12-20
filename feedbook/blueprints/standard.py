@@ -5,7 +5,7 @@ from webargs import fields
 from webargs.flaskparser import parser
 
 from feedbook.extensions import db
-from feedbook.models import Standard, StandardAttempt
+from feedbook.models import Standard, StandardAttempt, User
 from feedbook.schemas import StandardSchema, StandardListSchema
 from feedbook.wrappers import restricted
 
@@ -178,6 +178,27 @@ def add_standard_assessment(standard_id):
         "standards/student-updated.html",
         record=sa,
         name=f"{sa.user.last_name}, {sa.user.first_name}",
+    )
+
+
+@bp.post("/standards/<int:standard_id>/override")
+@login_required
+@restricted
+def post_standard_override(standard_id):
+    args = parser.parse({"user_id": fields.Int()}, location="query")
+
+    standard = Standard.query.filter(Standard.id == standard_id).first()
+    user = User.query.filter(User.id == args["user_id"]).first()
+
+    msg, resp_code = standard.add_proficient_override(user)
+    print(msg, resp_code)
+    if resp_code != 200:
+        is_error = True
+    else:
+        is_error = False
+
+    return make_response(
+        trigger={"showToast": {"msg": msg, "timeout": 5000, "err": is_error}}
     )
 
 

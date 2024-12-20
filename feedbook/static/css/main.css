@@ -127,6 +127,19 @@ input[type="text"] {
   margin: 0;
 }
 
+.form-row:has(input[type="checkbox"]:disabled) {
+  background-image: linear-gradient(
+    -45deg,
+    var(--secondary-color) 25%,
+    transparent 25%,
+    transparent 50%,
+    var(--secondary-color) 50%,
+    var(--secondary-color) 75%,
+    transparent 75%,
+    transparent
+  );
+}
+
 .align-check {
   appearance: none;
 }
@@ -138,7 +151,6 @@ input[type="text"] {
   width: 100%;
   top: 0;
   left: 0;
-  cursor: pointer;
   border: 1px solid transparent;
 }
 
@@ -670,8 +682,14 @@ btn:focus {
 
 .student-summary-standard-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 3rem;
+}
+
+.student-summary-standard-header > span {
+  flex-grow: 0;
+  flex-basis: max-content;
 }
 
 .standard-status {
@@ -856,7 +874,7 @@ td {
 .scroller td:not(:first-child):hover {
   background-color: rgba(0, 0, 0, 0.05);
   border-color: rgba(0, 0, 0, 0.25);
-  cursor: pointer;
+  cursor: pointer:;
 }
 
 .details-wrap {
@@ -954,10 +972,15 @@ td {
   opacity: 1;
 }
 
-#toast.htmx-request.htmx-indicator.error {
+#toast .htmx-request.htmx-indicator.error {
   background-color: var(--warn-color);
   border-color: transparent;
   width: auto;
+}
+
+#toast.error {
+  background-color: var(--warn-color);
+  border-color: transparent;
 }
 
 .tooltip {

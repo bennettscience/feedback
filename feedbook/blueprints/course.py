@@ -151,7 +151,7 @@ def get_single_course(id):
         for standard in course.standards.all():
             count = 0
             for student in enrollments:
-                if standard.is_proficient(student.id):
+                if standard.is_proficient(student):
                     count = count + 1
             results[f"standard_{standard.id}"] = {
                 "proficient": count,
@@ -297,7 +297,8 @@ def get_user(course_id):
     standards = defaultdict(dict)
 
     for a in user.assessments.all():
-        standards[a.standard.name]["is_proficient"] = a.standard.is_proficient(user.id)
+        standards[a.standard.name]["is_proficient"] = a.standard.is_proficient(user)
+        standards[a.standard.name]["id"] = a.standard.id
         standards[a.standard.name].setdefault("assessments", []).append(
             {
                 "assignment": a.assessed_on,
