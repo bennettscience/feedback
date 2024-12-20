@@ -11,15 +11,18 @@
 {% for key, values in standards.items()|sort(attribute="0", reverse=True) %}
 <div class="student-summary-standard-header">
 	<h2 id="{{key}}">{{key}}</h2>
-  <span class="box flex form-row">
-    <input 
+  <span class="box flex">
+		{% if values["is_proficient"] %}
+		Proficient
+		{% else %}
+		<button
+			class="btn btn-secondary"
 			hx-post="/standards/{{values['id']}}/override?user_id={{user.id}}"
 			hx-trigger="click"
-			type="checkbox" 
-			class="align-check" 
-			name="proficient_override" 
-			{% if values['is_proficient'] %}checked disabled{% endif %}/>
-    <label for="proficient_override">{% if values['is_proficient'] %}Proficient{% else %}Override?{% endif %}</label>
+			hx-target="closest span"
+			hx-swap="innerHTML"
+			>Mark as proficient</button>
+		{% endif %}
   </span>
 </div>
 <table class="user-summary">

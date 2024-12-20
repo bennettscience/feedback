@@ -191,14 +191,14 @@ def post_standard_override(standard_id):
     user = User.query.filter(User.id == args["user_id"]).first()
 
     msg, resp_code = standard.add_proficient_override(user)
-    print(msg, resp_code)
     if resp_code != 200:
         is_error = True
     else:
         is_error = False
 
     return make_response(
-        trigger={"showToast": {"msg": msg, "timeout": 5000, "err": is_error}}
+        "Proficient",
+        trigger={"showToast": {"msg": msg, "timeout": 5000, "err": is_error}},
     )
 
 
