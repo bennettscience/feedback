@@ -151,7 +151,7 @@ class Standard(db.Model):
     def __repr__(self):
         return self.name
 
-    def __get_scores(self, user_id):
+    def _get_scores(self, user_id):
         scores = (
             self.attempts.filter(StandardAttempt.user_id == user_id)
             .order_by("occurred")
@@ -159,17 +159,16 @@ class Standard(db.Model):
         )
         return [item.score for item in scores]
 
-    def __has_proficient_override(self, user) -> bool:
+    def _has_proficient_override(self, user) -> bool:
         """
         Check for an override on proficiency from a specific user. Returns True and overrides the is_proficient calculation for a specific user.
         """
         query = self.students.filter(user_standards.c.user_id == user.id).count()
         if query > 0:
             return True
-        else:
-            return False
+        return False
 
-    def __has_assessment_proficient(self, user_id) -> bool:
+    def _has_assessment_proficient(self, user) -> bool:
         """
         Check for a passed assessment on the current standard in the student's results.
         """
@@ -190,7 +189,7 @@ class Standard(db.Model):
             .filter(
                 Assignment.assignmenttype_id == 2,
                 StandardAttempt.score == 1,
-                StandardAttempt.user_id == user_id,
+                StandardAttempt.user_id == user.id,
             )
             .order_by("occurred")
             .all()
@@ -203,14 +202,25 @@ class Standard(db.Model):
             return False
 
     def add_proficient_override(self, user):
-        if not self.__has_proficient_override(user):
+        if not self._has_proficient_override(user):
             self.students.append(user)
+            db.session.commit()
         else:
-            raise Exception("Student already has already shown proficiency.")
+            return (
+                "{} already has an override for {}".format(
+                    f"{user.first_name} {user.last_name}", self.name
+                ),
+                409,
+            )
 
-        return self
+        return (
+            "Added proficient record for {}".format(
+                f"{user.first_name} {user.last_name}"
+            ),
+            200,
+        )
 
-    def is_proficient(self, user_id) -> bool:
+    def is_proficient(self, user) -> bool:
         """
         Determine if a user is showing mastery on a standard.
 
@@ -219,12 +229,13 @@ class Standard(db.Model):
         2. More 1's than 0's in the assessment objects AND a true assessment, otherwise false
         """
         # Get a count of 1's and 0's for the user
-        scores = self.__get_scores(user_id)
+        scores = self._get_scores(user.id)
         counts = Counter(scores)
 
         # Build a dict for the user with the different conditions.
         result = {
-            "has_assessment": self.__has_assessment_proficient(user_id),
+            "has_assessment": self._has_assessment_proficient(user),
+            "has_override": self._has_proficient_override(user),
             "scores": counts[1] > counts[0],
         }
 
@@ -234,7 +245,7 @@ class Standard(db.Model):
         # attempts, why care about the test at all?
         # Is having both the key? How to reconcile students who don't _need_
         # to do all the practice?
-        if result["has_assessment"]:
+        if result["has_assessment"] or result["has_override"]:
             return True
         elif result["scores"]:
             return True
@@ -258,7 +269,7 @@ class Standard(db.Model):
         Returns:
             float: average
         """
-        scores = self.__get_scores(user_id)
+        scores = self._get_scores(user_id)
         if len(scores) == 0:
             return None
         else:
