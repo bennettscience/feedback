@@ -15,6 +15,7 @@ from feedbook.models import (
     Standard,
     StandardAttempt,
     User,
+    user_courses,
 )
 from feedbook.schemas import CourseSchema, StandardListSchema
 from feedbook.wrappers import templated, restricted
@@ -149,10 +150,11 @@ def get_single_course(id):
         results = {}
         enrollments = course.enrollments.filter(User.usertype_id == 2).all()
         for standard in course.standards.all():
-            count = 0
-            for student in enrollments:
-                if standard.is_proficient(student):
-                    count = count + 1
+            count = (
+                standard.students.join(user_courses)
+                .filter(user_courses.c.course_id == course.id)
+                .count()
+            )
             results[f"standard_{standard.id}"] = {
                 "proficient": count,
                 "not_proficient": len(enrollments) - count,

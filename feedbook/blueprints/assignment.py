@@ -42,10 +42,6 @@ def create_assignment():
     assignment = Assignment(name=args["name"], assignmenttype_id=args["type_id"])
     db.session.add(assignment)
 
-    current_app.logger.info(
-        f"Assignment {assignment.id} created by User {current_user.id}"
-    )
-
     # Add the assignment to the courses requested
     for course in args["courses"]:
         course = Course.query.filter(Course.id == course).first()
@@ -55,6 +51,9 @@ def create_assignment():
         )
 
     db.session.commit()
+    current_app.logger.info(
+        f"Assignment {assignment.id} created by User {current_user.id}"
+    )
     # Return the full list of assignments to the admin page
     assignments = db.session.scalars(db.select(Assignment)).all()
     current_course = db.session.get(Course, args["current_course_id"])

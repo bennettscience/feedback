@@ -43,7 +43,7 @@
   </div>
 </div>
 <div id="context-detail" class="stack">
-  <section class="box flex" id="standards-list">
+  <section class="box grid" id="standards-list">
     {% for standard in course.standards %} {% if standard.active %}
     {{render_partial('standards/standard-card.html', item=standard,
     course_id=course.id, results=results["standard_{}".format(standard.id)])}}

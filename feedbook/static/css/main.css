@@ -208,6 +208,15 @@ input[type="text"] {
   align-items: stretch;
 }
 
+.box.grid {
+  display: grid;
+}
+
+.box.grid#standards-list {
+  grid-template-columns: repeat(3, auto);
+  gap: var(--small);
+}
+
 .box.flex.form-row {
   align-items: center;
 }
@@ -233,10 +242,6 @@ input[type="text"] {
 .box.inverted {
   background-color: var(--primary-color);
   color: var(--white);
-}
-
-#standards-list > .item {
-  flex-basis: 30ch;
 }
 
 .container--flex {
@@ -582,6 +587,10 @@ btn:focus {
   position: relative;
   flex: 1 1 0;
   border: 1px solid var(--secondary-color);
+}
+
+.outcome:last-child {
+  flex-grow: 0;
 }
 
 .outcome > .standard-status {
