@@ -60,29 +60,38 @@
 </section>
 {% endblock %} #} {% block main_content %}
 <section id="detail">
-  <div class="admin-nav">
-    <h1>Admin</h1>
-    <a
-      hx-get="{{ url_for('standard.index') }}"
-      hx-target="#detail"
-      hx-swap="innerHTML"
-      hx-boost="true"
-      >Standards</a
-    >
-    <a
-      hx-get="{{ url_for('user.index')}}"
-      hx-target="#detail"
-      hx-swap="innerHTML"
-      hx-boost="true"
-      >Users</a
-    >
-    <a
-      hx-get="{{ url_for('assignment.index')}}"
-      hx-target="#detail"
-      hx-swap="innerHTML"
-      hx-boost="true"
-      >Assignments</a
-    >
+  <div class="admin-header">
+    <div class="actions-container">
+      <h1>Admin</h1>
+      <button
+        class="btn"
+        hx-get="{{ url_for('standard.index') }}"
+        hx-target="#detail"
+        hx-swap="innerHTML"
+        hx-boost="true"
+        hx-push-url="true"
+      >
+        Standards
+      </button>
+      <button
+        class="btn"
+        hx-get="{{ url_for('user.index')}}"
+        hx-target="#detail"
+        hx-swap="innerHTML"
+        hx-boost="true"
+      >
+        Users
+      </button>
+      <button
+        class="btn"
+        hx-get="{{ url_for('assignment.index')}}"
+        hx-target="#detail"
+        hx-swap="innerHTML"
+        hx-boost="true"
+      >
+        Assignments
+      </button>
+    </div>
   </div>
   <canvas id="chart"></canvas>
   <script>
@@ -111,12 +120,17 @@
         ],
       },
       options: {
-        tension: 0.1,
+        plugins: {
+          legend: {
+            position: "right"
+          }
+        },
         scales: {
           y: {
             beginAtZero: true,
           }
-        }
+        },
+        tension: 0.1,
       }
     });
   </script>

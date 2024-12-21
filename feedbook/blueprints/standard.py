@@ -5,7 +5,7 @@ from webargs import fields
 from webargs.flaskparser import parser
 
 from feedbook.extensions import db
-from feedbook.models import Standard, StandardAttempt, User
+from feedbook.models import Course, Standard, StandardAttempt
 from feedbook.schemas import StandardSchema, StandardListSchema
 from feedbook.wrappers import restricted
 
@@ -75,15 +75,35 @@ def create_standard():
 
 
 # Get a single standard
-# 11/2024 - Not in use
 @bp.get("/standards/<int:standard_id>")
 @login_required
-def get_single_standard(id):  # pragma: no cover
+def get_single_standard(standard_id):  # pragma: no cover
     # TODO: Add in stats
     # Get all the attempts
     # Sort by class
     # Graph showing breakdown of average score for each course section
-    pass
+    from feedbook.models import User, user_courses
+
+    courses = Course.query.all()
+    results = []
+    for course in courses:
+        enrollments = course.enrollments.filter(User.usertype_id == 2).count()
+        standard = course.standards.filter(Standard.id == standard_id).first()
+
+        count = (
+            standard.students.join(user_courses)
+            .filter(user_courses.c.course_id == course.id)
+            .count()
+        )
+
+        results.append(
+            {
+                "avg": round(count / enrollments, 2),
+                "course": course.name,
+            }
+        )
+
+    return make_response(trigger={"buildChart": results})
 
 
 # Set the active/inactive status on a single standard
