@@ -1,0 +1,16 @@
+<tr>
+  <td>
+    <a
+      hx-get="{{ url_for('course.get_single_assignment', course_id=course.id, assignment_id=assignment.id)}}"
+      hx-target="#context-detail"
+      hx-swap="innerHTML show:top"
+      hx-push-url="true"
+      >{{ assignment.name }}</a
+    >
+  </td>
+  <td>{{ assignment.course_average(course) }}</td>
+  <td>
+    {% for item in assignment.alignments %}
+    <span class="box inverted pill">{{ item.name }}</span> {% endfor %}
+  </td>
+</tr>
