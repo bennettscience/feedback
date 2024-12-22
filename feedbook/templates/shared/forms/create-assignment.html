@@ -1,8 +1,8 @@
 <form
   hx-trigger="submit"
   hx-post="/assignments"
-  hx-swap="innerHTML"
-  hx-target="#assignments-list"
+  hx-swap="afterbegin"
+  hx-target="#assignments-list>table>tbody"
   _="on htmx:afterRequest reset() me"
 >
   <input type="hidden" name="current_course_id" value="{{course_id}}" />

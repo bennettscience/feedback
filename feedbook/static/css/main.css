@@ -127,6 +127,19 @@ input[type="text"] {
   margin: 0;
 }
 
+.form-row:has(input[type="checkbox"]:disabled) {
+  background-image: linear-gradient(
+    -45deg,
+    var(--secondary-color) 25%,
+    transparent 25%,
+    transparent 50%,
+    var(--secondary-color) 50%,
+    var(--secondary-color) 75%,
+    transparent 75%,
+    transparent
+  );
+}
+
 .align-check {
   appearance: none;
 }
@@ -138,7 +151,6 @@ input[type="text"] {
   width: 100%;
   top: 0;
   left: 0;
-  cursor: pointer;
   border: 1px solid transparent;
 }
 
@@ -196,6 +208,42 @@ input[type="text"] {
   align-items: stretch;
 }
 
+/* Set grids */
+.box.grid {
+  display: grid;
+}
+
+.box.grid#standards-list {
+  grid-template-columns: repeat(3, auto);
+  gap: var(--small);
+}
+
+.box.grid#admin-standards {
+  grid-template-columns: auto 1fr;
+}
+
+#admin-standards {
+  max-height: 100vh;
+}
+
+#admin-details {
+  position: relative;
+  max-width: 100%;
+  width: 100%;
+  overflow: hidden;
+  position: sticky;
+  top: 0;
+  align-self: start;
+}
+
+#admin-standards:first-child {
+  overflow-y: scroll
+}
+
+#admin-standards > #admin-details {
+  overflow: hidden;
+}
+
 .box.flex.form-row {
   align-items: center;
 }
@@ -221,10 +269,6 @@ input[type="text"] {
 .box.inverted {
   background-color: var(--primary-color);
   color: var(--white);
-}
-
-#standards-list > .item {
-  flex-basis: 30ch;
 }
 
 .container--flex {
@@ -525,8 +569,13 @@ btn:focus {
   cursor: pointer;
 }
 
-.item.active {
+.course-item.active,
+.nav-item.active {
   background-color: var(--primary-light-1);
+}
+
+.outcome.active {
+  border: solid 2px var(--primary-color);
 }
 
 .item.outcome > * + * {
@@ -569,7 +618,11 @@ btn:focus {
 .outcome {
   position: relative;
   flex: 1 1 0;
-  border: 1px solid var(--secondary-color);
+  border: 2px solid var(--secondary-color);
+}
+
+.outcome:last-child {
+  flex-grow: 0;
 }
 
 .outcome > .standard-status {
@@ -599,13 +652,15 @@ btn:focus {
   align-items: center;
 }
 
-.course-header {
+.course-header,
+.admin-header {
   display: grid;
   grid-template-rows: auto auto;
   grid-template-areas: "title" "actions";
 }
 
-.course-header .course-actions-container {
+.course-header .actions-container,
+.admin-header .actions-container {
   grid-area: actions;
   height: auto;
   position: relative;
@@ -670,8 +725,14 @@ btn:focus {
 
 .student-summary-standard-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 3rem;
+}
+
+.student-summary-standard-header > span {
+  flex-grow: 0;
+  flex-basis: max-content;
 }
 
 .standard-status {
@@ -856,7 +917,7 @@ td {
 .scroller td:not(:first-child):hover {
   background-color: rgba(0, 0, 0, 0.05);
   border-color: rgba(0, 0, 0, 0.25);
-  cursor: pointer;
+  cursor: pointer:;
 }
 
 .details-wrap {
@@ -954,10 +1015,15 @@ td {
   opacity: 1;
 }
 
-#toast.htmx-request.htmx-indicator.error {
+#toast .htmx-request.htmx-indicator.error {
   background-color: var(--warn-color);
   border-color: transparent;
   width: auto;
+}
+
+#toast.error {
+  background-color: var(--warn-color);
+  border-color: transparent;
 }
 
 .tooltip {

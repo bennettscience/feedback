@@ -1,7 +1,7 @@
-<div class="box flex">
-  <div>
+<div class="box grid" id="admin-standards">
+  <div class="box stack">
     {% for standard in standards %}
-    <div class="outcome">
+    <div class="item outcome">
       <h2>{{ standard.name }}</h2>
       <div class="actions">
         <button
@@ -11,12 +11,46 @@
         >
           {% if standard.active %}Deactivate{% else %}Activate{% endif %}
         </button>
-        <button>Get data</button>
+        <button
+          class="btn btn-secondary"
+          hx-get="{{ url_for('standard.get_single_standard', standard_id=standard.id)}}"
+          hx-swap="none"
+          _="on click remove .active from .outcome then add .active to the closest parent .outcome"
+        >
+          Get data
+        </button>
       </div>
     </div>
     {% endfor %}
   </div>
-  <div>
-    <h1>Right side</h1>
+  <div class="box" id="admin-details">
+    <canvas id="chart"></canvas>
   </div>
 </div>
+<script>
+  htmx.on("buildChart", (vals) => {
+    function parseData(data) {
+      return data.map((course) => {
+        return {
+          label: course.name,
+          data: course.assignments.map((a) => a.avg),
+        };
+      });
+    }
+
+    if (this.chart instanceof Chart) {
+      this.chart.destroy();
+    }
+    let results = vals.detail.value;
+    let ctx = document.querySelector(`#chart`).getContext(`2d`);
+
+    let data = {
+      labels: results[0].assignments.map((item) => item.assignment),
+      datasets: parseData(results),
+    };
+    this.chart = new Chart(ctx, {
+      type: "line",
+      data: data,
+    });
+  });
+</script>

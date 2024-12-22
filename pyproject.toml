@@ -14,6 +14,7 @@ dependencies = [
     "webargs>=8.3.0",
     "jinja_partials>=0.1.1",
     "htmx_flask>=0.1.0",
+    "flask-caching>=2.3.0",
 ]
 requires-python = ">= 3.9.14"
 

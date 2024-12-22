@@ -151,7 +151,7 @@ class Standard(db.Model):
     def __repr__(self):
         return self.name
 
-    def __get_scores(self, user_id):
+    def _get_scores(self, user_id):
         scores = (
             self.attempts.filter(StandardAttempt.user_id == user_id)
             .order_by("occurred")
@@ -159,13 +159,16 @@ class Standard(db.Model):
         )
         return [item.score for item in scores]
 
-    def __has_proficient_override(self, user_id) -> bool:  # pragma: no cover
+    def _has_proficient_override(self, user) -> bool:
         """
         Check for an override on proficiency from a specific user. Returns True and overrides the is_proficient calculation for a specific user.
         """
-        pass
+        query = self.students.filter(user_standards.c.user_id == user.id).count()
+        if query > 0:
+            return True
+        return False
 
-    def __has_assessment_proficient(self, user_id) -> bool:
+    def _has_assessment_proficient(self, user) -> bool:
         """
         Check for a passed assessment on the current standard in the student's results.
         """
@@ -186,7 +189,7 @@ class Standard(db.Model):
             .filter(
                 Assignment.assignmenttype_id == 2,
                 StandardAttempt.score == 1,
-                StandardAttempt.user_id == user_id,
+                StandardAttempt.user_id == user.id,
             )
             .order_by("occurred")
             .all()
@@ -198,7 +201,26 @@ class Standard(db.Model):
         else:
             return False
 
-    def is_proficient(self, user_id) -> bool:
+    def add_proficient_override(self, user):
+        if not self._has_proficient_override(user):
+            self.students.append(user)
+            db.session.commit()
+        else:
+            return (
+                "{} already has an override for {}".format(
+                    f"{user.first_name} {user.last_name}", self.name
+                ),
+                409,
+            )
+
+        return (
+            "Added proficient record for {}".format(
+                f"{user.first_name} {user.last_name}"
+            ),
+            200,
+        )
+
+    def is_proficient(self, user) -> bool:
         """
         Determine if a user is showing mastery on a standard.
 
@@ -207,12 +229,13 @@ class Standard(db.Model):
         2. More 1's than 0's in the assessment objects AND a true assessment, otherwise false
         """
         # Get a count of 1's and 0's for the user
-        scores = self.__get_scores(user_id)
+        scores = self._get_scores(user.id)
         counts = Counter(scores)
 
         # Build a dict for the user with the different conditions.
         result = {
-            "has_assessment": self.__has_assessment_proficient(user_id),
+            "has_assessment": self._has_assessment_proficient(user),
+            "has_override": self._has_proficient_override(user),
             "scores": counts[1] > counts[0],
         }
 
@@ -222,14 +245,14 @@ class Standard(db.Model):
         # attempts, why care about the test at all?
         # Is having both the key? How to reconcile students who don't _need_
         # to do all the practice?
-        if result["has_assessment"]:
+        if result["has_assessment"] or result["has_override"]:
             return True
         elif result["scores"]:
             return True
         else:
             return False
 
-    def current_score(self, user_id):
+    def current_score(self, user):
         """Average the last attemp with the highest attempt.
         Make sure to score by submission date, not assessed date!
         Example 1:
@@ -246,7 +269,7 @@ class Standard(db.Model):
         Returns:
             float: average
         """
-        scores = self.__get_scores(user_id)
+        scores = self._get_scores(user.id)
         if len(scores) == 0:
             return None
         else:
@@ -257,13 +280,14 @@ class Standard(db.Model):
     # Only return values for students with the given course.id AND attempts for the assignment with the matching ID.
     def course_average(self, course_id):
         course_attempts = (
-            StandardAttempt.query.join(Standard)
-            .join(course_standards)
+            StandardAttempt.query.join(User, StandardAttempt.user_id == User.id)
+            .join(user_courses)
             .filter(
-                (course_standards.c.course_id == course_id)
+                (user_courses.c.course_id == course_id)
                 & (StandardAttempt.standard_id == self.id)
             )
-        ).all()
+            .all()
+        )
         if course_attempts:
             return round(mean([attempt.score for attempt in course_attempts]), 2)
         else:
@@ -311,6 +335,13 @@ class User(UserMixin, db.Model):
         backref=backref("user", single_parent=True),
         lazy="dynamic",
         passive_deletes=True,
+    )
+
+    proficiencies = db.relationship(
+        "Standard",
+        secondary="user_standards",
+        backref=backref("students", lazy="dynamic"),
+        lazy="dynamic",
     )
 
     def enroll(self, course):
@@ -397,5 +428,20 @@ user_courses = db.Table(
         "course_id",
         db.Integer,
         db.ForeignKey("course.id", onupdate="CASCADE", ondelete="CASCADE"),
+    ),
+)
+
+user_standards = db.Table(
+    "user_standards",
+    db.Column("id", db.Integer, primary_key=True),
+    db.Column(
+        "user_id",
+        db.Integer,
+        db.ForeignKey("user.id", onupdate="CASCADE", ondelete="CASCADE"),
+    ),
+    db.Column(
+        "standard_id",
+        db.Integer,
+        db.ForeignKey("standard.id", onupdate="CASCADE", ondelete="CASCADE"),
     ),
 )

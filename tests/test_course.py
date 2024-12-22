@@ -174,9 +174,9 @@ class TestCourseBlueprint(TestBase):
                     context = get_template_context(
                         templates, "course/teacher-index-htmx.html"
                     )
-                    self.assertEqual(len(context["enrollments"]), 1)
+                    self.assertEqual(len(context["enrollments"]), 2)
                     self.assertEqual(
-                        context["results"]["standard_1"]["not_proficient"], 1
+                        context["results"]["standard_1"]["not_proficient"], 2
                     )
 
     def test_get_assignment_from_course(self):

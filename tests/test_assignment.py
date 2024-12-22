@@ -53,7 +53,7 @@ class TestUserModel(TestBase):
 
         course_average = assignment.course_average(course)
 
-        self.assertEqual(course_average, 0.5)
+        self.assertEqual(course_average, 0.67)
 
 
 class TestAssignmentBlueprint(TestBase):
@@ -105,13 +105,12 @@ class TestAssignmentBlueprint(TestBase):
         with captured_templates(self.app) as templates:
             resp = self.client.post("/assignments", data=data)
             context = get_template_context(
-                templates, "assignments/assignment-list.html"
+                templates, "assignments/assignment-list-item.html"
             )
 
             self.assertEqual(resp.status_code, 200)
             self.assertTrue(resp.headers["HX-Trigger"])
-            self.assertIsInstance(context["assignments"], list)
-            self.assertIsInstance(context["assignments"][0], Assignment)
+            self.assertIsInstance(context["assignment"], Assignment)
             self.assertIsInstance(context["course"], Course)
 
     def test_get_create_assignment_form(self):

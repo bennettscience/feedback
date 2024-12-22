@@ -41,11 +41,6 @@ def create_assignment():
     # Assignments don't need to be added to a specific course becuase any assignment can be attached to a standard attempt.
     assignment = Assignment(name=args["name"], assignmenttype_id=args["type_id"])
     db.session.add(assignment)
-    db.session.commit()
-
-    current_app.logger.info(
-        f"Assignment {assignment.id} created by User {current_user.id}"
-    )
 
     # Add the assignment to the courses requested
     for course in args["courses"]:
@@ -56,17 +51,23 @@ def create_assignment():
         )
 
     db.session.commit()
+    current_app.logger.info(
+        f"Assignment {assignment.id} created by User {current_user.id}"
+    )
     # Return the full list of assignments to the admin page
     assignments = db.session.scalars(db.select(Assignment)).all()
     current_course = db.session.get(Course, args["current_course_id"])
 
     return make_response(
         render_template(
-            "assignments/assignment-list.html",
-            assignments=assignments,
+            "assignments/assignment-list-item.html",
+            assignment=assignment,
             course=current_course,
         ),
-        trigger={"showToast": "Assignment added", "closeModal": True},
+        trigger={
+            "showToast": {"msg": "Assignment added", "err": False},
+            "closeModal": True,
+        },
     )
 
 

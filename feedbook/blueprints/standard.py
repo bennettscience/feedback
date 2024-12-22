@@ -5,7 +5,7 @@ from webargs import fields
 from webargs.flaskparser import parser
 
 from feedbook.extensions import db
-from feedbook.models import Standard, StandardAttempt
+from feedbook.models import Course, Standard, StandardAttempt
 from feedbook.schemas import StandardSchema, StandardListSchema
 from feedbook.wrappers import restricted
 
@@ -75,15 +75,46 @@ def create_standard():
 
 
 # Get a single standard
-# 11/2024 - Not in use
 @bp.get("/standards/<int:standard_id>")
 @login_required
-def get_single_standard(id):  # pragma: no cover
-    # TODO: Add in stats
+def get_single_standard(standard_id):  # pragma: no cover
     # Get all the attempts
     # Sort by class
     # Graph showing breakdown of average score for each course section
-    pass
+    from statistics import mean
+    from feedbook.models import User, user_courses
+
+    courses = Course.query.all()
+    results = []
+
+    for course in courses:
+        course_results = {
+            "name": course.name,
+            "assignments": [],
+        }
+        enrollments = course.enrollments.filter(User.usertype_id == 2).count()
+        standard = course.standards.filter(Standard.id == standard_id).first()
+
+        # get assignments for the given standard assessed in this course
+        assignments = standard.assignments.order_by("created_on").all()
+        for assignment in assignments:
+            attempts = (
+                assignment.assessments.join(User, User.id == StandardAttempt.user_id)
+                .join(user_courses)
+                .filter(user_courses.c.course_id == course.id)
+                .all()
+            )
+            if attempts:
+                score = round(mean([attempt.score for attempt in attempts]), 2)
+            else:
+                score = 0
+            course_results["assignments"].append(
+                {"assignment": assignment.name, "avg": score}
+            )
+
+        results.append(course_results)
+
+    return make_response(trigger={"buildChart": results})
 
 
 # Set the active/inactive status on a single standard
@@ -166,16 +197,39 @@ def add_standard_assessment(standard_id):
     db.session.add(sa)
     db.session.commit()
 
-    user = User.query.filter(User.id == args["user_id"]).first()
-
-    user.assessments = user.assessments.filter(
-        StandardAttempt.standard_id == standard_id
-    )
+    # If the assignment is a test, add a record on the
+    # student proficiencies
+    if sa.assessed_on.type.name == "Assessment":
+        sa.standard.add_proficient_override(sa.user)
+        current_app.logger.info(
+            "Added proficiency record on {} for {}".format(sa.standard, args["user_id"])
+        )
 
     return render_template(
         "standards/student-updated.html",
         record=sa,
-        name=f"{user.last_name}, {user.first_name}",
+        name=f"{sa.user.last_name}, {sa.user.first_name}",
+    )
+
+
+@bp.post("/standards/<int:standard_id>/override")
+@login_required
+@restricted
+def post_standard_override(standard_id):
+    args = parser.parse({"user_id": fields.Int()}, location="query")
+
+    standard = Standard.query.filter(Standard.id == standard_id).first()
+    user = User.query.filter(User.id == args["user_id"]).first()
+
+    msg, resp_code = standard.add_proficient_override(user)
+    if resp_code != 200:
+        is_error = True
+    else:
+        is_error = False
+
+    return make_response(
+        "Proficient",
+        trigger={"showToast": {"msg": msg, "timeout": 5000, "err": is_error}},
     )
 
 

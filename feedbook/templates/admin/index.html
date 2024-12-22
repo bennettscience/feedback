@@ -3,7 +3,7 @@
   <div id="left-sidebar-inner">
     <a
       href="{{ url_for('home.index') }}"
-      class="item"
+      class="item nav-item"
       _="on click 
             remove .active from <div />
             then add .active to me"
@@ -14,7 +14,7 @@
     %}
     <a
       href="{{ url_for('admin.index') }}"
-      class="item active"
+      class="item nav-item active"
       _="on click 
                 remove .active from <div />
                 then add .active to me"
@@ -60,29 +60,79 @@
 </section>
 {% endblock %} #} {% block main_content %}
 <section id="detail">
-  <div class="admin-nav">
-    <h1>Admin</h1>
-    <a
-      hx-get="{{ url_for('standard.index') }}"
-      hx-target="#detail"
-      hx-swap="innerHTML"
-      hx-boost="true"
-      >Standards</a
-    >
-    <a
-      hx-get="{{ url_for('user.index')}}"
-      hx-target="#detail"
-      hx-swap="innerHTML"
-      hx-boost="true"
-      >Users</a
-    >
-    <a
-      hx-get="{{ url_for('assignment.index')}}"
-      hx-target="#detail"
-      hx-swap="innerHTML"
-      hx-boost="true"
-      >Assignments</a
-    >
+  <div class="admin-header">
+    <div class="actions-container">
+      <h1>Admin</h1>
+      <button
+        class="btn"
+        hx-get="{{ url_for('standard.index') }}"
+        hx-target="#detail"
+        hx-swap="innerHTML"
+        hx-boost="true"
+        hx-push-url="true"
+      >
+        Standards
+      </button>
+      <button
+        class="btn"
+        hx-get="{{ url_for('user.index')}}"
+        hx-target="#detail"
+        hx-swap="innerHTML"
+        hx-boost="true"
+      >
+        Users
+      </button>
+      <button
+        class="btn"
+        hx-get="{{ url_for('assignment.index')}}"
+        hx-target="#detail"
+        hx-swap="innerHTML"
+        hx-boost="true"
+      >
+        Assignments
+      </button>
+    </div>
   </div>
+  <canvas id="chart"></canvas>
+  <script>
+    let data = {{ status|safe }}
+    const ctx = document.getElementById("chart").getContext("2d");
+    const chart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: data[0].results.map(item => item.name),
+        datasets: [
+          {
+            label: data[0].course,
+            data: data[0].results.map((item) => item.avg),
+            fill: false,
+          },
+          {
+            label: data[1].course,
+            data: data[1].results.map((item) => item.avg),
+            fill: false,
+          },
+          {
+            label: data[2].course,
+            data: data[2].results.map((item) => item.avg),
+            fill: false,
+          },
+        ],
+      },
+      options: {
+        plugins: {
+          legend: {
+            position: "right"
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+          }
+        },
+        tension: 0.1,
+      }
+    });
+  </script>
 </section>
 {% endblock %}
