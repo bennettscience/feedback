@@ -2,7 +2,7 @@ from flask import abort, Blueprint, current_app, redirect, render_template, url_
 from flask_login import current_user, login_required
 from htmx_flask import make_response
 
-from feedbook.extensions import cache, db
+from feedbook.extensions import db
 from feedbook.models import Course, Standard, User, user_courses
 from feedbook.static.icons import *
 from feedbook.wrappers import restricted
