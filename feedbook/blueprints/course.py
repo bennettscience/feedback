@@ -148,17 +148,23 @@ def get_single_course(id):
     else:
         # prep the standard report
         results = {}
-        enrollments = course.enrollments.filter(User.usertype_id == 2).all()
+        enrollments = course.enrollments.filter(User.usertype_id == 2)
         for standard in course.standards.all():
-            count = (
-                standard.students.join(user_courses)
-                .filter(user_courses.c.course_id == course.id)
-                .count()
-            )
+            if standard.students.all():
+                count = (
+                    standard.students.join(user_courses)
+                    .filter(user_courses.c.course_id == course.id)
+                    .count()
+                )
+            else:
+                count = 0
+                for student in enrollments.all():
+                    if standard.is_proficient(student):
+                        count += 1
             results[f"standard_{standard.id}"] = {
                 "proficient": count,
-                "not_proficient": len(enrollments) - count,
-                "average": round(count / len(enrollments), 2),
+                "not_proficient": enrollments.count() - count,
+                "average": round(count / enrollments.count(), 2),
             }
 
         template = "course/teacher-index-htmx.html"
