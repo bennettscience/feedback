@@ -621,10 +621,6 @@ btn:focus {
   border: 2px solid var(--secondary-color);
 }
 
-.outcome:last-child {
-  flex-grow: 0;
-}
-
 .outcome > .standard-status {
   margin: 0;
   position: absolute;
