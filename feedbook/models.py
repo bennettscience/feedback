@@ -224,10 +224,18 @@ class Standard(db.Model):
         """
         Determine if a user is showing mastery on a standard.
 
-        Perform two checks:
-        1. A "1" on an `assessment` type <Assignment> is proficient
-        2. More 1's than 0's in the assessment objects AND a true assessment, otherwise false
+        Perform several checks:
+        - If an assessment is present:
+            - If the assessment attempt == 1, then True
+            - If an override is present, then True
+        - else no assessment is present:
+            - If an override is present, then True
+            - More 1's than 0's in the assessment objects AND a true assessment, otherwise false
         """
+        assessment_present = self.assignments.filter(
+            Assignment.assignmenttype_id == 2
+        ).all()
+
         # Get a count of 1's and 0's for the user
         scores = self._get_scores(user.id)
         counts = Counter(scores)
@@ -245,12 +253,14 @@ class Standard(db.Model):
         # attempts, why care about the test at all?
         # Is having both the key? How to reconcile students who don't _need_
         # to do all the practice?
-        if result["has_assessment"] or result["has_override"]:
-            return True
-        elif result["scores"]:
-            return True
+        if assessment_present:
+            if result["has_assessment"] or result["has_override"]:
+                return True
         else:
-            return False
+            if result["scores"]:
+                return True
+            else:
+                return False
 
     def current_score(self, user):
         """Average the last attemp with the highest attempt.
