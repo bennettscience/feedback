@@ -5,7 +5,7 @@ from webargs import fields
 from webargs.flaskparser import parser
 
 from feedbook.extensions import db
-from feedbook.models import Course, Standard, StandardAttempt
+from feedbook.models import Course, Standard, StandardAttempt, User
 from feedbook.schemas import StandardSchema, StandardListSchema
 from feedbook.wrappers import restricted
 
