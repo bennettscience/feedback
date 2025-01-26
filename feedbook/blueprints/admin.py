@@ -24,7 +24,7 @@ def index():
     # For each course, build an array of all of the standards
     for course in courses:
         standard_results = []
-        enrollments = course.enrollments.filter(User.usertype_id == 2)
+        enrollments = course.enrollments.filter(User.usertype_id == 2, User.active)
         for standard in course.standards.all():
             # Filter the students array on the standard and count how many
             # are proficient in the current course through the user_courses table
