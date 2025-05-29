@@ -30,19 +30,23 @@ def index():
             # are proficient in the current course through the user_courses table
             if standard.students.all():
                 count = (
-                    standard.students.join(user_courses)
-                    .filter(user_courses.c.course_id == course.id)
+                    standard.students.join(User)
+                    .join(user_courses)
+                    .filter(User.active == True, user_courses.c.course_id == course.id)
                     .count()
                 )
             else:
                 count = 0
-                for student in enrollments.all():
+                for student in enrollments.filter(User.active == True).all():
                     if standard.is_proficient(student):
                         count += 1
 
             # Divide that count by the enrollment length variable
             standard_results.append(
-                {"name": standard.name, "avg": round(count / enrollments.count(), 2)}
+                {
+                    "name": standard.name,
+                    "avg": round(count / enrollments.count(), 2),
+                }
             )
         data.append({"course": course.name, "results": standard_results})
 

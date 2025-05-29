@@ -15,7 +15,6 @@ from feedbook.models import (
     Standard,
     StandardAttempt,
     User,
-    user_courses,
 )
 from feedbook.schemas import CourseSchema, StandardListSchema
 from feedbook.wrappers import templated, restricted
@@ -115,7 +114,7 @@ def roster_upload(course_id):
     for student in student_enrollments:
         student.scores = []
         for standard in course.standards.all():
-            user_score = standard.current_score(student)
+            user_score = standard.current_score(student.id)
             student.scores.append({"standard_id": standard.id, "score": user_score})
 
     return render_template(
@@ -148,23 +147,17 @@ def get_single_course(id):
     else:
         # prep the standard report
         results = {}
-        enrollments = course.enrollments.filter(User.usertype_id == 2, User.active)
+        enrollments = course.enrollments.filter(
+            User.usertype_id == 2, User.active == True
+        ).all()
         for standard in course.standards.all():
-            if standard.students.all():
-                count = (
-                    standard.students.join(user_courses)
-                    .filter(user_courses.c.course_id == course.id)
-                    .count()
-                )
-            else:
-                count = 0
-                for student in enrollments.all():
-                    if standard.is_proficient(student):
-                        count += 1
+            count = 0
+            for student in enrollments:
+                if standard.is_proficient(student):
+                    count = count + 1
             results[f"standard_{standard.id}"] = {
                 "proficient": count,
-                "not_proficient": enrollments.count() - count,
-                "average": round(count / enrollments.count(), 2),
+                "not_proficient": len(enrollments) - count,
             }
 
         template = "course/teacher-index-htmx.html"
@@ -484,7 +477,7 @@ def remove_standard_from_course(course_id, standard_id):
     for student in student_enrollments:
         student.scores = []
         for standard in course.standards.all():
-            user_score = standard.current_score(student)
+            user_score = standard.current_score(student.id)
             student.scores.append({"standard_id": standard.id, "score": user_score})
 
     return render_template(
