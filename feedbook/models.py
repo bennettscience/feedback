@@ -140,6 +140,7 @@ class Standard(db.Model):
     name = db.Column(db.String(64), nullable=False)
     description = db.Column(db.String(1000))
     active = db.Column(db.Boolean, default=True)
+    standardtype_id = db.Column(db.Integer, db.ForeignKey("standard_type.id"))
 
     attempts = db.relationship(
         "StandardAttempt",
@@ -322,6 +323,11 @@ class StandardAttempt(db.Model):
         for key, value in data.items():
             setattr(self, key, value)
         db.session.commit()
+
+
+class StandardType(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(16))
 
 
 class User(UserMixin, db.Model):
