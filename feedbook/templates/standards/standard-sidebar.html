@@ -1,25 +1,22 @@
-{# TODO: Refactor to accept a dict of hx-attributes to apply #} {# TODO:
-Refactor to name inner container? #} {# Several params are passed in to make
-this dynamic: 1. HTTP method 2. app endpoint 3. Sidebar position - left or right
-4. Hidden: bool #}
-<section {% if position=='right' %} _="on closeModal
+{% if position == "right" %}
+<section
+  _="on closeModal
         add .hide to me
         then wait 1s
         then remove me
         end
-        " {% else %} _="on htmx:load call checkActivePage()" {% endif %} id="{{position}}-sidebar"
-	class="sidebar sidebar--{{ position }} {{'hide' if hide}}">
-	{%if position == 'right' %}
-	<button class="btn-close" _="on click trigger closeModal">
-		× close
-	</button>
-	<h2>{{title}}</h2>
-	{% endif %}
-	<div id="{{position}}-sidebar-inner">
-		{{ render_partial(partial, course_id=course_id) }}
-		{% if items %}
-		{% for item in items %} {{ render_partial('standards/standard-small.html', item=item, course_id=course_id
-		)}} {%endfor%}
-		{% endif %}
-	</div>
+        "
+  id="{{position}}-sidebar"
+  class="sidebar sidebar--{{ position }} {{'hide' if hide}}"
+>
+  {% endif %} {%if position == 'right' %}
+  <button class="btn-close" _="on click trigger closeModal">× close</button>
+  <h2>{{title}}</h2>
+  {% endif %}
+  <div id="{{position}}-sidebar-inner">
+    {{ render_partial(partial, course_id=course_id, types=types) }} {% if items
+    %} {% for item in items %} {{
+    render_partial('standards/standard-small.html', item=item,
+    course_id=course_id )}} {%endfor%} {% endif %}
+  </div>
 </section>

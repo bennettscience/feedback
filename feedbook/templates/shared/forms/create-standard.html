@@ -16,7 +16,7 @@
   <label
     >Type
     <select name="type_id">
-      {% for type in standard_types %}
+      {% for type in types %}
       <option value="{{ type.id }}">{{ type.name }}</option>
       {% endfor %}
     </select>

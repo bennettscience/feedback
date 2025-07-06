@@ -4,6 +4,19 @@
   <p>{{ type.name }}</p>
   {% endfor %}
   <p>Standard type controls go here</p>
+  <h3>Create new type</h3>
+  <form
+    hx-trigger="submit"
+    hx-post="/standards/type"
+    hx-swap="beforeend"
+    _="on htmx:afterRequest reset() me"
+  >
+    <label
+      >Name
+      <input type="text" name="name" />
+    </label>
+    <input type="submit" />
+  </form>
 </div>
 <div class="box grid" id="admin-standards">
   <div class="box stack">

@@ -359,9 +359,9 @@ def get_create_standard_form(course_id):
         position="right",
         partial="shared/forms/create-standard.html",
         title="Add standards",
-        standard_types=StandardTypeSchema(many=True).dump(standard_types),
         items=StandardListSchema(many=True).dump(filtered),
         course_id=course_id,
+        types=standard_types,
     )
 
 

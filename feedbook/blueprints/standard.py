@@ -1,4 +1,4 @@
-from flask import Blueprint, current_app, jsonify, render_template, request
+from flask import Blueprint, current_app, render_template, request
 from flask_login import current_user, login_required
 from htmx_flask import make_response
 from webargs import fields
@@ -351,3 +351,23 @@ def add_standard_to_course():
         course_id=args["course_id"],
         results=results,
     )
+
+
+# Create a new standard type
+@bp.post("/standards/type")
+@login_required
+@restricted
+def create_standard_type():
+    from feedbook.models import StandardType
+
+    args = parser.parse({"name": fields.Str()}, location="form")
+
+    type = StandardType.query.filter(StandardType.name == args["name"]).first()
+    if type:
+        result = f"Type {args['name']} already exists."
+    else:
+        db.session.add(StandardType(name=args["name"]))
+        db.session.commit()
+        result = f"Created new type called {args['name']}"
+
+    return make_response("ok", trigger={"showToast": result})

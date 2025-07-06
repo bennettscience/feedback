@@ -1,9 +1,7 @@
-from flask import abort, Blueprint, current_app, redirect, render_template, url_for
-from flask_login import current_user, login_required
-from htmx_flask import make_response
+from flask import Blueprint, render_template
+from flask_login import login_required
 
-from feedbook.extensions import db
-from feedbook.models import Course, Standard, User, user_courses
+from feedbook.models import Course, User, user_courses
 from feedbook.static.icons import *
 from feedbook.utils import get_system_stats
 from feedbook.wrappers import restricted

@@ -66,49 +66,47 @@
     <div class="box">
       <h2>Assignments</h2>
       <p>Created: {{ system_status["assignments"]["created"]}}</p>
+      <button
+        class="btn"
+        hx-get="{{ url_for('assignment.index')}}"
+        hx-target="#detail"
+        hx-swap="innerHTML"
+        hx-boost="true"
+      >
+        Assignments
+      </button>
     </div>
     <!-- Standards overview -->
     <div class="box">
       <h2>Standards</h2>
       <p>Created: {{ system_status["standards"]["created"]}}</p>
       <p>Assessed: {{ system_status["standards"]["assessments"]}}</p>
+      <button
+        class="btn"
+        hx-get="{{ url_for('standard.index') }}"
+        hx-target="#detail"
+        hx-swap="innerHTML"
+        hx-boost="true"
+        hx-push-url="true"
+      >
+        Standards
+      </button>
     </div>
     <!-- Users overview -->
     <div class="box">
       <h2>Users</h2>
       <p>Users: {{ system_status["users"]["created"]}}</p>
       <p>Active: {{ system_status["users"]["active"]}}</p>
+      <button
+        class="btn"
+        hx-get="{{ url_for('user.index')}}"
+        hx-target="#detail"
+        hx-swap="innerHTML"
+        hx-boost="true"
+      >
+        Users
+      </button>
     </div>
-    <!-- <div class="actions-container"> -->
-    <!-- <button -->
-    <!-- class="btn" -->
-    <!-- hx-get="{{ url_for('standard.index') }}" -->
-    <!-- hx-target="#detail" -->
-    <!-- hx-swap="innerHTML" -->
-    <!-- hx-boost="true" -->
-    <!-- hx-push-url="true" -->
-    <!-- > -->
-    <!-- Standards -->
-    <!-- </button> -->
-    <!-- <button -->
-    <!-- class="btn" -->
-    <!-- hx-get="{{ url_for('user.index')}}" -->
-    <!-- hx-target="#detail" -->
-    <!-- hx-swap="innerHTML" -->
-    <!-- hx-boost="true" -->
-    <!-- > -->
-    <!-- Users -->
-    <!-- </button> -->
-    <!-- <button -->
-    <!-- class="btn" -->
-    <!-- hx-get="{{ url_for('assignment.index')}}" -->
-    <!-- hx-target="#detail" -->
-    <!-- hx-swap="innerHTML" -->
-    <!-- hx-boost="true" -->
-    <!-- > -->
-    <!-- Assignments -->
-    <!-- </button> -->
-    <!-- </div> -->
   </div>
   <canvas id="chart"></canvas>
   <script>
