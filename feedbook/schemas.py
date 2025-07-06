@@ -84,3 +84,8 @@ class StandardAttemptSchema(Schema):
     comments = fields.Str()
     standard = fields.Nested(StandardSchema(exclude=["attempts"]))
     assignment = fields.Nested("AssignmentSchema")
+
+
+class StandardTypeSchema(Schema):
+    id = fields.Int(dump_only=True)
+    name = fields.Str()

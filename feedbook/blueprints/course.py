@@ -345,8 +345,12 @@ def get_user(course_id):
 @login_required
 @restricted
 def get_create_standard_form(course_id):
+    from feedbook.models import StandardType
+    from feedbook.schemas import StandardTypeSchema
+
     standards = Standard.query.all()
     course = current_user.enrollments.filter(Course.id == course_id).first()
+    standard_types = StandardType.query.all()
 
     filtered = [standard for standard in standards if standard not in course.standards]
 
@@ -355,6 +359,7 @@ def get_create_standard_form(course_id):
         position="right",
         partial="shared/forms/create-standard.html",
         title="Add standards",
+        standard_types=StandardTypeSchema(many=True).dump(standard_types),
         items=StandardListSchema(many=True).dump(filtered),
         course_id=course_id,
     )
@@ -366,7 +371,6 @@ def get_create_standard_form(course_id):
 @restricted
 def get_standard_scores_in_course(course_id, standard_id):
     from feedbook.models import StandardAttempt
-    from feedbook.schemas import StandardAttemptSchema
 
     course = Course.query.filter(Course.id == course_id).first()
     standard = Standard.query.filter(Standard.id == standard_id).first()

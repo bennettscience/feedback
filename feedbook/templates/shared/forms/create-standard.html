@@ -13,6 +13,14 @@
     >Description
     <input type="text" name="description" />
   </label>
+  <label
+    >Type
+    <select name="type_id">
+      {% for type in standard_types %}
+      <option value="{{ type.id }}">{{ type.name }}</option>
+      {% endfor %}
+    </select>
+  </label>
   <input type="hidden" name="course_id" value="{{course_id}}" />
   <input type="submit" />
 </form>

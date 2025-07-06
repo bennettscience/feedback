@@ -5,8 +5,7 @@ from webargs import fields
 from webargs.flaskparser import parser
 
 from feedbook.extensions import db
-from feedbook.models import Course, Standard, StandardAttempt, User
-from feedbook.schemas import StandardSchema, StandardListSchema
+from feedbook.models import Course, Standard, StandardAttempt, StandardType, User
 from feedbook.wrappers import restricted
 
 bp = Blueprint("standard", __name__)
@@ -20,7 +19,10 @@ def index():
     Get all standards in the database.
     """
     standards = Standard.query.all()
-    return render_template("standards/index.html", standards=standards)
+    standard_types = StandardType.query.all()
+    return render_template(
+        "standards/index.html", standards=standards, standard_types=standard_types
+    )
 
 
 @bp.post("/standards")
@@ -38,11 +40,17 @@ def create_standard():
             "name": fields.String(),
             "description": fields.String(),
             "course_id": fields.Int(),
+            "type_id": fields.Int(),
         },
         location="form",
     )
 
-    standard = Standard(name=args["name"], description=args["description"], active=True)
+    standard = Standard(
+        name=args["name"],
+        description=args["description"],
+        active=True,
+        standardtype_id=args["type_id"],
+    )
     db.session.add(standard)
     db.session.commit()
 
