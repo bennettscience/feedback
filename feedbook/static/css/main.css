@@ -236,7 +236,8 @@ input[type="text"] {
   align-self: start;
 }
 
-#admin-standards:first-child {
+/* Left hand side list of standards on the admin panel. */
+#admin-standards:nth-child(2) {
   overflow-y: scroll
 }
 
@@ -650,9 +651,10 @@ btn:focus {
 
 .course-header,
 .admin-header {
-  display: grid;
-  grid-template-rows: auto auto;
-  grid-template-areas: "title" "actions";
+  display: flex;
+  gap: 1rem;
+  flex-direction: row;
+  justify-content: space-evenly;
 }
 
 .course-header .actions-container,

@@ -1,3 +1,10 @@
+<div class="box">
+  <h2>Standard Types</h2>
+  {% for type in standard_types %}
+  <p>{{ type.name }}</p>
+  {% endfor %}
+  <p>Standard type controls go here</p>
+</div>
 <div class="box grid" id="admin-standards">
   <div class="box stack">
     {% for standard in standards %}

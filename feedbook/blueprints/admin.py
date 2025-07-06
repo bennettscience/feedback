@@ -5,6 +5,7 @@ from htmx_flask import make_response
 from feedbook.extensions import db
 from feedbook.models import Course, Standard, User, user_courses
 from feedbook.static.icons import *
+from feedbook.utils import get_system_stats
 from feedbook.wrappers import restricted
 
 bp = Blueprint("admin", __name__)
@@ -50,5 +51,10 @@ def index():
             )
         data.append({"course": course.name, "results": standard_results})
 
+    # Get info for assignments and users in the database
+    system_status = get_system_stats()
+
     icons = {"home": home, "add": add, "admin": admin, "logout": logout}
-    return render_template("admin/index.html", icons=icons, status=data)
+    return render_template(
+        "admin/index.html", icons=icons, status=data, system_status=system_status
+    )
