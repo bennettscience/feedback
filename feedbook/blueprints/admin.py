@@ -1,4 +1,12 @@
-from flask import abort, Blueprint, current_app, redirect, render_template, url_for
+from flask import (
+    abort,
+    Blueprint,
+    current_app,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 from flask_login import current_user, login_required
 from htmx_flask import make_response
 
@@ -10,18 +18,8 @@ from feedbook.wrappers import restricted
 bp = Blueprint("admin", __name__)
 
 
-@bp.get("/admin")
-@login_required
-@restricted
-def index():
-    """
-    Load the main admin panel. Reload the sidebar because
-    this extends the main layout right now.
-    """
+def process_course_data(courses):
     data = []
-    # Loop all the courses
-    courses = Course.query.all()
-    # For each course, build an array of all of the standards
     for course in courses:
         standard_results = []
         enrollments = course.enrollments.filter(User.usertype_id == 2, User.active)
@@ -50,5 +48,31 @@ def index():
             )
         data.append({"course": course.name, "results": standard_results})
 
-    icons = {"home": home, "add": add, "admin": admin, "logout": logout}
-    return render_template("admin/index.html", icons=icons, status=data)
+    return data
+
+
+@bp.get("/admin")
+@login_required
+@restricted
+def index():
+    """
+    Load the main admin panel. Reload the sidebar because
+    this extends the main layout right now.
+    """
+    # Loop the requested courses
+    query = request.args.get("archived")
+
+    if query:
+        courses = Course.query.all()
+        data = process_course_data(courses)
+
+        return data
+    else:
+        print("Getting all the active courses")
+        courses = Course.query.filter(Course.active == True).all()
+        # For each course, build an array of all of the standards
+
+        data = process_course_data(courses)
+
+        icons = {"home": home, "add": add, "admin": admin, "logout": logout}
+        return render_template("admin/index.html", icons=icons, status=data)
