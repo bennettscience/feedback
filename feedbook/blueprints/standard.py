@@ -1,4 +1,4 @@
-from flask import Blueprint, current_app, jsonify, render_template, request
+from flask import Blueprint, current_app, render_template, request
 from flask_login import current_user, login_required
 from htmx_flask import make_response
 from webargs import fields
@@ -6,7 +6,6 @@ from webargs.flaskparser import parser
 
 from feedbook.extensions import db
 from feedbook.models import Course, Standard, StandardAttempt, User
-from feedbook.schemas import StandardSchema, StandardListSchema
 from feedbook.wrappers import restricted
 
 bp = Blueprint("standard", __name__)

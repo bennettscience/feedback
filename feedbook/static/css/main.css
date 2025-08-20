@@ -190,6 +190,12 @@ input[type="text"] {
   background-color: #f78f8f;
 }
 
+.msg {
+  width: 100%;
+  background-color: var(--tooltip-color); 
+  padding: var(--small);
+  text-align: center;
+}
 /* Placeholder for an eventual stack layout item. */
 .stack > * + * {
   margin-top: var(--small);

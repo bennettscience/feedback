@@ -2,7 +2,7 @@ import csv
 from io import TextIOWrapper
 from collections import defaultdict
 
-from flask import abort, Blueprint, current_app, jsonify, render_template, request
+from flask import abort, Blueprint, current_app, make_response, render_template, request
 from flask_login import current_user, login_required
 from webargs import fields
 from webargs.flaskparser import parser
@@ -184,6 +184,29 @@ def get_single_course(id):
         )
 
     return resp
+
+
+@bp.put("/courses/<int:course_id>/status")
+def update_course_state(course_id):
+    """
+    Toggle the current course state between active and inactive.
+    This also activates/deactivates student user statuses in that course.
+    """
+    course = db.session.get(Course, course_id)
+    if not course:
+        abort(404)
+
+    course.active = not course.active
+
+    for user in course.enrollments.filter(User.usertype_id == 2).all():
+        user.active = not user.active
+
+    db.session.commit()
+
+    response = make_response("Complete.")
+    response.headers["HX-Refresh"] = "true"
+
+    return response
 
 
 @bp.get("/courses/<int:course_id>/assignments/<int:assignment_id>")

@@ -1,3 +1,6 @@
+{% if not course.active %}
+<aside class="msg">This course is no longer active.</aside>
+{% endif %}
 <div class="course-header">
   <h1>{{ course.name }}</h1>
   <div class="actions-container">
@@ -39,6 +42,14 @@
       hx-swap="beforeend"
     >
       + Import roster
+    </button>
+    <button
+      class="btn red"
+      hx-put="/courses/{{course.id}}/status"
+      hx-swap="none"
+      hx-refresh="true"
+    >
+      {% if course.active %}Deactivate{% else %}Activate{% endif %}
     </button>
   </div>
 </div>
