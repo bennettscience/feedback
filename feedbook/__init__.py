@@ -7,7 +7,7 @@ from flask import Flask, has_request_context, request
 from config import Config
 from feedbook.extensions import db, htmx, login_manager, migrate, partials
 from feedbook.blueprints import admin, assignment, auth, home, course, standard, user
-from feedbook.errors import forbidden, unauthorized
+from feedbook.errors import forbidden, not_found, unauthorized
 
 
 class RequestFormatter(logging.Formatter):
@@ -63,5 +63,6 @@ def create_app(config=Config):
 
     app.register_error_handler(401, unauthorized)
     app.register_error_handler(403, forbidden)
+    app.register_error_handler(404, not_found)
 
     return app
