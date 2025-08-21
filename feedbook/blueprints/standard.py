@@ -116,6 +116,41 @@ def get_single_standard(standard_id):  # pragma: no cover
     return make_response(trigger={"buildChart": results})
 
 
+# Get edit form for an existing Standard
+@bp.get("/standards/<int:standard_id>/edit")
+@login_required
+@restricted
+def get_standard_edit_form(standard_id):
+    """
+    Return the edit form for a single standard.
+    """
+    standard = Standard.query.filter(Standard.id == standard_id).first()
+
+    return render_template("standards/standard-form.html", standard=standard)
+
+
+# Submit an edit to an individual standard.
+@bp.put("/standards/<int:standard_id>/edit")
+@login_required
+@restricted
+def update_single_standard(standard_id):
+    """
+    Update a property for a single standard.
+    """
+    standard = Standard.query.filter(Standard.id == standard_id).first()
+
+    args = parser.parse(
+        {"name": fields.String(), "description": fields.String()}, location="form"
+    )
+
+    standard.update(args)
+
+    return make_response(
+        render_template("standards/single-standard.html", standard=standard),
+        trigger={"showToast": "Standard updated"},
+    )
+
+
 # Set the active/inactive status on a single standard
 @bp.put("/standards/<int:standard_id>/status")
 @login_required

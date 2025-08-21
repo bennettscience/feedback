@@ -303,6 +303,11 @@ class Standard(db.Model):
         else:
             return None
 
+    def update(self, data):
+        for key, value in data.items():
+            setattr(self, key, value)
+        db.session.commit()
+
 
 class StandardAttempt(db.Model):
     id = db.Column(db.Integer, primary_key=True)

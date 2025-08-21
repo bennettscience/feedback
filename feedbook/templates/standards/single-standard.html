@@ -1,0 +1,30 @@
+<div class="item outcome">
+  <h2>{{ standard.name }}</h2>
+  <p>{{ standard.description }}</p>
+  <div class="actions">
+    <button
+      class="btn btn-primary"
+      hx-put="/standards/{{standard.id}}/status"
+      hx-swap="innerHTML"
+    >
+      {% if standard.active %}Deactivate{% else %}Activate{% endif %}
+    </button>
+    <button
+      class="btn btn-secondary"
+      hx-get="{{ url_for('standard.get_single_standard', standard_id=standard.id)}}"
+      hx-swap="none"
+      _="on click remove .active from .outcome then add .active to the closest parent .outcome"
+    >
+      Details
+    </button>
+    <button
+      class="btn"
+      hx-trigger="click"
+      hx-get="{{ url_for('standard.get_standard_edit_form', standard_id=standard.id)}}"
+      hx-swap="innerHTML"
+      hx-target="closest .item.outcome"
+    >
+      Edit
+    </button>
+  </div>
+</div>
