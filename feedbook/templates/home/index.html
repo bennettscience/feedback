@@ -24,6 +24,7 @@
     {% endif %} {% if current_user.enrollments %}
     <div class="courses">
       {% for item in current_user.enrollments %}
+      {% if item.active %}
       <a
         id="course-{{item.id}}"
         class="item course-item"
@@ -38,6 +39,7 @@
                   then add .active to me"
         >{{ item.name }}</a
       >
+      {% endif %}
       {% endfor %}
     </div>
     {% endif %} {% if current_user.usertype_id == 1 %}
