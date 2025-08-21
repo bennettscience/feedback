@@ -105,39 +105,34 @@
   <canvas id="chart"></canvas>
   <script>
     let data = {{ status|safe }}
-    console.log(data)
 
     let processedData = [];
 
     const ctx = document.getElementById("chart").getContext("2d");
-    if(data.length) {
-      const chart = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: data[0].results.map(item => item.name),
-          datasets: processedData,
+    const chart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: data[0].results.map(item => item.name),
+        datasets: processedData,
+      },
+      options: {
+        plugins: {
+          legend: {
+            position: "right"
+          }
         },
-        options: {
-          plugins: {
-            legend: {
-              position: "right"
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-            }
-          },
-          tension: 0.1,
-        }
-      });
-    }
+        scales: {
+          y: {
+            beginAtZero: true,
+          }
+        },
+        tension: 0.1,
+      }
+    });
 
     function processCourseData(data) {
       processedData = [];
-      console.log("processing data")
       if(!data.length) return
-      console.log(data)
       for (let course of data) {
         processedData.push({
           "label": course.course,
@@ -145,6 +140,7 @@
           "fill": false
         })
       }
+      chart.data.datasets = processedData;
       chart.update()
     }
 
