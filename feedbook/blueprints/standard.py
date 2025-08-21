@@ -83,7 +83,7 @@ def get_single_standard(standard_id):  # pragma: no cover
     from statistics import mean
     from feedbook.models import User, user_courses
 
-    courses = Course.query.all()
+    courses = Course.query.filter(Course.active == True).all()
     results = []
 
     for course in courses:

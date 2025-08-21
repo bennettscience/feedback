@@ -110,40 +110,33 @@
     let processedData = [];
 
     const ctx = document.getElementById("chart").getContext("2d");
-    const chart = new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: data[0].results.map(item => item.name),
-        datasets: processedData,
-      },
-      options: {
-        plugins: {
-          legend: {
-            position: "right"
-          }
+    if(data.length) {
+      const chart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: data[0].results.map(item => item.name),
+          datasets: processedData,
         },
-        scales: {
-          y: {
-            beginAtZero: true,
-          }
-        },
-        tension: 0.1,
-      }
-    });
-
-    let checkbox = document.querySelector("#all-courses");
-    checkbox.addEventListener("click", async function(event) {
-      if(!checkbox.checked) { return }
-      else {
-        let response = await fetch("/admin?archived=true")
-        let data = await response.json()
-        processCourseData(data)
-      }
-    })
+        options: {
+          plugins: {
+            legend: {
+              position: "right"
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+            }
+          },
+          tension: 0.1,
+        }
+      });
+    }
 
     function processCourseData(data) {
       processedData = [];
       console.log("processing data")
+      if(!data.length) return
       console.log(data)
       for (let course of data) {
         processedData.push({

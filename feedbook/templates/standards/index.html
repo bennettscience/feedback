@@ -38,6 +38,7 @@
 <script>
   htmx.on("buildChart", (vals) => {
     function parseData(data) {
+    console.log(data)
       return data.map((course) => {
         return {
           label: course.name,
@@ -49,16 +50,23 @@
     if (this.chart instanceof Chart) {
       this.chart.destroy();
     }
-    let results = vals.detail.value;
-    let ctx = document.querySelector(`#chart`).getContext(`2d`);
 
-    let data = {
-      labels: results[0].assignments.map((item) => item.assignment),
-      datasets: parseData(results),
-    };
-    this.chart = new Chart(ctx, {
-      type: "line",
-      data: data,
-    });
+    if(!vals.detail.value.length) {
+      document.querySelector(`#admin-details`).textContent = "No data to display."
+      return;
+    } else {
+      
+      let results = vals.detail.value;
+      let ctx = document.querySelector(`#chart`).getContext(`2d`);
+
+      let data = {
+        labels: results[0].assignments.map((item) => item.assignment),
+        datasets: parseData(results),
+      };
+      this.chart = new Chart(ctx, {
+        type: "line",
+        data: data,
+      });
+    }
   });
 </script>
