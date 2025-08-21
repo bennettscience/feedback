@@ -225,7 +225,7 @@ input[type="text"] {
 }
 
 .box.grid#admin-standards {
-  grid-template-columns: auto 1fr;
+  grid-template-columns: 1fr 2fr;
 }
 
 #admin-standards {
@@ -671,6 +671,10 @@ btn:focus {
   justify-content: flex-start;
   align-items: center;
   gap: 1rem;
+}
+
+.course-header #user-select {
+  width: auto;
 }
 
 .course-header .course-actions-container button {
