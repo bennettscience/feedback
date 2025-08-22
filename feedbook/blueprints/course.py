@@ -252,8 +252,6 @@ def update_course_state(course_id):
     else:
         response = make_response("Complete.", refresh=True)
 
-    print(response.headers)
-
     return response
 
 

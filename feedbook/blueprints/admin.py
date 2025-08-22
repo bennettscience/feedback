@@ -68,7 +68,6 @@ def index():
 
         return data
     else:
-        print("Getting all the active courses")
         courses = Course.query.filter(Course.active == True).all()
         # For each course, build an array of all of the standards
 
