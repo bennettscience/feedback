@@ -3,6 +3,24 @@
     <h1>Admin</h1>
     <button
       class="btn"
+      hx-get="{{ url_for('assignment.index')}}"
+      hx-target="#detail"
+      hx-swap="innerHTML"
+      hx-boost="true"
+    >
+      Assignments
+    </button>
+    <button
+      class="btn"
+      hx-get="{{ url_for('course.index')}}"
+      hx-target="#detail"
+      hx-swap="innerHTML"
+      hx-boost="true"
+    >
+      Courses
+    </button>
+    <button
+      class="btn"
       hx-get="{{ url_for('standard.index') }}"
       hx-target="#detail"
       hx-swap="innerHTML"
@@ -19,15 +37,6 @@
       hx-boost="true"
     >
       Users
-    </button>
-    <button
-      class="btn"
-      hx-get="{{ url_for('assignment.index')}}"
-      hx-target="#detail"
-      hx-swap="innerHTML"
-      hx-boost="true"
-    >
-      Assignments
     </button>
   </div>
 </div>

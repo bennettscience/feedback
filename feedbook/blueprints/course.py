@@ -2,8 +2,9 @@ import csv
 from io import TextIOWrapper
 from collections import defaultdict
 
-from flask import abort, Blueprint, current_app, make_response, render_template, request
+from flask import abort, Blueprint, current_app, render_template, request
 from flask_login import current_user, login_required
+from htmx_flask import make_response
 from webargs import fields
 from webargs.flaskparser import parser
 
@@ -37,6 +38,15 @@ def get_create_course_form():
         partial="shared/forms/create-course.html",
         data={},
     )
+
+
+@bp.get("/courses")
+@login_required
+@restricted
+def index():
+    courses = Course.query.all()
+
+    return render_template("course/index.html", courses=courses)
 
 
 @bp.post("/courses")
@@ -203,8 +213,16 @@ def update_course_state(course_id):
 
     db.session.commit()
 
-    response = make_response("Complete.")
-    response.headers["HX-Refresh"] = "true"
+    # Listen for a response from the admin panel vs the course.
+    if request.args.get("source"):
+        result = "Deactivate" if course.active else "Activate"
+        response = make_response(
+            result, trigger={"showToast": "Course status updated."}
+        )
+    else:
+        response = make_response("Complete.", refresh=True)
+
+    print(response.headers)
 
     return response
 

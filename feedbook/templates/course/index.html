@@ -1,0 +1,20 @@
+<div class="box grid" id="admin-courses">
+  <div class="box stack">
+    {% for course in courses %}
+    <div class="item">
+      <h2>{{ course.name }}</h2>
+      <div class="actions">
+        <button
+          class="btn btn-primary"
+          hx-put="{{ url_for('course.update_course_state', course_id=course.id, source='admin')}}"
+          hx-swap="innerHTML"
+        >
+          {% if course.active %}Deactivate{% else %}Activate{% endif %}
+        </button>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="box" id="admin-details">
+  </div>
+</div>
