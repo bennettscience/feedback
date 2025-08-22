@@ -1,9 +1,10 @@
 <h1>{{ course.name }}</h1>
 <div class="box grid" id="admin-standards">
 <section class="box stack">
-  {% for standard in course.standards %} {{
-  render_partial('standards/student-standard-card.html', item=standard,
-  course_id=course.id, student_id=current_user.id)}} {%endfor%}
+  {% for standard in course.standards %} 
+  {% if standard.active %}
+  {{ render_partial('standards/student-standard-card.html', item=standard,
+  course_id=course.id, student_id=current_user.id)}} {% endif %} {%endfor%}
 </section>
 <section id="student-details"></section>
 </div>
