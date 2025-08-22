@@ -13,18 +13,21 @@
     {% if not current_user.is_anonymous %} {% if current_user.usertype_id == 1
     %}
     <a
-      href="{{ url_for('admin.index') }}"
+      hx-get="/admin"
+      hx-trigger="click"
+      hx-target="#detail"
+      hx-swap="innerHTML"
+      hx-push-url="true"
       class="item nav-item"
       _="on click 
-                remove .active from <div />
+                remove .active from <a />
                 then add .active to me"
     >
       {% autoescape false %}{{data["icons"]["admin"]}}{% endautoescape %} Admin
     </a>
     {% endif %} {% if current_user.enrollments %}
     <div class="courses">
-      {% for item in current_user.enrollments %}
-        {% if item.active %}
+      {% for item in current_user.enrollments %} {% if item.active %}
       <a
         id="course-{{item.id}}"
         class="item course-item"
@@ -39,8 +42,7 @@
                   then add .active to me"
         >{{ item.name }}</a
       >
-      {% endif %}
-      {% endfor %}
+      {% endif %} {% endfor %}
     </div>
     {% endif %} {% if current_user.usertype_id == 1 %}
     <button

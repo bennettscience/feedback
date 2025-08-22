@@ -74,5 +74,4 @@ def index():
 
         data = process_course_data(courses)
 
-        icons = {"home": home, "add": add, "admin": admin, "logout": logout}
-        return render_template("admin/index.html", icons=icons, status=data)
+        return render_template("admin/index.html", status=data)
