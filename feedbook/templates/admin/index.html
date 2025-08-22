@@ -1,150 +1,77 @@
-{% extends '_layout.html'%} {% block sidebar %}
-<section id="left-sidebar" class="sidebar sidebar--left">
-  <div id="left-sidebar-inner">
-    <a
-      href="{{ url_for('home.index') }}"
-      class="item nav-item"
-      _="on click 
-            remove .active from <div />
-            then add .active to me"
-    >
-      {% autoescape false %}{{icons["home"]}}{% endautoescape %} Home
-    </a>
-    {% if not current_user.is_anonymous %} {% if current_user.usertype_id == 1
-    %}
-    <a
-      href="{{ url_for('admin.index') }}"
-      class="item nav-item active"
-      _="on click 
-                remove .active from <div />
-                then add .active to me"
-    >
-      {% autoescape false %}{{icons["admin"]}}{% endautoescape %} Admin
-    </a>
-    {% endif %} {% if current_user.enrollments %} {% for item in
-    current_user.enrollments %}
-    <a
-      id="course-{{item.id}}"
-      class="item course-item"
-      hx-get="/courses/{{ item.id }}"
-      hx-trigger="click"
+<div class="admin-header">
+  <div class="actions-container">
+    <h1>Admin</h1>
+    <button
+      class="btn"
+      hx-get="{{ url_for('standard.index') }}"
       hx-target="#detail"
       hx-swap="innerHTML"
-      hx-indicator="#toast"
+      hx-boost="true"
       hx-push-url="true"
-      _="on click 
-                  remove .active from <div />
-                  then add .active to me"
-      >{{ item.name }}</a
     >
-    {% endfor %} {% endif %} {% if current_user.usertype_id == 1 %}
-    <button
-      class="btn item"
-      hx-get="/courses/create"
-      hx-trigger="click"
-      hx-target="main"
-      hx-swap="beforeend"
-      hx-indicator="#toast"
-    >
-      {% autoescape false %} {{icons["add"]}} {% endautoescape %} Add new course
+      Standards
     </button>
-    {% endif %} {% else %}
-    <a href="{{ url_for('auth.get_login')}}" class="item">Login</a>
-    {% endif %}
+    <button
+      class="btn"
+      hx-get="{{ url_for('user.index')}}"
+      hx-target="#detail"
+      hx-swap="innerHTML"
+      hx-boost="true"
+    >
+      Users
+    </button>
+    <button
+      class="btn"
+      hx-get="{{ url_for('assignment.index')}}"
+      hx-target="#detail"
+      hx-swap="innerHTML"
+      hx-boost="true"
+    >
+      Assignments
+    </button>
   </div>
-  {% if current_user.is_authenticated %}
-  <a href="{{ url_for('auth.logout')}}" class="item"
-    >{% autoescape false %}{{icons["logout"]}}{%endautoescape%}Logout</a
-  >
-  {% endif %}
-</section>
-{% endblock %} #} {% block main_content %}
-<section id="detail">
-  <div class="admin-header">
-    <div class="actions-container">
-      <h1>Admin</h1>
-      <button
-        class="btn"
-        hx-get="{{ url_for('standard.index') }}"
-        hx-target="#detail"
-        hx-swap="innerHTML"
-        hx-boost="true"
-        hx-push-url="true"
-      >
-        Standards
-      </button>
-      <button
-        class="btn"
-        hx-get="{{ url_for('user.index')}}"
-        hx-target="#detail"
-        hx-swap="innerHTML"
-        hx-boost="true"
-      >
-        Users
-      </button>
-      <button
-        class="btn"
-        hx-get="{{ url_for('assignment.index')}}"
-        hx-target="#detail"
-        hx-swap="innerHTML"
-        hx-boost="true"
-      >
-        Assignments
-      </button>
-    </div>
-    <label>
-      <input
-        type="checkbox"
-        id="all-courses"
-        name="all-courses"
-        value="all-courses"
-      />
-      Include archived classes
-    </label>
-  </div>
-  <canvas id="chart"></canvas>
-  <script>
-    let data = {{ status|safe }}
+</div>
+<canvas id="chart"></canvas>
+<script>
+  data = {{ status|safe }}
 
-    let processedData = [];
+  processedData = [];
 
-    const ctx = document.getElementById("chart").getContext("2d");
-    const chart = new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: data[0].results.map(item => item.name),
-        datasets: processedData,
+  ctx = document.getElementById("chart").getContext("2d");
+  chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: data[0].results.map(item => item.name),
+      datasets: processedData,
+    },
+    options: {
+      plugins: {
+        legend: {
+          position: "right"
+        }
       },
-      options: {
-        plugins: {
-          legend: {
-            position: "right"
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-          }
-        },
-        tension: 0.1,
-      }
-    });
-
-    function processCourseData(data) {
-      processedData = [];
-      if(!data.length) return
-      for (let course of data) {
-        processedData.push({
-          "label": course.course,
-          "data": course.results.map((item) => item.avg),
-          "fill": false
-        })
-      }
-      chart.data.datasets = processedData;
-      chart.update()
+      scales: {
+        y: {
+          beginAtZero: true,
+        }
+      },
+      tension: 0.1,
     }
+  });
 
-    processCourseData(data)
-  </script>
-</section>
-{% endblock %}
+  function processCourseData(data) {
+    processedData = [];
+    if(!data.length) return
+    for (let course of data) {
+      processedData.push({
+        "label": course.course,
+        "data": course.results.map((item) => item.avg),
+        "fill": false
+      })
+    }
+    chart.data.datasets = processedData;
+    chart.update()
+  }
+
+  processCourseData(data)
+</script>

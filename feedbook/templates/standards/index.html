@@ -26,7 +26,9 @@
           hx-get="{{ url_for('standard.get_standard_edit_form', standard_id=standard.id)}}"
           hx-swap="innerHTML"
           hx-target="closest .item.outcome"
-          >Edit</button>
+        >
+          Edit
+        </button>
       </div>
     </div>
     {% endfor %}
@@ -38,7 +40,7 @@
 <script>
   htmx.on("buildChart", (vals) => {
     function parseData(data) {
-    console.log(data)
+      console.log(data);
       return data.map((course) => {
         return {
           label: course.name,
@@ -47,26 +49,29 @@
       });
     }
 
+    /*
     if (this.chart instanceof Chart) {
       this.chart.destroy();
     }
+    */
 
-    if(!vals.detail.value.length) {
-      document.querySelector(`#admin-details`).textContent = "No data to display."
-      return;
-    } else {
-      
-      let results = vals.detail.value;
-      let ctx = document.querySelector(`#chart`).getContext(`2d`);
+    let results = vals.detail.value;
+    ctx = document.querySelector(`#chart`).getContext(`2d`);
 
-      let data = {
-        labels: results[0].assignments.map((item) => item.assignment),
-        datasets: parseData(results),
-      };
-      this.chart = new Chart(ctx, {
-        type: "line",
-        data: data,
-      });
-    }
+    data = {
+      labels: results[0].assignments.map((item) => item.assignment),
+      datasets: parseData(results),
+    };
+
+    chart.data = data;
+    console.log(chart);
+    chart.update();
+
+    /*
+    this.chart = new Chart(ctx, {
+      type: "line",
+      data: data,
+    });
+    */
   });
 </script>
