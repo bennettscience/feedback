@@ -196,6 +196,36 @@ def get_single_course(id):
     return resp
 
 
+# Get edit form for a single course
+@bp.get("/courses/<int:course_id>/edit")
+@login_required
+@restricted
+def get_course_edit_form(course_id):
+    course = Course.query.filter(Course.id == course_id).first()
+
+    return render_template("shared/forms/edit-course.html", course=course)
+
+
+# Update course details
+@bp.put("/courses/<int:course_id>/edit")
+def edit_course(course_id):
+    args = parser.parse(
+        {"name": fields.String(), "created_on": fields.Date()}, location="form"
+    )
+
+    course = Course.query.filter(Course.id == course_id).first()
+
+    if not course:
+        abort(404)
+
+    course.update(args)
+
+    return make_response(
+        render_template("course/partials/single-course.html", course=course),
+        trigger={"showToast": "Course updated."},
+    )
+
+
 @bp.put("/courses/<int:course_id>/status")
 def update_course_state(course_id):
     """

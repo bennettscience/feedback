@@ -3,6 +3,7 @@
     {% for course in courses %}
     <div class="item">
       <h2>{{ course.name }}</h2>
+      <p>Created - {% if course.created_on is not none %}{{ course.created_on.strftime('%Y-%m-%d')}} {% endif %}</p>
       <div class="actions">
         <button
           class="btn btn-primary"
@@ -11,6 +12,14 @@
         >
           {% if course.active %}Deactivate{% else %}Activate{% endif %}
         </button>
+        <button
+          class="btn"
+          hx-get="{{ url_for('course.get_course_edit_form', course_id=course.id)}}"
+          hx-trigger="click"
+          hx-swap="innerHTML"
+          hx-target="closest .item">
+          Edit
+          </button>
       </div>
     </div>
     {% endfor %}

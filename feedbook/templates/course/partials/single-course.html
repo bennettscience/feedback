@@ -1,0 +1,21 @@
+<div class="item">
+  <h2>{{ course.name }}</h2>
+  <p>Created - {{ course.created_on.strftime('%Y-%m-%d')}}</p>
+  <div class="actions">
+    <button
+      class="btn btn-primary"
+      hx-put="{{ url_for('course.update_course_state', course_id=course.id, source='admin')}}"
+      hx-swap="innerHTML"
+    >
+      {% if course.active %}Deactivate{% else %}Activate{% endif %}
+    </button>
+        <button
+          class="btn"
+          hx-get="{{ url_for('course.get_course_edit_form', course_id=course.id)}}"
+          hx-trigger="click"
+          hx-swap="innerHTML"
+          hx-target="closest .item">
+          Edit
+          </button>
+  </div>
+</div>

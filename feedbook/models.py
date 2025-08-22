@@ -94,6 +94,7 @@ class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
     active = db.Column(db.Boolean, default=True)
+    created_on = db.Column(db.DateTime(timezone=True), default=func.now())
 
     standards = db.relationship(
         "Standard",
@@ -133,6 +134,11 @@ class Course(db.Model):
             self.standards.filter(course_standards.c.standard_id == standard.id).count()
             > 0
         )
+
+    def update(self, data):
+        for key, value in data.items():
+            setattr(self, key, value)
+        db.session.commit()
 
 
 class Standard(db.Model):

@@ -1,0 +1,14 @@
+<form
+	hx-trigger="submit"
+	hx-put="/courses/{{ course.id }}/edit"
+	hx-swap="outerHTML"
+	hx-target="closest .item"
+	>
+	<label>Name
+	<input type="text" name="name" value="{{ course.name }}" />
+	</label>
+	<label>Created
+    <input type="date" name="created_on" {% if course.created_on is not none %}value="{{ course.created_on.strftime('%Y-%m-%d') }}" {% endif %} />
+	</label>
+	<input type="submit">
+</form>
