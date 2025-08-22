@@ -976,15 +976,14 @@ td {
 
 #toast {
   position: fixed;
-  /* Allow a click through the toast position */
-  pointer-events: none;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   opacity: 0;
   top: 90%;
-  right: 1.5rem;
+  /* Keep the toast offscreen */
+  right: -275px;
   min-width: 250px;
   margin: 0;
   padding: 0;
@@ -997,6 +996,7 @@ td {
 
 #toast.show {
   opacity: 1;
+  right: 1.5rem;
 }
 
 #toast-message {

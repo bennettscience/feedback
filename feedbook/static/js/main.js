@@ -13,15 +13,15 @@ function formatDate(target, strDate) {
   return new Intl.DateTimeFormat("en", formats[target]).format(date);
 }
 
-function showToast(msg = "Loading...", err = false) {
+function showToast(msg, err = false) {
+  console.log("Toasted!");
   const toast = document.querySelector(`#toast`);
   // Handle message objects from hyperscript
   // For non-template returns, the backend will also return JSON with
   // the `message` key with details for the user.
   if (typeof msg === "object") {
     // HTMX returns strings, so convert it to an object
-    let obj = JSON.parse(msg.xhr.responseText);
-    msg = obj.message;
+    msg = msg.value;
   }
 
   toast.children[0].innerText = msg;
@@ -40,14 +40,12 @@ function showToast(msg = "Loading...", err = false) {
 function cancelToast() {
   const toast = document.querySelector(`#toast`);
   toast.classList.remove("show");
-  toast.children[0].innerText = "Loading...";
   clearTimeout();
 }
 
 // Listen for toast messaging from the server
 htmx.on("showToast", (event) => {
-  let { msg, err } = event.detail;
-  showToast(msg, err);
+  showToast(event.detail);
 });
 
 // TODO: Doesn't run after hard refresh?
