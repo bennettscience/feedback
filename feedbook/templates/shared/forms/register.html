@@ -1,5 +1,10 @@
 <h2>Hello {{first_name.title()}}</h2>
-<form hx-trigger="submit" hx-post="/register">
+<form
+  class="stack"
+  hx-indicator="#toast"
+  hx-trigger="submit"
+  hx-post="/register"
+>
   <input type="hidden" name="email" value="{{email}}" />
   <label
     >Password

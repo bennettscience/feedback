@@ -299,8 +299,9 @@ input[type="text"] {
   border: 1px solid black;
 }
 
-#login-form input {
+#login-form input:not(input[type="submit"]) {
   line-height: 1.5;
+  width: 100%;
 }
 
 #bulk-form,
@@ -315,6 +316,7 @@ input[type="text"] {
 
 #login-form input[type="email"],
 #login-form input[type="password"],
+#login-form input[type="text"]
 #bulk-form input {
   display: block;
   width: 100%;
