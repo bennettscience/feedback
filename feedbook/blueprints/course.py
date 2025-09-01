@@ -110,7 +110,6 @@ def roster_upload(course_id):
             usertype_id=2,
             active=True,
         )
-        user.set_password(row[3])
         db.session.add(user)
 
         user.enroll(course)
