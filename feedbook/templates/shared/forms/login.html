@@ -16,5 +16,9 @@
     </span>
     <input type="submit" />
   </form>
+  <p>
+    Need an account?
+    <a href="{{ url_for('auth.get_register_form')}}">Sign up here.</a>
+  </p>
 </div>
 {% endblock %}
