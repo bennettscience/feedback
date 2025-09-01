@@ -1,0 +1,27 @@
+{% extends '_layout.html' %} {% block main_content %}
+<div class="box flex column" id="login-form">
+  <h2>Register</h2>
+  <form
+    hx-trigger="submit"
+    hx-post="/register?step=veremail"
+    hx-target="#login-form"
+    hx-swap="innerHTML"
+  >
+    <label
+      >Email
+      <input type="email" name="email" required />
+    </label>
+    <label
+      >Last name
+      <input type="text" name="last_name" required />
+    </label>
+    <label
+      >First name
+      <input type="text" name="first_name" required />
+    </label>
+    <input type="submit" />
+  </form>
+  <div id="error">{{error}}</div>
+  <div id="notice">{{notice}}</div>
+</div>
+{% endblock %}

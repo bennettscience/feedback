@@ -1,4 +1,4 @@
-from flask import abort, Blueprint, current_app, redirect, render_template, url_for
+from flask import abort, Blueprint, redirect, request, render_template, url_for
 from flask_login import current_user, login_user, logout_user
 from htmx_flask import make_response
 from webargs import fields
@@ -46,52 +46,74 @@ def login():
 
 
 @bp.get("/register")
-def get_register():
-    return make_response("Registrations are not open at this time."), 403
-    # return render_template(
-    #     "shared/forms/register.html"
-    # )
+def get_register_form():
+    print("getting registration form")
+    return render_template("shared/forms/register-email.html")
 
 
-# pragma: no cover
 @bp.post("/register")
 def register():
-    abort(403)
-    # args = parser.parse({
-    #     "email": fields.Str(),
-    #     "last_name": fields.Str(),
-    #     "first_name": fields.Str(),
-    #     "password": fields.Str(),
-    #     "password_again": fields.Str()
-    # }, location="form")
+    """
+    Aug 2025
+    Two step registration process. First check that the user's name and email
+     are in the database. If the record exists, have them set a password.
+     If not, abort the attempt.
+    """
+    reg_step = request.args.get("step")
+    if reg_step == "veremail":
+        args = parser.parse(
+            {
+                "email": fields.Str(),
+                "last_name": fields.Str(),
+                "first_name": fields.Str(),
+            },
+            location="form",
+        )
 
-    # if args['password'] != args['password_again']:
-    #     return make_response(
-    #         redirect(url_for('auth.get_register')),
-    #         trigger={"showToast": "Your passwords do not match."}
-    #     )
-    # user = User.query.filter(User.email == args['email']).first()
-    # if user:
-    #     print(f"{args['email']} already exists")
-    #     return render_template(
-    #         "shared/partials/register-form.html",
-    #         error="That email is unavailable"
-    #     )
+        user = User.query.filter(
+            User.email == args["email"],
+            User.last_name.ilike(args["last_name"]),
+            User.first_name.ilike(args["first_name"]),
+        ).first()
 
-    # user = User(
-    #     email=args['email'],
-    #     last_name=args['last_name'],
-    #     first_name=args['first_name'],
-    #     usertype_id=2,
-    # )
-    # user.set_password(args['password'])
-    # db.session.add(user)
-    # db.session.commit()
-    # login_user(user)
+        if not user:
+            abort(403)
 
-    # return make_response(
-    #     redirect=url_for('home.index')
-    #     )
+        # Check for an existing password. If it is saved, then don't allow the registration.
+        if user.password_hash is not None:
+            abort(403)
+
+        result = render_template(
+            "shared/forms/register.html",
+            email=args["email"],
+            first_name=args["first_name"],
+        )
+    else:
+        args = parser.parse(
+            {
+                "email": fields.Str(),
+                "password": fields.Str(),
+                "password_again": fields.Str(),
+            },
+            location="form",
+        )
+
+        if args["password"] != args["password_again"]:
+            return make_response(
+                redirect(url_for("auth.get_register_form")),
+                trigger={"showToast": "Your passwords do not match."},
+            )
+
+        user = User.query.filter(User.email == args["email"]).first()
+
+        user.set_password(args["password"])
+        db.session.add(user)
+        db.session.commit()
+        login_user(user)
+
+        result = make_response(redirect=url_for("home.index"))
+
+    return result
 
 
 @bp.get("/logout")

@@ -1,27 +1,26 @@
-{% extends 'shared/_layout.html' %}
-{% block main_content %}
-<h2>Register</h2>
-<p>Create your account!</p>
+<h2>Hello {{first_name.title()}}</h2>
 <form hx-trigger="submit" hx-post="/register">
-	<label>Email
-		<input type="email" name="email" required />
-	</label>
-	<label>Last name
-		<input type="text" name="last_name" required />
-	</label>
-	<label>First name
-		<input type="text" name="first_name" required />
-	</label>
-	<label>Password
-		<input type="password" name="password" value="" required _="on blur set $pass to my value" />
-	</label>
-	<label>Retype password
-		<input
-			_="on blur if my value is not $pass put 'Your passwords do not match' into #notice otherwise put '' into #notice"
-			type="password" name="password_again" required />
-	</label>
-	<input type="submit" />
+  <input type="hidden" name="email" value="{{email}}" />
+  <label
+    >Password
+    <input
+      type="password"
+      name="password"
+      value=""
+      required
+      _="on blur set $pass to my value"
+    />
+  </label>
+  <label
+    >Retype password
+    <input
+      _="on blur if my value is not $pass put 'Your passwords do not match' into #notice otherwise put '' into #notice"
+      type="password"
+      name="password_again"
+      required
+    />
+  </label>
+  <input type="submit" />
 </form>
 <div id="error">{{error}}</div>
 <div id="notice">{{notice}}</div>
-{% endblock %}
