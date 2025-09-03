@@ -66,5 +66,50 @@
   {% endif %}
 </section>
 {% endblock %} {% block main_content %}
-<section id="detail"></section>
+<section id="detail" class="box">
+  <div id="welcome" class="box stack">
+    <h1>Welcome to OutcomeMaps</h1>
+    <p>
+      This site will help you keep track of your progress developing skills in
+      chemistry. You learn by demonstrating a skill and then taking feedback in
+      order to improve. This account collects all the feedback you've been given
+      so far this year into one place so you can look at your progress.
+    </p>
+    <h2>Grading</h2>
+    <p>Feedback for every assignment this year follows this scale:</p>
+    <table>
+      <thead>
+        <th>N - Not assessable</th>
+        <th>R - Revision needed</th>
+        <th>M - Meets expectations</th>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="red">
+            No submission or so many errors or confusions that the student has
+            not shown the proficiency on the standard being assessed.
+          </td>
+          <td class="red">
+            Your work demonstrates some understanding, but includes errors in
+            processes or concepts which are fundamental to the standard.
+          </td>
+          <td class="green">
+            You have shown a clear understanding of the concept through complete
+            answers with accurate scientific justifications of the standard.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      You can click on the box for each standard to see your feedback. Pay
+      attention to how many times you <b>meet expectations</b> compared to how
+      many times you <b>need revision</b> or <b>could not be assessed</b>. You
+      want to meet expectations more frequently than you need revision to show
+      you understand and can do the standard.
+    </p>
+    <p>
+      Click on your Chemistry class on the left to see your current feedback.
+    </p>
+  </div>
+</section>
 {% endblock %}
