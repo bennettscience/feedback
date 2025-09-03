@@ -80,7 +80,7 @@ def create_assignment_form():
     """
     args = parser.parse({"current_course_id": fields.Int()}, location="query")
     types = AssignmentType.query.all()
-    courses = Course.query.all()
+    courses = Course.query.filter(Course.active).all()
     return render_template(
         "course/right-sidebar.html",
         title="Create a new assignment",
