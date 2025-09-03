@@ -156,9 +156,11 @@ def get_single_course(id):
     else:
         # prep the standard report
         results = {}
-        enrollments = course.enrollments.filter(
-            User.usertype_id == 2, User.active == True
-        ).all()
+        enrollments = (
+            course.enrollments.filter(User.usertype_id == 2, User.active)
+            .order_by(User.last_name)
+            .all()
+        )
         for standard in course.standards.all():
             count = 0
             for student in enrollments:
