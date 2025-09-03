@@ -1,14 +1,24 @@
 <form
-	hx-trigger="submit"
-	hx-put="/standards/{{ standard.id }}/edit"
-	hx-swap="outerHTML"
-	hx-target="closest .item.outcome"
-	>
-	<label>Name
-	<input type="text" name="name" value="{{ standard.name }}" />
-	</label>
-	<label>Description
-	<textarea name="description">{{ standard.description }}</textarea> 
-	</label>
-	<input type="submit">
+  hx-trigger="submit"
+  hx-put="/standards/{{ standard.id }}/edit"
+  hx-swap="outerHTML"
+  hx-target="closest .item.outcome"
+>
+  <label
+    >Name
+    <input type="text" name="name" value="{{ standard.name }}" />
+  </label>
+  <label
+    >Display name
+    <input
+      type="text"
+      name="display_name"
+      value="{{ standard.display_name }}"
+    />
+  </label>
+  <label
+    >Description
+    <textarea name="description">{{ standard.description }}</textarea>
+  </label>
+  <input type="submit" />
 </form>

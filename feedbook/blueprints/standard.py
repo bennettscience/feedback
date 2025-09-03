@@ -37,11 +37,17 @@ def create_standard():
             "name": fields.String(),
             "description": fields.String(),
             "course_id": fields.Int(),
+            "display_name": fields.String(),
         },
         location="form",
     )
 
-    standard = Standard(name=args["name"], description=args["description"], active=True)
+    standard = Standard(
+        name=args["name"],
+        display_name=args["display_name"],
+        description=args["description"],
+        active=True,
+    )
     db.session.add(standard)
     db.session.commit()
 
@@ -140,7 +146,12 @@ def update_single_standard(standard_id):
     standard = Standard.query.filter(Standard.id == standard_id).first()
 
     args = parser.parse(
-        {"name": fields.String(), "description": fields.String()}, location="form"
+        {
+            "name": fields.String(),
+            "display_name": fields.String(),
+            "description": fields.String(),
+        },
+        location="form",
     )
 
     standard.update(args)

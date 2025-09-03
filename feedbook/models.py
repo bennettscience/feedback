@@ -146,6 +146,7 @@ class Standard(db.Model):
     name = db.Column(db.String(64), nullable=False)
     description = db.Column(db.String(1000))
     active = db.Column(db.Boolean, default=True)
+    display_name = db.Column(db.String(12))
 
     attempts = db.relationship(
         "StandardAttempt",

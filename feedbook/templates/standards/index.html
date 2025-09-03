@@ -3,6 +3,7 @@
     {% for standard in standards %}
     <div class="item outcome">
       <h2>{{ standard.name }}</h2>
+      <p>Display name: {{ standard.display_name }}</p>
       <p>{{ standard.description }}</p>
       <div class="actions">
         <button
@@ -40,18 +41,18 @@
 <script>
   // Update data to an existing chart
   function parseData(courseResults) {
-  // Loop through each course and return a well-formatted data point
-  // for the chart.
-  // The map loops over each assignment and finds the average score, packing
-  // it against a specific assignment.
+    // Loop through each course and return a well-formatted data point
+    // for the chart.
+    // The map loops over each assignment and finds the average score, packing
+    // it against a specific assignment.
     return courseResults.map((course) => {
       return {
         label: course.name,
-        data: course.assignments.map((assignment) => assignment.avg)
-      }
-    })
+        data: course.assignments.map((assignment) => assignment.avg),
+      };
+    });
   }
-  
+
   htmx.on("buildChart", (response) => {
     let results = response.detail.value;
     ctx = document.querySelector(`#chart`).getContext(`2d`);
@@ -59,7 +60,7 @@
     // Get rid of any existing charts on the page. It's easier to rebuild
     // a new chart object than keeping track of old and new data with
     // different structures.
-    if(chart instanceof Chart) {
+    if (chart instanceof Chart) {
       chart.destroy();
     }
 
@@ -70,8 +71,7 @@
 
     chart = new Chart(ctx, {
       type: "line",
-      data: data
-    })
-
+      data: data,
+    });
   });
 </script>
