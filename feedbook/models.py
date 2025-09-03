@@ -233,17 +233,18 @@ class Standard(db.Model):
 
         Perform several checks:
         - If an assessment is present:
-            - If the assessment attempt == 1, then True
+            - If the assessment attempt == 2, then True
             - If an override is present, then True
         - else no assessment is present:
             - If an override is present, then True
-            - More 1's than 0's in the assessment objects AND a true assessment, otherwise false
+            - More 2's than 1's or 0's in the assessment objects AND a true assessment, otherwise false
         """
+        # Check for assessments attached to the given standard.
         assessment_present = self.assignments.filter(
             Assignment.assignmenttype_id == 2
         ).all()
 
-        # Get a count of 1's and 0's for the user
+        # Get a count of scores for the user
         scores = self._get_scores(user.id)
         counts = Counter(scores)
 
@@ -251,7 +252,7 @@ class Standard(db.Model):
         result = {
             "has_assessment": self._has_assessment_proficient(user),
             "has_override": self._has_proficient_override(user),
-            "scores": counts[1] > counts[0],
+            "scores": counts[2] > counts[1] + counts[0],
         }
 
         # Still can't decide how I feel about this check. What point is
