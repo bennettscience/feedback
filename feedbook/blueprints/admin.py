@@ -23,16 +23,16 @@ def process_course_data(courses):
     for course in courses:
         standard_results = []
         enrollments = course.enrollments.filter(User.usertype_id == 2, User.active)
-        for standard in course.standards.all():
+        for standard in course.standards.filter(Standard.active):
             # Filter the students array on the standard and count how many
             # are proficient in the current course through the user_courses table
-            if standard.students.all():
-                count = (
-                    standard.students.join(User)
-                    .join(user_courses)
-                    .filter(User.active == True, user_courses.c.course_id == course.id)
-                    .count()
-                )
+            query = (
+                standard.students.join(User)
+                .join(user_courses)
+                .filter(User.active, user_courses.c.course_id == course.id)
+            )
+            if query.all():
+                count = query.count()
             else:
                 count = 0
                 for student in enrollments.filter(User.active == True).all():

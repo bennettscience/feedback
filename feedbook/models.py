@@ -195,7 +195,7 @@ class Standard(db.Model):
             self.attempts.join(Assignment)
             .filter(
                 Assignment.assignmenttype_id == 2,
-                StandardAttempt.score == 1,
+                StandardAttempt.score == 2,
                 StandardAttempt.user_id == user.id,
             )
             .order_by("occurred")
@@ -239,12 +239,18 @@ class Standard(db.Model):
             - If an override is present, then True
             - More 2's than 1's or 0's in the assessment objects AND a true assessment, otherwise false
         """
-        # Check for assessments attached to the given standard.
-        assessment_present = self.assignments.filter(
-            Assignment.assignmenttype_id == 2
-        ).all()
+        # Check for assessments attached to the given standard for the user's course
+        assessment_present = (
+            self.assignments.join(course_assignments)
+            .filter(
+                (Assignment.assignmenttype_id == 2)
+                & (course_assignments.c.course_id == user.enrollments.all()[0].id)
+            )
+            .all()
+        )
 
         # Get a count of scores for the user
+
         scores = self._get_scores(user.id)
         counts = Counter(scores)
 
@@ -264,6 +270,8 @@ class Standard(db.Model):
         if assessment_present:
             if result["has_assessment"] or result["has_override"]:
                 return True
+            else:
+                return False
         else:
             if result["scores"]:
                 return True
@@ -375,6 +383,15 @@ class User(UserMixin, db.Model):
             raise Exception(
                 "{} is already enrolled in {}".format(self.first_name, course.name)
             )
+
+    def unenroll(self, course):
+        if not self.is_enrolled(course):
+            raise Exception(
+                "{} is not enrolled in {}".format(self.first_name, course.name)
+            )
+        else:
+            self.enrollments.remove(course)
+            db.session.commit()
 
     def is_enrolled(self, course):
         return (
