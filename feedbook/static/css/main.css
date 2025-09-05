@@ -1020,6 +1020,7 @@ td {
 
 #toast.htmx-request.htmx-indicator {
   opacity: 1;
+  right: 1.5rem;
 }
 
 #toast .htmx-request.htmx-indicator.error {
