@@ -87,7 +87,13 @@ def get_single_standard(standard_id):  # pragma: no cover
     # Sort by class
     # Graph showing breakdown of average score for each course section
     from statistics import mean
-    from feedbook.models import User, user_courses
+    from feedbook.models import (
+        Assignment,
+        User,
+        user_courses,
+        assignment_standards,
+        course_assignments,
+    )
 
     courses = Course.query.filter(Course.active == True).all()
     results = []
@@ -101,7 +107,14 @@ def get_single_standard(standard_id):  # pragma: no cover
         standard = course.standards.filter(Standard.id == standard_id).first()
 
         # get assignments for the given standard assessed in this course
-        assignments = standard.assignments.order_by("created_on").all()
+
+        assignments = (
+            standard.assignments.join(assignment_standards)
+            .join(Assignment.courses)
+            .filter(assignment_standards.c.standard_id == standard_id, Course.active)
+            .all()
+        )
+
         for assignment in assignments:
             attempts = (
                 assignment.assessments.join(User, User.id == StandardAttempt.user_id)
