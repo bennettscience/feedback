@@ -257,7 +257,7 @@ def add_standard_assessment(standard_id):
 
     # If the assignment is a test, add a record on the
     # student proficiencies
-    if sa.score == 1 and sa.assessed_on.type.name == "Assessment":
+    if sa.score == 2 and sa.assessed_on.type.name == "Assessment":
         sa.standard.add_proficient_override(sa.user)
         current_app.logger.info(
             "Added proficiency record on {} for {}".format(sa.standard, args["user_id"])
