@@ -460,6 +460,7 @@ def get_standard_scores_in_course(course_id, standard_id):
                 "first_name": student.first_name,
                 "id": student.id,
                 "scores": assessments,
+                "is_proficient": standard.is_proficient(student),
             }
         )
 
