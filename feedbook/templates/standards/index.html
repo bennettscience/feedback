@@ -19,7 +19,7 @@
           hx-swap="none"
           _="on click remove .active from .outcome then add .active to the closest parent .outcome"
         >
-          Details
+          Data
         </button>
         <button
           class="btn"
@@ -64,6 +64,12 @@
       chart.destroy();
     }
 
+    console.log(results);
+    if (!results[0].assignments) {
+      showToast("No data for this standard.");
+      return;
+    }
+
     data = {
       labels: results[0].assignments.map((item) => item.assignment),
       datasets: parseData(results),
@@ -72,6 +78,32 @@
     chart = new Chart(ctx, {
       type: "line",
       data: data,
+      options: {
+        plugins: {
+          legend: {
+            position: "right",
+          },
+        },
+        scales: {
+          y: {
+            min: 0,
+            max: 2,
+            afterTickToLabelConversion: function (chart) {
+              (chart.ticks = []),
+                chart.ticks.push({ value: 0, label: "Did not demonstrate" }),
+                chart.ticks.push({ value: 1, label: "Revision needed" }),
+                chart.ticks.push({ value: 2, label: "Met expectations" });
+            },
+          },
+          x: {
+            title: {
+              display: true,
+              text: "Assignment",
+            },
+          },
+        },
+        tension: 0.1,
+      },
     });
   });
 </script>
