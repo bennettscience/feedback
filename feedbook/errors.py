@@ -7,4 +7,4 @@ def forbidden(err):
 
 
 def not_found(err):
-    return "That action wasn't found.", 404
+    return str(err), 404

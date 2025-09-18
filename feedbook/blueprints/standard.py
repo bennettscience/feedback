@@ -1,4 +1,4 @@
-from flask import Blueprint, current_app, render_template, request
+from flask import abort, Blueprint, current_app, render_template, request
 from flask_login import current_user, login_required
 from htmx_flask import make_response
 from webargs import fields
@@ -105,6 +105,9 @@ def get_single_standard(standard_id):  # pragma: no cover
         }
         enrollments = course.enrollments.filter(User.usertype_id == 2).count()
         standard = course.standards.filter(Standard.id == standard_id).first()
+
+        if not standard:
+            abort(404, description="No data for this standard exists.")
 
         # get assignments for the given standard assessed in this course
 

@@ -14,7 +14,6 @@ function formatDate(target, strDate) {
 }
 
 function showToast(msg, err = false) {
-  console.log("Toasted!");
   const toast = document.querySelector(`#toast`);
   // Handle message objects from hyperscript
   // For non-template returns, the backend will also return JSON with
