@@ -851,7 +851,7 @@ table#assessment-table #max-len {
 }
 
 thead th:first-child {
-  width: auto;
+  width: 20%;
   white-space: nowrap;
 }
 

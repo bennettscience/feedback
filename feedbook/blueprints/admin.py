@@ -26,18 +26,18 @@ def process_course_data(courses):
         for standard in course.standards.filter(Standard.active):
             # Filter the students array on the standard and count how many
             # are proficient in the current course through the user_courses table
-            query = (
-                standard.students.join(User)
-                .join(user_courses)
-                .filter(User.active, user_courses.c.course_id == course.id)
-            )
-            if query.all():
-                count = query.count()
-            else:
-                count = 0
-                for student in enrollments.filter(User.active == True).all():
-                    if standard.is_proficient(student):
-                        count += 1
+            # query = (
+            #     standard.students.join(User)
+            #     .join(user_courses)
+            #     .filter(User.active, user_courses.c.course_id == course.id)
+            # )
+            # if query.all():
+            #     count = query.count()
+            # else:
+            count = 0
+            for student in enrollments.filter(User.active == True).all():
+                if standard.is_proficient(student):
+                    count += 1
 
             # Divide that count by the enrollment length variable
             standard_results.append(
@@ -51,7 +51,7 @@ def process_course_data(courses):
     return data
 
 
-@bp.get("/admin")
+@bp.get("/admin/")
 @login_required
 @restricted
 def index():

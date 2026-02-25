@@ -1,5 +1,14 @@
-<tr id="student_{{student.id}}"> 
-    <td class="{% if student.is_proficient %}green{% else %}red{%endif%}">{{student.last_name}}, {{ student.first_name }}</td>
+<tr id="student_{{student.id}}">
+    <td>{% if not student.is_proficient %}
+		<button
+			class="btn btn-secondary"
+			hx-post="/standards/{{standard.id}}/override?user_id={{student.id}}"
+			hx-trigger="click"
+			hx-target="closest td"
+			hx-swap="innerHTML"
+			>Add Override</button>
+    {% else %}{% endif %}</td>
+    <td>{{student.last_name}}, {{ student.first_name }}</td>
     {% for attempt in student.scores %}
     <td {% if attempt["assessed_on"] %} class="tooltip" data-assignment-name="{{attempt['assessed_on']['name']}}" {% endif %} hx-trigger="click"
         hx-get="/standards/{{attempt.standard['id']}}/users/{{student.id}}/results/{{attempt.id}}" hx-target="main"

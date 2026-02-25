@@ -290,7 +290,10 @@ def post_standard_override(standard_id):
 
     return make_response(
         "Proficient",
-        trigger={"showToast": {"msg": msg, "timeout": 5000, "err": is_error}},
+        trigger={
+            "showToast": {"msg": msg, "timeout": 5000, "err": is_error},
+            "toggleUserState": {"val": True}
+        },
     )
 
 
