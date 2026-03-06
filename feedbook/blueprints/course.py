@@ -447,6 +447,11 @@ def get_standard_scores_in_course(course_id, standard_id):
         .all()
     )
 
+    # Get the specific assignments for a standard within a given course
+    assignments = standard.assignments.join(course_assignments).filter(course_assignments.c.id == course.id)
+
+    # loop over the assignments and get results for students in this course
+
     # Process student results
     results = []
     for student in student_enrollments:

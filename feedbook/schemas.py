@@ -44,7 +44,7 @@ class CreateAssignmentSchema(Schema):
     canvas_id = fields.Int(required=True)
     course_id = fields.Int(required=True)
     name = fields.Str(required=True)
-    points_possible = fields.Int(requried=True)
+    points_possible = fields.Int(required=True)
 
 
 class AssignmentTypeSchema(Schema):

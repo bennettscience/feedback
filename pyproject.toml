@@ -15,18 +15,19 @@ dependencies = [
     "jinja_partials>=0.1.1",
     "htmx_flask>=0.1.0",
 ]
-requires-python = ">= 3.9.14"
+requires-python = ">= 3.11"
 
 [build-system]
 requires = ["hatchling<=1.18.0"]
 build-backend = "hatchling.build"
 
-[tool.rye]
+[tool.uv]
 managed = true
 dev-dependencies = [
     "black>=23.7.0",
     "flask-migrate>=4.0.4",
     "coverage>=7.6.8",
+    "flask-shell-ipython>=0.5.3",
 ]
 
 [tool.hatch.metadata]
