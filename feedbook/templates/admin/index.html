@@ -50,7 +50,7 @@
   chart = new Chart(ctx, {
     type: "line",
     data: {
-      labels: data[0].results.map(item => item.name),
+      labels: data[0].results.map(item => item.display_name),
       datasets: processedData,
     },
     options: {

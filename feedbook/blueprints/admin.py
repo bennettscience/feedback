@@ -43,6 +43,7 @@ def process_course_data(courses):
             standard_results.append(
                 {
                     "name": standard.name,
+                    "display_name": standard.display_name,
                     "avg": round(count / enrollments.count(), 2),
                 }
             )
