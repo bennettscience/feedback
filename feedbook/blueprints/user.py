@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from flask import abort, Blueprint, render_template, redirect, abort
+from flask import abort, Blueprint, render_template, redirect, abort, request
 from flask_login import current_user, login_required
 from htmx_flask import make_response
 from webargs import fields
@@ -18,9 +18,76 @@ bp = Blueprint("user", __name__)
 @login_required
 @restricted
 def index():
-    users = User.query.all()
-    return render_template("user/index.html", users=users)
+    stmt = db.select(User).where(User.usertype_id == 2).order_by(User.last_name)
+    users = db.session.scalars(stmt).all()
 
+    resp_data = {
+        "users": users
+    }
+
+    template = "user/index.html"
+
+    if request.htmx:
+        resp = render_template(template, **resp_data)
+    else:
+        resp = render_template(
+            "shared/layout_wrapper.html", partial=template, data=resp_data
+        )
+
+    return resp
+    # return render_template("user/index.html", users=users)
+
+
+# Get a single user
+@bp.get("/users/<int:user_id>")
+@login_required
+@restricted
+def get_user(user_id):
+    # args = parser.parse({"user_id": fields.Int()}, location="querystring")
+    # course = Course.query.filter(Course.id == course_id).first()
+    stmt = db.select(User).where(User.id == user_id)
+    user = db.session.scalar(stmt)
+    # user = User.query.filter(User.id == args["user_id"]).first()
+    standards = defaultdict(dict)
+
+    for a in user.assessments.all():
+        standards[a.standard.name]["is_proficient"] = a.standard.is_proficient(user)
+        standards[a.standard.name]["id"] = a.standard.id
+        standards[a.standard.name].setdefault("assessments", []).append(
+            {
+                "assignment": a.assessed_on,
+                "score": a.score,
+                "occurred": a.occurred,
+                "comments": a.comments,
+            }
+        )
+
+    template = "user/user-index.html"
+    resp_data = {
+        "user": user,
+        "standards": standards,
+    }
+
+    return render_template("user/user-index.html", user=user, standards=standards)
+
+    if request.htmx:
+        resp = render_template(template, **resp_data)
+    else:
+        # The sidebar is part of the template, so it needs to be rebult
+        # if the page is reloaded.
+        from feedbook.static.icons import add, admin, home, logout
+
+        resp_data["icons"] = {
+            "add": add,
+            "admin": admin,
+            "home": home,
+            "logout": logout,
+        }
+        resp = render_template(
+            "shared/layout_wrapper.html", partial=template, data=resp_data
+        )
+
+    return resp
 
 # Set the user's active status
 @bp.put("/users/<int:user_id>/status")

@@ -1,3 +1,14 @@
-{% for user in users %}
-<div class="user">{{ user.last_name }}, {{ user.first_name }}</div>
-{% endfor %}
+{% for user in users %} {% endfor %}
+
+<div class="box grid" id="admin-users">
+  <ul>
+    {% for user in users %}
+    <li>
+      <a href="{{url_for('user.get_user', user_id=user.id)}}" class="user"
+        >{{ user.last_name }}, {{ user.first_name }}</a
+      >
+    </li>
+    {% endfor %}
+  </ul>
+  <div class="box" id="admin-details"></div>
+</div>

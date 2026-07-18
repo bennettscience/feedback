@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}OutcomeMaps{% endblock %}</title>
     <!-- load this in the head to be used later -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <link rel="icon" href="{{ url_for('static', filename='favicon.svg')}}" />
     <link
       rel="stylesheet"
@@ -16,8 +15,9 @@
       href="https://fonts.googleapis.com/css?family=Inter"
       rel="stylesheet"
     />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <script>
-      /* Initialize a bunch of variables to use on admin pages. Feels a little hacky. */
+      /* Initialize a bunch of variables to use on admin pages. Feels a little hacky. These are globally scoped.*/
       let processedData;
       let ctx;
       let chart;
@@ -28,7 +28,8 @@
 
   <body _="on keyup[key is 'Escape'] trigger closeModal">
     <main>
-      {% block sidebar %} {% endblock %} {% block main_content %}
+      {% block sidebar %} {% include "shared/partials/left-sidebar.html" %} {%
+      endblock %} {% block main_content %}
       <section id="detail"></section>
       {% endblock %}
     </main>

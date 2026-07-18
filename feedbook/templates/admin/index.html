@@ -1,3 +1,4 @@
+{% extends "_layout.html" %} {% block main_content %}
 <div class="admin-header">
   <div class="actions-container">
     <h1>Admin</h1>
@@ -7,6 +8,7 @@
       hx-target="#detail"
       hx-swap="innerHTML"
       hx-boost="true"
+      hx-push-url="true"
     >
       Assignments
     </button>
@@ -16,6 +18,7 @@
       hx-target="#detail"
       hx-swap="innerHTML"
       hx-boost="true"
+      hx-push-url="true"
     >
       Courses
     </button>
@@ -26,6 +29,7 @@
       hx-swap="innerHTML"
       hx-boost="true"
       hx-push-url="true"
+      hx-push-url="true"
     >
       Standards
     </button>
@@ -35,13 +39,16 @@
       hx-target="#detail"
       hx-swap="innerHTML"
       hx-boost="true"
+      hx-push-url="true"
     >
       Users
     </button>
   </div>
 </div>
-<canvas id="chart"></canvas>
-<script>
+<div id="detail">
+  <canvas id="chart"></canvas>
+</div>
+<script defer>
   data = {{ status|safe }}
 
   processedData = [];
@@ -100,3 +107,4 @@
 
   processCourseData(data)
 </script>
+{% endblock %}
