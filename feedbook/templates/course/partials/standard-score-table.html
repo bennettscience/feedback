@@ -63,20 +63,24 @@
 <table id="course-roster">
   <thead id="table-head">
     <tr>
-      <th class="columnheader" role="columnheader">Override</th>
       <th class="columnheader" role="columnheader">
         <div class="th-inner-container">
           <p>Name</p>
         </div>
       </th>
-      {% for header in headers %}
-      <th>{{header}}</th>
+      {% for col in columns %}
+      <th>{{ col }}</th>
       {% endfor %}
     </tr>
   </thead>
-  <tbody class="scroller">
-    {% for student in students %}
-    {{render_partial('course/partials/student-entry.html', student=student,
-    course=course, standard=standard, clickable=True)}} {% endfor %}
+  <tbody>
+    {% for student_id, data in roster.items() %}
+    <tr>
+      <td>{{ data.name }}</td>
+      {% for col in columns %}
+      <td>{{ data.scores[col] }}</td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
   </tbody>
 </table>

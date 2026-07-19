@@ -435,57 +435,58 @@ def get_create_standard_form(course_id):
 @login_required
 @restricted
 def get_standard_scores_in_course(course_id, standard_id):
-    from feedbook.models import StandardAttempt
-    from feedbook.schemas import StandardAttemptSchema
+    from feedbook.models import StandardAttempt, assignment_standards
+    # from feedbook.schemas import StandardAttemptSchema
 
     course = Course.query.filter(Course.id == course_id).first()
     standard = Standard.query.filter(Standard.id == standard_id).first()
 
-    student_enrollments = (
-        course.enrollments.filter(User.usertype_id == 2, User.active == True)
-        .order_by("last_name")
-        .all()
+    query = (
+        db.select(User, Assignment, StandardAttempt)
+        .select_from(assignment_standards)
+        .join(Assignment, assignment_standards.c.assignment_id == Assignment.id)
+        .join(Course, Course.id == course.id)
+        .join(User, Course.enrollments)
+        .outerjoin(
+            StandardAttempt,
+            (StandardAttempt.assignment_id == Assignment.id) &
+            (StandardAttempt.user_id == User.id)
+        )
+        .where(
+            assignment_standards.c.standard_id == standard.id,
+            User.usertype_id == 2,
+            User.active
+        )
+        .order_by(User.last_name, Assignment.created_on)
     )
 
-    # Get the specific assignments for a standard within a given course
-    assignments = standard.assignments.join(course_assignments).filter(course_assignments.c.id == course.id)
+    results = db.session.execute(query).all()
 
-    # loop over the assignments and get results for students in this course
+    assignment_names = sorted(list({assignment.name for _, assignment, _ in results}))
 
-    # Process student results
-    results = []
-    for student in student_enrollments:
-        assessments = student.assessments.filter(
-            StandardAttempt.standard_id == standard_id
-        ).order_by(StandardAttempt.occurred)
+    score_table = {}
 
-        results.append(
-            {
-                "last_name": student.last_name,
-                "first_name": student.first_name,
-                "id": student.id,
-                "scores": assessments,
-                "is_proficient": standard.is_proficient(student),
+    for user, assignment, attempt in results:
+        if user.id not in score_table:
+            score_table[user.id] = {
+                "name": f"{user.last_name}, {user.first_name}",
+                "scores": {name: "N/A" for name in assignment_names}
             }
-        )
+
+        if attempt:
+            score_table[user.id]["scores"][assignment.name] = attempt.score
 
     template = "course/partials/standard-score-table.html"
-    resp_data = {"students": results, "course_id": course_id, "standard": standard}
+    resp_data = {
+        "roster": score_table,
+        "columns": assignment_names,
+        "course_id": course_id,
+        "standard": standard
+    }
 
     if request.htmx:
         resp = render_template(template, **resp_data)
     else:
-        # The sidebar is part of the template, so it needs to be rebult
-        # if the page is reloaded.
-        from feedbook.static.icons import add, admin, home, logout
-
-        resp_data["icons"] = {
-            "add": add,
-            "admin": admin,
-            "home": home,
-            "logout": logout,
-        }
-
         resp = render_template(
             "shared/layout_wrapper.html", partial=template, data=resp_data
         )
