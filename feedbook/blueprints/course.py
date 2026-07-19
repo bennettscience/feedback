@@ -435,16 +435,23 @@ def get_create_standard_form(course_id):
 @login_required
 @restricted
 def get_standard_scores_in_course(course_id, standard_id):
-    from feedbook.models import StandardAttempt, assignment_standards
-    # from feedbook.schemas import StandardAttemptSchema
+    from feedbook.models import StandardAttempt, assignment_standards, course_assignments, user_courses
 
     course = Course.query.filter(Course.id == course_id).first()
     standard = Standard.query.filter(Standard.id == standard_id).first()
 
+    # This is a huge query: 
+    # 1. Select <Assignment> from course_assignments to filter by course. This prevents all assignments, including from past years, to be displayed.
+    # 2. Select <Assignment> through assignment_standards to make sure they match the requested item.
+    # 3. Pull any users from the current course.
+    # 4. Finally, attach the <StandardAttempt> records for those items matching the <Course> id.
+    # 5. Return results ordered by student last name and assignments by date they were created.
+    #   - The created_by date isn't great, but it's a good first filtering parameter for this update.
     query = (
         db.select(User, Assignment, StandardAttempt)
-        .select_from(assignment_standards)
-        .join(Assignment, assignment_standards.c.assignment_id == Assignment.id)
+        .select_from(course_assignments)
+        .join(Assignment, course_assignments.c.assignment_id == Assignment.id)
+        .join(assignment_standards, assignment_standards.c.assignment_id == Assignment.id)
         .join(Course, Course.id == course.id)
         .join(User, Course.enrollments)
         .outerjoin(
@@ -453,6 +460,7 @@ def get_standard_scores_in_course(course_id, standard_id):
             (StandardAttempt.user_id == User.id)
         )
         .where(
+            course_assignments.c.course_id == course.id,
             assignment_standards.c.standard_id == standard.id,
             User.usertype_id == 2,
             User.active
@@ -462,10 +470,12 @@ def get_standard_scores_in_course(course_id, standard_id):
 
     results = db.session.execute(query).all()
 
+    # Throw all of the assignment names into a list to pre-populate a results array.
     assignment_names = sorted(list({assignment.name for _, assignment, _ in results}))
 
     score_table = {}
 
+    # Process the results, creating an array of scores for each student to make sure everything stays sorted correctly.
     for user, assignment, attempt in results:
         if user.id not in score_table:
             score_table[user.id] = {
@@ -473,6 +483,7 @@ def get_standard_scores_in_course(course_id, standard_id):
                 "scores": {name: "N/A" for name in assignment_names}
             }
 
+        # if a student has a <StandardAttempt> record, place it with the correct assignment.
         if attempt:
             score_table[user.id]["scores"][assignment.name] = attempt.score
 
