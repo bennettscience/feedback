@@ -76,7 +76,11 @@
   <tbody>
     {% for student_id, data in roster.items() %}
     <tr>
-      <td>{{ data.name }}</td>
+      <td>
+        <a href="{{url_for('user.get_user', user_id=student_id)}}"
+          >{{ data.name }}</a
+        >
+      </td>
       {% for col in columns %}
       <td>{{ data.scores[col] }}</td>
       {% endfor %}

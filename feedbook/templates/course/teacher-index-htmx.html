@@ -4,21 +4,6 @@
 <div class="course-header">
   <h1>{{ course.name }}</h1>
   <div class="actions-container">
-    <select
-      id="user-select"
-      name="user_id"
-      hx-get="{{ url_for('course.get_user', course_id=course.id) }}"
-      hx-trigger="change"
-      hx-swap="innerHTML"
-      hx-target="#context-detail"
-    >
-      <option>Select a student</option>
-      {% for student in enrollments %}
-      <option value="{{student.id}}">
-        {{student.last_name}}, {{student.first_name}}
-      </option>
-      {% endfor %}
-    </select>
     <button
       class="btn"
       hx-get="/courses/{{course.id}}/standards/create"
