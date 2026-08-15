@@ -7,15 +7,21 @@
 	endif %}</button>
 	<div class="box flex">
 	{% for key, values in standards.items() %}
-	<a class="box pill {% if values['is_proficient'] %}green{% else %}red{% endif %}" href="#{{key}}">{{key}}</a>
+	<a class="box pill {% if values['is_proficient']['status'] %}green{% else %}red{% endif %}" href="#{{key}}">{{key}}</a>
 	{% endfor %}
 	</div>
 {% for key, values in standards.items()|sort(attribute="0", reverse=True) %}
 <div class="student-summary-standard-header">
 	<h2 id="{{key}}">{{key}}</h2>
   <span class="box flex">
-		{% if values["is_proficient"] %}
-		Proficient
+		{% if values["is_proficient"]["records"]["has_override"] %}
+		<button
+			class="btn btn-secondary"
+			hx-delete="/standards/{{values['id']}}/override?user_id={{user.id}}"
+			hx-trigger="click"
+			hx-target="closest span"
+			hx-swap="innerHTML"
+			>Remove override</button>
 		{% else %}
 		<button
 			class="btn btn-secondary"

@@ -227,7 +227,24 @@ class Standard(db.Model):
             200,
         )
 
-    def is_proficient(self, user) -> bool:
+    def remove_proficient_override(self, user):
+        if not self._has_proficient_override(user):
+            return (
+                "{} does not have an override for {}".format(
+                    f"{user.first_name} {user.last_name}", self.name
+                ), 404
+            )
+        else:
+            self.students.remove(user)
+            db.session.commit()
+
+        return (
+            "Removed proficiency override for {}".format(
+                f"{user.first_name} {user.last_name}"
+            ), 200
+        )
+
+    def is_proficient(self, user) -> dict:
         """
         Determine if a user is showing mastery on a standard.
 
@@ -238,6 +255,8 @@ class Standard(db.Model):
         - else no assessment is present:
             - If an override is present, then True
             - More 2's than 1's or 0's in the assessment objects AND a true assessment, otherwise false
+
+        returns a dict with details of the proficiency.
         """
         # Check for assessments attached to the given standard for the user's course
         assessment_present = (
@@ -269,14 +288,14 @@ class Standard(db.Model):
         # to do all the practice?
         if assessment_present:
             if result["has_assessment"] or result["has_override"]:
-                return True
+                return {"status": True, "records": result}
             else:
-                return False
+                return {"status": False, "records": result}
         else:
             if result["scores"]:
-                return True
+                return {"status": True, "records": result}
             else:
-                return False
+                return {"status": False, "records": result}
 
     def current_score(self, user):
         """Average the last attemp with the highest attempt.

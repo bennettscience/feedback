@@ -296,6 +296,28 @@ def post_standard_override(standard_id):
         },
     )
 
+@bp.delete("/standards/<int:standard_id>/override")
+@login_required
+@restricted
+def delete_standard_override(standard_id):
+    args = parser.parse({"user_id": fields.Int()}, location="query")
+
+    standard = Standard.query.filter(Standard.id == standard_id).first()
+    user = User.query.filter(User.id == args["user_id"]).first()
+
+    msg, resp_code = standard.remove_proficient_override(user)
+    if resp_code != 200:
+        is_error = True
+    else:
+        is_error = False
+
+    return make_response(
+        "Not Proficient",
+        trigger={
+            "showToast": {"msg": msg, "timeout": 5000, "err": is_error}
+        }
+    )
+
 
 # Edit a single standard attempt
 @bp.get("/standards/<int:standard_id>/attempts/<int:attempt_id>")
