@@ -70,24 +70,6 @@ def get_user(user_id):
 
     return render_template("user/user-index.html", user=user, standards=standards)
 
-    if request.htmx:
-        resp = render_template(template, **resp_data)
-    else:
-        # The sidebar is part of the template, so it needs to be rebult
-        # if the page is reloaded.
-        from feedbook.static.icons import add, admin, home, logout
-
-        resp_data["icons"] = {
-            "add": add,
-            "admin": admin,
-            "home": home,
-            "logout": logout,
-        }
-        resp = render_template(
-            "shared/layout_wrapper.html", partial=template, data=resp_data
-        )
-
-    return resp
 
 # Set the user's active status
 @bp.put("/users/<int:user_id>/status")
