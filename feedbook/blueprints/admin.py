@@ -36,7 +36,7 @@ def process_course_data(courses):
             # else:
             count = 0
             for student in enrollments.filter(User.active == True).all():
-                if standard.is_proficient(student):
+                if standard.is_proficient(student)["status"]:
                     count += 1
 
             # Divide that count by the enrollment length variable
