@@ -1,51 +1,51 @@
 {% extends "_layout.html" %} {% block main_content %}
-<div class="admin-header">
-  <div class="actions-container">
-    <h1>Admin</h1>
-    <button
-      class="btn"
-      hx-get="{{ url_for('assignment.index')}}"
-      hx-target="#detail"
-      hx-swap="innerHTML"
-      hx-boost="true"
-      hx-push-url="true"
-    >
-      Assignments
-    </button>
-    <button
-      class="btn"
-      hx-get="{{ url_for('course.index')}}"
-      hx-target="#detail"
-      hx-swap="innerHTML"
-      hx-boost="true"
-      hx-push-url="true"
-    >
-      Courses
-    </button>
-    <button
-      class="btn"
-      hx-get="{{ url_for('standard.index') }}"
-      hx-target="#detail"
-      hx-swap="innerHTML"
-      hx-boost="true"
-      hx-push-url="true"
-      hx-push-url="true"
-    >
-      Standards
-    </button>
-    <button
-      class="btn"
-      hx-get="{{ url_for('user.index')}}"
-      hx-target="#detail"
-      hx-swap="innerHTML"
-      hx-boost="true"
-      hx-push-url="true"
-    >
-      Users
-    </button>
-  </div>
-</div>
 <div id="detail">
+  <div class="admin-header">
+    <div class="actions-container">
+      <h1>Admin</h1>
+      <button
+        class="btn"
+        hx-get="{{ url_for('assignment.index')}}"
+        hx-target="#detail"
+        hx-swap="innerHTML"
+        hx-boost="true"
+        hx-push-url="true"
+      >
+        Assignments
+      </button>
+      <button
+        class="btn"
+        hx-get="{{ url_for('course.index')}}"
+        hx-target="#detail"
+        hx-swap="innerHTML"
+        hx-boost="true"
+        hx-push-url="true"
+      >
+        Courses
+      </button>
+      <button
+        class="btn"
+        hx-get="{{ url_for('standard.index') }}"
+        hx-target="#detail"
+        hx-swap="innerHTML"
+        hx-boost="true"
+        hx-push-url="true"
+        hx-push-url="true"
+      >
+        Standards
+      </button>
+      <button
+        class="btn"
+        hx-get="{{ url_for('user.index')}}"
+        hx-target="#detail"
+        hx-swap="innerHTML"
+        hx-boost="true"
+        hx-push-url="true"
+      >
+        Users
+      </button>
+    </div>
+  </div>
   <canvas id="chart"></canvas>
 </div>
 <script defer>
