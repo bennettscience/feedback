@@ -14,13 +14,14 @@ function formatDate(target, strDate) {
 }
 
 function showToast(msg, err = false) {
+  // debugger;
   const toast = document.querySelector(`#toast`);
   // Handle message objects from hyperscript
   // For non-template returns, the backend will also return JSON with
   // the `message` key with details for the user.
   if (typeof msg === "object") {
     // HTMX returns strings, so convert it to an object
-    msg = msg.value;
+    msg = msg.msg;
   }
 
   toast.children[0].innerText = msg;
