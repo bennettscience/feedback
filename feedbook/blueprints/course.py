@@ -164,7 +164,7 @@ def get_single_course(id):
         for standard in course.standards.all():
             count = 0
             for student in enrollments:
-                if standard.is_proficient(student):
+                if standard.is_proficient(student)["status"]:
                     count = count + 1
             results[f"standard_{standard.id}"] = {
                 "proficient": count,
