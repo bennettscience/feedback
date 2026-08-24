@@ -11,7 +11,7 @@ from feedbook.wrappers import restricted
 bp = Blueprint("assignment", __name__)
 
 
-@bp.get("/assignments")
+@bp.get("/admin/assignments")
 def index():
     """
     Get a list of all assignments.
@@ -99,12 +99,16 @@ def create_assignment_form():
 @restricted
 def get_assignment(assignment_id):
     """
-    Get a single assignment
+    Get admin data for a single assignment
     """
     assignment = Assignment.query.filter(Assignment.id == assignment_id).first()
+
+    # Get the standard average for the assignment per course?
+    # Sort by student attempt date?
     return render_template("assignments/single-assignment.html", assignment=assignment)
 
 
+# Get edit form for a single assignment
 @bp.get("/assignments/<int:assignment_id>/edit")
 @login_required
 @restricted

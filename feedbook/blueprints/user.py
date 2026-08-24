@@ -13,8 +13,8 @@ from feedbook.wrappers import restricted
 
 bp = Blueprint("user", __name__)
 
-
-@bp.get("/users")
+# Admin view of all users
+@bp.get("/admin/users")
 @login_required
 @restricted
 def index():

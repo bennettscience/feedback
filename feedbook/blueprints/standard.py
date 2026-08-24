@@ -12,7 +12,7 @@ bp = Blueprint("standard", __name__)
 
 
 # Admin view of all standards
-@bp.get("/standards")
+@bp.get("/admin/standards")
 @login_required
 def index():
     """
