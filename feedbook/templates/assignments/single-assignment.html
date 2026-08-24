@@ -1,16 +1,14 @@
-<tr>
-  <td>{{ assignment.name }}</td>
-  <td>{{ assignment.created_on }}</td>
-  <td>{{ assignment.type.name }}</td>
-  <td>
-    {% for item in assignment.courses%}
-    <span class="box pill">{{ item.name }}</span> {% endfor %}
-  </td>
-  <td>
-    <button
-      hx-get="{{url_for('assignment.get_assignment_edit_form', assignment_id=assignment.id)}}"
-    >
-      Edit
-    </button>
-  </td>
-</tr>
+{% extends "_layout.html" %}{% block main_content %}
+<section id="detail">
+  <h2>{{ assignment.name }}</h2>
+  <h3>Attempts</h3>
+  <ul>
+    {% for attempt in assignment.assessments.all() %}
+    <li>
+      {{ attempt.user.last_name }}, {{ attempt.score }}, {{
+      attempt.standard.display_name }}
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}
