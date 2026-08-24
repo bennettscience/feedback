@@ -215,6 +215,10 @@ input[type="text"] {
   align-items: stretch;
 }
 
+.column {
+  flex-direction: column;
+}
+
 /* Set grids */
 .box.grid {
   display: grid;
@@ -400,10 +404,6 @@ main {
   background-color: var(--primary-color);
 }
 
-#left-sidebar-inner > * + * {
-  margin-top: 0.5rem;
-}
-
 .sidebar--left button {
   background-color: inherit;
 }
@@ -572,6 +572,10 @@ btn:focus {
   border-radius: 3px;
 }
 
+.item.sub-item {
+  padding: 0.5rem 0 0.5rem 2.5rem;
+}
+
 .item:hover {
   cursor: pointer;
 }
@@ -585,9 +589,9 @@ btn:focus {
   border: solid 2px var(--primary-color);
 }
 
-.item.outcome > * + * {
-  margin-top: var(--small);
-}
+/* .item.outcome > * + * { */
+  /* margin-top: var(--small); */
+/* } */
 
 .item--small {
   border: 1px solid transparent;

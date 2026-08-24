@@ -17,7 +17,11 @@
     </a>
     {% if not current_user.is_anonymous %} {% if current_user.usertype_id == 1
     %}
-    <a href="{{ url_for('admin.index') }}" class="item nav-item">
+    <a
+      href="{{ url_for('admin.index') }}"
+      class="item nav-item"
+      hx-indicator="#toast"
+    >
       <svg
         fill="none"
         viewBox="0 0 24 24"
@@ -32,6 +36,50 @@
         ></path></svg
       >Admin
     </a>
+    <a class="item sub-item" href="{{url_for('assignment.index')}}"
+      ><svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M4 4a2 2 0 0 1 2-2h8a1 1 0 0 1 .707.293l5 5A1 1 0 0 1 20 8v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4zm13.586 4L14 4.414V8h3.586zM12 4H6v16h12V10h-5a1 1 0 0 1-1-1V4zm-4 9a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H9a1 1 0 0 1-1-1zm0 4a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H9a1 1 0 0 1-1-1z"
+          fill="#dcdcdc"
+        /></svg
+      >Assignments</a
+    >
+    <a class="item sub-item" href="{{url_for('standard.index')}}"
+      ><svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M2 3a1 1 0 0 1 1-1h8a1 1 0 0 1 .707.293l10 10a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-10-10A1 1 0 0 1 2 11V3zm2 1v6.586l9 9L19.586 13l-9-9H4z"
+          fill="#dcdcdc"
+        />
+        <path d="M9 7.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" fill="#dcdcdc" />
+      </svg>
+      Standards</a
+    >
+    <a class="item sub-item" href="{{url_for('user.index')}}"
+      ><svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M10 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM4 8a6 6 0 1 1 12 0A6 6 0 0 1 4 8zm12.828-4.243a1 1 0 0 1 1.415 0 6 6 0 0 1 0 8.486 1 1 0 1 1-1.415-1.415 4 4 0 0 0 0-5.656 1 1 0 0 1 0-1.415zm.702 13a1 1 0 0 1 1.212-.727c1.328.332 2.169 1.18 2.652 2.148.468.935.606 1.98.606 2.822a1 1 0 1 1-2 0c0-.657-.112-1.363-.394-1.928-.267-.533-.677-.934-1.349-1.102a1 1 0 0 1-.727-1.212zM6.5 18C5.24 18 4 19.213 4 21a1 1 0 1 1-2 0c0-2.632 1.893-5 4.5-5h7c2.607 0 4.5 2.368 4.5 5a1 1 0 1 1-2 0c0-1.787-1.24-3-2.5-3h-7z"
+          fill="#dcdcdc"
+        /></svg
+      >Users</a
+    >
     {% endif %} {% if current_user.enrollments %}
     <div class="courses">
       {% for item in current_user.enrollments %} {% if item.active %}
