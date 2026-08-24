@@ -589,9 +589,9 @@ btn:focus {
   border: solid 2px var(--primary-color);
 }
 
-/* .item.outcome > * + * { */
-  /* margin-top: var(--small); */
-/* } */
+.item.outcome > * + * {
+  margin-top: var(--small);
+}
 
 .item--small {
   border: 1px solid transparent;
