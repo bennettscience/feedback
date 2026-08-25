@@ -1,5 +1,6 @@
 {% extends '_layout.html' %}
 {% block main_content %}
+<section id="detail">
 <h1>{{ user.last_name }}, {{ user.first_name }}</h1>
 <button class="btn btn-primary" hx-put="/users/{{user.id}}/status" hx-swap="innerHTML">{% if user.active
 	%}Deactivate{%
@@ -57,4 +58,5 @@
 	</tbody>
 </table>
 {% endfor %}
+</section>
 {% endblock %}
