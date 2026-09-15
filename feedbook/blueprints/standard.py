@@ -224,6 +224,48 @@ def get_standard_result(standard_id, user_id, result_id):
         data={"attempt": attempt, "student": student},
     )
 
+# Bulk add a standard assessment
+@bp.post("/standards/<int:standard_id>")
+@login_required
+@restricted
+def bulk_add_standard_assessments(standard_id):
+    data = request.get_json()
+    assignment_id = int(data.pop('assignment_id'))
+
+    attempts = []
+
+    # get the user score from the key
+    # The key is `score-{user_id}-{standard_id}`
+    # Keeping the standard id in the key allows for matching before submitting
+    for key, val in data.items():
+        key_id_values = key.split("-")
+        user_id = int(key_id_values[1])
+        standard_id = int(key_id_values[2])
+
+        if standard_id != standard_id:
+            return 403
+        else:
+            attempts.append(
+                StandardAttempt(
+                    user_id=user_id,
+                    standard_id=standard_id,
+                    score=val,
+                    assignment_id=assignment_id,
+                    comments=None,
+                )
+            )
+
+    print("received {} attempts".format(len(attempts)))
+    for attempt in attempts:
+        print(attempt.user_id, attempt.score)
+    db.session.add_all(attempts)
+    db.session.commit()
+    
+    return make_response(
+        trigger={
+            "showToast": {"msg": "Scores updated", "timeout": 5000, "err": False},
+        },
+    )
 
 # Add an assessment to a standard
 @bp.post("/standards/<int:standard_id>/attempts")

@@ -78,6 +78,14 @@ function setBulkValue(els, val) {
   els.forEach((el) => (el.value = val));
 }
 
+function setAllScores(val) {
+  console.log(val);
+  buttons = document.querySelectorAll(`input[type="radio"][value="${val}"]`);
+  buttons.forEach((item) => {
+    item.checked = true;
+  });
+}
+
 // Handle errors from the server
 document.addEventListener("htmx:responseError", (evt) => {
   showToast(evt.detail.xhr.responseText, true);

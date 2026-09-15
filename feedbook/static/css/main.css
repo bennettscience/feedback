@@ -6,6 +6,7 @@
   --hover-color: #f1e8e6;
   --warn-color: #f55951;
   --success-color: #00915b;
+  --success-color-light: #35e5a3;
   --tooltip-color: #f9f871;
   --black: #333;
   --white: #f8f8ff;
@@ -117,6 +118,33 @@ input[type="text"] {
   width: 100%;
 }
 
+fieldset {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: flex-start;
+  border: none;
+}
+
+label.radio-card {
+  position: relative;
+  padding: 0.3rem 2rem;
+  border: 2px solid var(--secondary-color);
+  cursor: pointer;
+}
+
+.radio-card > input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.radio-card:has(input:checked) {
+  border-color: var(--success-color);
+  background-color: var(--success-color-light);
+}
+
 .form-row {
   height: auto;
   margin: 10px;
@@ -213,6 +241,10 @@ input[type="text"] {
   flex-wrap: wrap;
   gap: var(--small);
   align-items: stretch;
+}
+
+.box.flex.wide {
+  justify-content: space-evenly;
 }
 
 .column {
@@ -779,9 +811,15 @@ table {
   overflow-x: scroll;
 }
 
-table tr:hover {
-  background-color: var(--hover-color);
+thead {
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
+
+/* table tr:hover { */
+  /* background-color: var(--hover-color); */
+/* } */
 
 /* Override the user list table style */
 table.user-summary {
@@ -855,7 +893,7 @@ table#assessment-table #max-len {
 }
 
 thead th:first-child {
-  width: 20%;
+  /* width: 20%; */
   white-space: nowrap;
 }
 
@@ -917,7 +955,7 @@ th[data-aligned="True"]:after {
 }
 
 td {
-  padding: 1rem;
+  padding: 0.3rem 0.3rem 0;
   border: 1px transparent;
 }
 
