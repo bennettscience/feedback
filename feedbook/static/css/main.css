@@ -118,7 +118,7 @@ input[type="text"] {
   width: 100%;
 }
 
-fieldset {
+form.assignment-scores {
   display: flex;
   gap: 1rem;
   align-items: center;

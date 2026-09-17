@@ -224,13 +224,14 @@ def get_standard_result(standard_id, user_id, result_id):
         data={"attempt": attempt, "student": student},
     )
 
+
 # Bulk add a standard assessment
 @bp.post("/standards/<int:standard_id>")
 @login_required
 @restricted
 def bulk_add_standard_assessments(standard_id):
     data = request.get_json()
-    assignment_id = int(data.pop('assignment_id'))
+    assignment_id = int(data.pop("assignment_id"))
 
     attempts = []
 
@@ -260,12 +261,13 @@ def bulk_add_standard_assessments(standard_id):
         print(attempt.user_id, attempt.score)
     db.session.add_all(attempts)
     db.session.commit()
-    
+
     return make_response(
         trigger={
             "showToast": {"msg": "Scores updated", "timeout": 5000, "err": False},
         },
     )
+
 
 # Add an assessment to a standard
 @bp.post("/standards/<int:standard_id>/attempts")
@@ -284,8 +286,7 @@ def add_standard_assessment(standard_id):
         {
             "user_id": fields.Int(),
             "score": fields.Int(),
-            "assignment": fields.Int(),
-            "comments": fields.Str(),
+            "assignment_id": fields.Int(),
         },
         location="form",
     )
@@ -294,8 +295,8 @@ def add_standard_assessment(standard_id):
         user_id=args["user_id"],
         standard_id=standard_id,
         score=args["score"],
-        assignment_id=args["assignment"],
-        comments=args["comments"],
+        assignment_id=args["assignment_id"],
+        comments=None,
     )
     db.session.add(sa)
     db.session.commit()
@@ -334,9 +335,10 @@ def post_standard_override(standard_id):
         "Proficient",
         trigger={
             "showToast": {"msg": msg, "timeout": 5000, "err": is_error},
-            "toggleUserState": {"val": True}
+            "toggleUserState": {"val": True},
         },
     )
+
 
 @bp.delete("/standards/<int:standard_id>/override")
 @login_required
@@ -355,9 +357,7 @@ def delete_standard_override(standard_id):
 
     return make_response(
         "Not Proficient",
-        trigger={
-            "showToast": {"msg": msg, "timeout": 5000, "err": is_error}
-        }
+        trigger={"showToast": {"msg": msg, "timeout": 5000, "err": is_error}},
     )
 
 
@@ -392,42 +392,37 @@ def edit_single_attempt(standard_id, attempt_id):
     Update a StandardAttempt record for a student.
     """
     from feedbook.models import User
+    import datetime as dt
 
     # breakpoint()
     # This will accept a query param as well as the form. Parse
     # the param to return the correct template.
     query = request.args.get("source")
-    
+
     args = parser.parse(
         {
             "assignment_id": fields.Int(),
+            "user_id": fields.Int(),
             "score": fields.Int(),
-            "standard_id": fields.Int(),
-            "comments": fields.String(),
         },
         location="form",
     )
 
-    breakpoint()
-    print(args)
+    args["occurred"] = dt.datetime.now()
+
     attempt = db.session.get(StandardAttempt, attempt_id)
     attempt.update(args)
 
-    # if query == "standard":
-    #     # template = "course/partials/student-entry.html"
-    #     student = db.session.get(User, attempt.user_id)
-        # student.scores = student.assessments.filter(
-        #     StandardAttempt.standard_id == standard_id
-        # ).all()
-
-        # data = {"student": student, "clickable": True}
-    # else:
-    #     template = "assignments/single-attempt.html"
-    #     data = {"attempt": attempt}
-
-    return make_response(
-        trigger={"showToast": "Attempt updated for {}, {}".format(attempt.user.last_name, attempt.user.first_name)}
-    ), 200
+    return (
+        make_response(
+            trigger={
+                "showToast": "Attempt updated for {}, {}".format(
+                    attempt.user.last_name, attempt.user.first_name
+                )
+            }
+        ),
+        200,
+    )
 
 
 # Delete a single standard attempt

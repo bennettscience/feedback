@@ -13,36 +13,36 @@
   <div class="box outcome">
     <h2>{{ standard.name }}</h2>
     <p>{{ standard.description }}</p>
-    <label class="form-row"
-      >Bulk score
-      <fieldset>
-        <label class="radio-card">
-          <input
-            _="on click call setAllScores(my.value)"
-            type="radio"
-            name="bulk-score"
-            value="0"
-          />
-          <span class="radio-label">0</span>
-        </label>
-        <label class="radio-card">
-          <input
-            _="on click call setAllScores(my.value)"
-            type="radio"
-            name="bulk-score"
-            value="1"
-          />1</label
-        >
-        <label class="radio-card">
-          <input
-            _="on click call setAllScores(my.value)"
-            type="radio"
-            name="bulk-score"
-            value="2"
-          />2</label
-        >
-      </fieldset>
-    </label>
+    <!-- <label class="form-row" -->
+      <!-- >Bulk score -->
+      <!-- <fieldset> -->
+        <!-- <label class="radio-card"> -->
+          <!-- <input -->
+            <!-- _="on click call setAllScores(my.value)" -->
+            <!-- type="radio" -->
+            <!-- name="bulk-score" -->
+            <!-- value="0" -->
+          <!-- /> -->
+          <!-- <span class="radio-label">0</span> -->
+        <!-- </label> -->
+        <!-- <label class="radio-card"> -->
+          <!-- <input -->
+            <!-- _="on click call setAllScores(my.value)" -->
+            <!-- type="radio" -->
+            <!-- name="bulk-score" -->
+            <!-- value="1" -->
+          <!-- />1</label -->
+        <!-- > -->
+        <!-- <label class="radio-card"> -->
+          <!-- <input -->
+            <!-- _="on click call setAllScores(my.value)" -->
+            <!-- type="radio" -->
+            <!-- name="bulk-score" -->
+            <!-- value="2" -->
+          <!-- />2</label -->
+        <!-- > -->
+      <!-- </fieldset> -->
+    <!-- </label> -->
     <button
       hx-delete="{{ url_for('assignment.remove_standard_alignment', assignment_id=assignment.id, standard_id=standard.id)}}"
     >
@@ -64,27 +64,29 @@
       </thead>
       <tbody>
         {% for student in results %}
-        {% if student['items'] %}
-          {% set attempt=student['items'] %}
-          {% set id_string="{}-{}".format(student['user'].id,standard.id) %}
-        {% endif %}
         <tr class="student-score">
           <td>
             {{ student["user"].last_name }}, {{ student["user"].first_name }}
           </td>
           <td>
-            <fieldset
-              hx-swap="none"
-              hx-trigger="change"
-              include="this"
-              hx-put="/standards/{{attempt[0].standard_id}}/attempts/{{attempt[0].id}}?source=standard"
+          <form
+            class="assignment-scores"
+            hx-swap="none"
+            hx-trigger="change"
+            {% if student['items'] %}
+              hx-put="/standards/{{student['items'][0].standard_id}}/attempts/{{student['items'][0].id}}?source=standard"
+            {% else %}
+              hx-post="/standards/{{ standard.id }}/attempts"
+            {% endif %}
             >
+            <input type="hidden" name="user_id" value="{{ student['user'].id }}" />
+            <input type="hidden" name="assignment_id" value="{{ assignment.id }}" />
             {% for i in range(3) %}
               <label class="radio-card">
                 <input
                   type="radio"
                   class="score-{{standard.id}}"
-                  name="score-{{id_string}}"
+                  name="score"
                   value="{{loop.index0}}"
                   {% if standard.id in student['includes'] %}
                   {% set attempt=student['items']|selectattr("standard_id", "equalto", standard.id)|list %}
@@ -93,7 +95,7 @@
                 <span class="radio-label">{{loop.index0}}</span>
               </label>
               {% endfor %}
-            </fieldset>
+            </form>
           </td>
         </tr>
         {% endfor %}
