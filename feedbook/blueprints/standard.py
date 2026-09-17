@@ -393,10 +393,11 @@ def edit_single_attempt(standard_id, attempt_id):
     """
     from feedbook.models import User
 
+    # breakpoint()
     # This will accept a query param as well as the form. Parse
     # the param to return the correct template.
     query = request.args.get("source")
-
+    
     args = parser.parse(
         {
             "assignment_id": fields.Int(),
@@ -407,25 +408,26 @@ def edit_single_attempt(standard_id, attempt_id):
         location="form",
     )
 
+    breakpoint()
+    print(args)
     attempt = db.session.get(StandardAttempt, attempt_id)
     attempt.update(args)
 
-    if query == "standard":
-        template = "course/partials/student-entry.html"
-        student = db.session.get(User, attempt.user_id)
-        student.scores = student.assessments.filter(
-            StandardAttempt.standard_id == standard_id
-        ).all()
+    # if query == "standard":
+    #     # template = "course/partials/student-entry.html"
+    #     student = db.session.get(User, attempt.user_id)
+        # student.scores = student.assessments.filter(
+        #     StandardAttempt.standard_id == standard_id
+        # ).all()
 
-        data = {"student": student, "clickable": True}
-    else:
-        template = "assignments/single-attempt.html"
-        data = {"attempt": attempt}
+        # data = {"student": student, "clickable": True}
+    # else:
+    #     template = "assignments/single-attempt.html"
+    #     data = {"attempt": attempt}
 
     return make_response(
-        render_template(template, **data),
-        trigger={"showToast": "Attempt updated", "closeModal": ""},
-    )
+        trigger={"showToast": "Attempt updated for {}, {}".format(attempt.user.last_name, attempt.user.first_name)}
+    ), 200
 
 
 # Delete a single standard attempt

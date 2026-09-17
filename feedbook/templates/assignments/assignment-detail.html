@@ -54,16 +54,6 @@
 <hr />
 <section class="box flex wide">
   {% for standard in assignment.alignments %}
-  <form
-    hx-trigger="submit"
-    hx-post="/standards/{{standard.id}}"
-    hx-swap="none"
-    hx-vals='{
-      "assignment_id": "{{assignment.id}}"
-    }'
-    hx-ext="json-enc"
-    hx-include="find .student-score"
-  >
     <h2>{{ standard.display_name }}</h2>
     <table>
       <thead>
@@ -74,18 +64,27 @@
       </thead>
       <tbody>
         {% for student in results %}
+        {% if student['items'] %}
+          {% set attempt=student['items'] %}
+          {% set id_string="{}-{}".format(student['user'].id,standard.id) %}
+        {% endif %}
         <tr class="student-score">
           <td>
             {{ student["user"].last_name }}, {{ student["user"].first_name }}
           </td>
           <td>
-            <fieldset>
+            <fieldset
+              hx-swap="none"
+              hx-trigger="change"
+              include="this"
+              hx-put="/standards/{{attempt[0].standard_id}}/attempts/{{attempt[0].id}}?source=standard"
+            >
             {% for i in range(3) %}
               <label class="radio-card">
                 <input
                   type="radio"
                   class="score-{{standard.id}}"
-                  name="score-{{student['user'].id}}-{{standard.id}}"
+                  name="score-{{id_string}}"
                   value="{{loop.index0}}"
                   {% if standard.id in student['includes'] %}
                   {% set attempt=student['items']|selectattr("standard_id", "equalto", standard.id)|list %}
@@ -100,7 +99,5 @@
         {% endfor %}
       </tbody>
     </table>
-    <input type="submit" value="Save" />
-  </form>
   {% endfor %}
 </section>
