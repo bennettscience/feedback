@@ -34,8 +34,8 @@ def index():
             "shared/layout_wrapper.html", partial=template, data=resp_data
         )
 
-    return resp
-    # return render_template("user/index.html", users=users)
+    # return resp
+    return render_template("user/index.html", users=users)
 
 
 # Get a single user
@@ -47,6 +47,9 @@ def get_user(user_id):
     # course = Course.query.filter(Course.id == course_id).first()
     stmt = db.select(User).where(User.id == user_id)
     user = db.session.scalar(stmt)
+    if not user:
+        abort(404)
+
     # user = User.query.filter(User.id == args["user_id"]).first()
     standards = defaultdict(dict)
 
@@ -55,6 +58,7 @@ def get_user(user_id):
         standards[a.standard.name]["id"] = a.standard.id
         standards[a.standard.name].setdefault("assessments", []).append(
             {
+                "id": a.id,
                 "assignment": a.assessed_on,
                 "score": a.score,
                 "occurred": a.occurred,
@@ -77,6 +81,9 @@ def get_user(user_id):
 @restricted
 def deactivate_user(user_id):
     user = User.query.filter(User.id == user_id).first()
+
+    if not user:
+        abort(404)
 
     user.active = not user.active
     db.session.commit()

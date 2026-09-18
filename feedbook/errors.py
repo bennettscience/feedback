@@ -3,8 +3,11 @@ def unauthorized(err):
 
 
 def forbidden(err):
-    return "You do not have access to this resource.", 403
+    return "You are not authorized to perform that action.", 403
 
 
 def not_found(err):
-    return str(err), 404
+    return err.description, 404
+
+def server_error(err):
+    return err.description, 500
