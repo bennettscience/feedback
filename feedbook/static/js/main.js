@@ -21,7 +21,7 @@ function showToast(msg, err = false) {
   // the `message` key with details for the user.
   if (typeof msg === "object") {
     // HTMX returns strings, so convert it to an object
-    msg = msg.msg;
+    msg = msg.value;
   }
 
   toast.children[0].innerText = msg;
@@ -34,7 +34,7 @@ function showToast(msg, err = false) {
     if (err) {
       toast.classList.remove("error");
     }
-  }, 5000);
+  }, 3000);
 }
 
 function cancelToast() {
@@ -45,6 +45,7 @@ function cancelToast() {
 
 // Listen for toast messaging from the server
 htmx.on("showToast", (event) => {
+  console.log(event.detail);
   showToast(event.detail);
 });
 

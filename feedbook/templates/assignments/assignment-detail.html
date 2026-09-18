@@ -13,36 +13,6 @@
   <div class="box outcome">
     <h2>{{ standard.name }}</h2>
     <p>{{ standard.description }}</p>
-    <!-- <label class="form-row" -->
-      <!-- >Bulk score -->
-      <!-- <fieldset> -->
-        <!-- <label class="radio-card"> -->
-          <!-- <input -->
-            <!-- _="on click call setAllScores(my.value)" -->
-            <!-- type="radio" -->
-            <!-- name="bulk-score" -->
-            <!-- value="0" -->
-          <!-- /> -->
-          <!-- <span class="radio-label">0</span> -->
-        <!-- </label> -->
-        <!-- <label class="radio-card"> -->
-          <!-- <input -->
-            <!-- _="on click call setAllScores(my.value)" -->
-            <!-- type="radio" -->
-            <!-- name="bulk-score" -->
-            <!-- value="1" -->
-          <!-- />1</label -->
-        <!-- > -->
-        <!-- <label class="radio-card"> -->
-          <!-- <input -->
-            <!-- _="on click call setAllScores(my.value)" -->
-            <!-- type="radio" -->
-            <!-- name="bulk-score" -->
-            <!-- value="2" -->
-          <!-- />2</label -->
-        <!-- > -->
-      <!-- </fieldset> -->
-    <!-- </label> -->
     <button
       hx-delete="{{ url_for('assignment.remove_standard_alignment', assignment_id=assignment.id, standard_id=standard.id)}}"
     >
@@ -60,6 +30,7 @@
         <tr>
           <th>Name</th>
           <th>Score</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -97,6 +68,11 @@
               {% endfor %}
             </form>
           </td>
+          {% if student['includes'] %}
+          <td>
+          <button class="btn" hx-delete="/standards/{{standard.id}}/attempts/{{student['items'][0].id}}" hx-swap="none" _="on click reset closest <form/>">Delete</button>
+          </td>
+          {% endif %}
         </tr>
         {% endfor %}
       </tbody>

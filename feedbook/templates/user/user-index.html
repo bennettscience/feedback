@@ -43,6 +43,7 @@
 			<th class="columnheader" role="columnheader">Assignment</th>
 			<th class="columnheader" role="columnheader">Score</th>
 			<th class="columnheader" role="columnheader">Comment</th>
+			<th class="columnheader" role="columnheader">Action</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -52,6 +53,9 @@
 			<td>{{entry["assignment"].name}}</td>
 			<td>{{entry["score"]}}</td>
 			<td>{{entry["comments"]}}</td>
+			<td>
+				<button class="btn" hx-delete="/standards/{{values['id']}}/attempts/{{entry.id}}" hx-swap="none" _="on htmx:afterSettle remove closest <tr/>">Delete</button>
+			</td>
 		</tr>
 		{% endfor %}
 		</tr>

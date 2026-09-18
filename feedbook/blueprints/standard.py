@@ -309,10 +309,8 @@ def add_standard_assessment(standard_id):
             "Added proficiency record on {} for {}".format(sa.standard, args["user_id"])
         )
 
-    return render_template(
-        "standards/student-updated.html",
-        record=sa,
-        name=f"{sa.user.last_name}, {sa.user.first_name}",
+    return make_response(
+        trigger={"showToast": "Added attempt for {}, {}".format(sa.user.last_name, sa.user.first_name)}
     )
 
 
@@ -439,7 +437,7 @@ def delete_standard_assessment(standard_id, attempt_id):
 
     # The closeModal event doesn't need a specific value in the template,
     # so just pass it an empty string to fire.
-    return make_response(trigger={"closeModal": "", "showToast": "Attempt deleted"})
+    return make_response(trigger={"showToast": "Attempt deleted"})
 
 
 # Attach a standard to a course
