@@ -294,25 +294,27 @@ def get_single_assignment(course_id, assignment_id):
         .all()
     )
 
+    attempt_items = [attempt.user_id for attempt in query]
+
     # Use a defaultdict class to collect the StandardAttempt objects by
     # user in a dictionary.
     results = defaultdict(dict)
 
-    if not query:
-        for user in students:
-            results["user_{}".format(user.id)]["user"] = user
-            results["user_{}".format(user.id)]["items"] = []
-            results["user_{}".format(user.id)].setdefault("includes", []).append(
-                assignment.alignments.all()
-            )
-    else:
-        for user in students:
-            student_results = [item for item in query if item.user.id == user.id]
-            results["user_{}".format(user.id)]["items"] = student_results
-            results["user_{}".format(user.id)]["user"] = user
-            results["user_{}".format(user.id)]["includes"] = [
-                result.standard_id for result in student_results
-            ]
+    # buld the response data for each student. Add results for students who have stored attempts.
+    for user in students:
+
+        # set the result object for the current student.
+        # Include the assessed standard items for everyone
+        results["user_{}".format(user.id)]["user"] = user
+        results["user_{}".format(user.id)].setdefault("includes", []).append(assignment.alignments.all())
+
+        # Assume there is no record attempt for everyone.
+        results["user_{}".format(user.id)]["has_assessment"] = False
+
+        if user.id in attempt_items:
+            results["user_{}".format(user.id)]["items"] = [item for item in query if item.user.id == user.id]
+            results["user_{}".format(user.id)]["has_assessment"] = True
+
 
     sorted_results = sorted(results.values(), key=lambda item: item["user"].last_name)
 

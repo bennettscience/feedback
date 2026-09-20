@@ -44,7 +44,7 @@
             class="assignment-scores"
             hx-swap="none"
             hx-trigger="change"
-            {% if student['items'] %}
+            {% if student['has_assessment'] %}
               hx-put="/standards/{{student['items'][0].standard_id}}/attempts/{{student['items'][0].id}}?source=standard"
             {% else %}
               hx-post="/standards/{{ standard.id }}/attempts"
@@ -59,7 +59,7 @@
                   class="score-{{standard.id}}"
                   name="score"
                   value="{{loop.index0}}"
-                  {% if standard.id in student['includes'] %}
+                  {% if student['has_assessment'] %}
                   {% set attempt=student['items']|selectattr("standard_id", "equalto", standard.id)|list %}
                   {% if attempt[0].score == loop.index0 %}checked{% endif %} />
                   {% endif %}
@@ -68,7 +68,7 @@
               {% endfor %}
             </form>
           </td>
-          {% if student['includes'] %}
+          {% if student['has_assessment'] %}
           <td>
           <button class="btn" hx-delete="/standards/{{standard.id}}/attempts/{{student['items'][0].id}}" hx-swap="none" _="on click reset closest <form/>">Delete</button>
           </td>
