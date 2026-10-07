@@ -59,16 +59,16 @@
                   class="score-{{standard.id}}"
                   name="score"
                   value="{{loop.index0}}"
-                  {% if student['has_assessment'] %}
+                  {% if student['has_assessment'] == True %}
                   {% set attempt=student['items']|selectattr("standard_id", "equalto", standard.id)|list %}
-                  {% if attempt[0].score == loop.index0 %}checked{% endif %} />
+                  {% if attempt and attempt[0].score == loop.index0 %}checked{% endif %} />
                   {% endif %}
                 <span class="radio-label">{{loop.index0}}</span>
               </label>
               {% endfor %}
             </form>
           </td>
-          {% if student['has_assessment'] %}
+          {% if student['has_assessment'] == True %}
           <td>
           <button class="btn" hx-delete="/standards/{{standard.id}}/attempts/{{student['items'][0].id}}" hx-swap="none" _="on click reset closest <form/>">Delete</button>
           </td>
