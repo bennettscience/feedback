@@ -273,13 +273,6 @@ def get_single_assignment(course_id, assignment_id):
         User.usertype_id == 2, User.active == True
     ).all()
 
-    enrollment_ids = [
-        user.id
-        for user in db.session.get(Course, course_id)
-        .enrollments.filter(User.usertype_id == 2 and User.active == True)
-        .all()
-    ]
-
     # Limit the results for the assignment to the current course only.
     # This returns all StandardAttempt records for the current course,
     # arranged by student ID.
@@ -306,15 +299,18 @@ def get_single_assignment(course_id, assignment_id):
         # set the result object for the current student.
         # Include the assessed standard items for everyone
         results["user_{}".format(user.id)]["user"] = user
-        results["user_{}".format(user.id)].setdefault("includes", []).append(assignment.alignments.all())
+        results["user_{}".format(user.id)].setdefault("includes", []).append(
+            assignment.alignments.all()
+        )
 
         # Assume there is no record attempt for everyone.
         results["user_{}".format(user.id)]["has_assessment"] = False
 
         if user.id in attempt_items:
-            results["user_{}".format(user.id)]["items"] = [item for item in query if item.user.id == user.id]
+            results["user_{}".format(user.id)]["items"] = [
+                item for item in query if item.user.id == user.id
+            ]
             results["user_{}".format(user.id)]["has_assessment"] = True
-
 
     sorted_results = sorted(results.values(), key=lambda item: item["user"].last_name)
 
@@ -437,12 +433,17 @@ def get_create_standard_form(course_id):
 @login_required
 @restricted
 def get_standard_scores_in_course(course_id, standard_id):
-    from feedbook.models import StandardAttempt, assignment_standards, course_assignments, user_courses
+    from feedbook.models import (
+        StandardAttempt,
+        assignment_standards,
+        course_assignments,
+        user_courses,
+    )
 
     course = Course.query.filter(Course.id == course_id).first()
     standard = Standard.query.filter(Standard.id == standard_id).first()
 
-    # This is a huge query: 
+    # This is a huge query:
     # 1. Select <Assignment> from course_assignments to filter by course. This prevents all assignments, including from past years, to be displayed.
     # 2. Select <Assignment> through assignment_standards to make sure they match the requested item.
     # 3. Pull any users from the current course.
@@ -453,19 +454,21 @@ def get_standard_scores_in_course(course_id, standard_id):
         db.select(User, Assignment, StandardAttempt)
         .select_from(course_assignments)
         .join(Assignment, course_assignments.c.assignment_id == Assignment.id)
-        .join(assignment_standards, assignment_standards.c.assignment_id == Assignment.id)
+        .join(
+            assignment_standards, assignment_standards.c.assignment_id == Assignment.id
+        )
         .join(Course, Course.id == course.id)
         .join(User, Course.enrollments)
         .outerjoin(
             StandardAttempt,
-            (StandardAttempt.assignment_id == Assignment.id) &
-            (StandardAttempt.user_id == User.id)
+            (StandardAttempt.assignment_id == Assignment.id)
+            & (StandardAttempt.user_id == User.id),
         )
         .where(
             course_assignments.c.course_id == course.id,
             assignment_standards.c.standard_id == standard.id,
             User.usertype_id == 2,
-            User.active
+            User.active,
         )
         .order_by(User.last_name, Assignment.created_on)
     )
@@ -501,7 +504,7 @@ def get_standard_scores_in_course(course_id, standard_id):
         "roster": score_table,
         "columns": list(name[0] for name in assignment_names),
         "course_id": course_id,
-        "standard": standard
+        "standard": standard,
     }
 
     if request.htmx:
