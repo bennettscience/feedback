@@ -472,8 +472,15 @@ def get_standard_scores_in_course(course_id, standard_id):
 
     results = db.session.execute(query).all()
 
-    # Throw all of the assignment names into a list to pre-populate a results array.
-    assignment_names = sorted(list({assignment.name for _, assignment, _ in results}))
+    # Throw all of the assignment names into a list to pre-populate a results array. Keep the assignment date in the list to sort by.
+    assignment_names = (
+        sorted(
+               list(
+                    {(assignment.name, assignment.created_on) for _, assignment, _ in results}
+                ),
+               key=lambda item: item[1]
+           )
+    )
 
     score_table = {}
 
@@ -482,7 +489,7 @@ def get_standard_scores_in_course(course_id, standard_id):
         if user.id not in score_table:
             score_table[user.id] = {
                 "name": f"{user.last_name}, {user.first_name}",
-                "scores": {name: "N/A" for name in assignment_names}
+                "scores": {name[0]: "N/A" for name in assignment_names}
             }
 
         # if a student has a <StandardAttempt> record, place it with the correct assignment.
@@ -492,7 +499,7 @@ def get_standard_scores_in_course(course_id, standard_id):
     template = "course/partials/standard-score-table.html"
     resp_data = {
         "roster": score_table,
-        "columns": assignment_names,
+        "columns": list(name[0] for name in assignment_names),
         "course_id": course_id,
         "standard": standard
     }
