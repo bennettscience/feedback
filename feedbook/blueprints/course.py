@@ -1,16 +1,16 @@
-import csv
-from io import TextIOWrapper
 from collections import defaultdict
 
 from flask import abort, Blueprint, current_app, render_template, request
 from flask_login import current_user, login_required
 from htmx_flask import make_response
+from sqlalchemy import and_
 from webargs import fields
 from webargs.flaskparser import parser
 
 from feedbook.extensions import db
 from feedbook.models import (
     course_assignments,
+    user_courses,
     Assignment,
     Course,
     Standard,
@@ -21,6 +21,33 @@ from feedbook.schemas import CourseSchema, StandardListSchema
 from feedbook.wrappers import templated, restricted
 
 bp = Blueprint("course", __name__)
+
+def standard_keyed_dict(roster, alignments, standard_scores):
+    """
+        Build a dict keyed by standard ID.
+        param alignments: list of <Standard> objects
+        param standard_scores: list of <StandardAttempt>
+    """
+    results = defaultdict(dict)
+    
+    for standard in alignments:
+        results[f"standard_{standard.id}"]["standard"] = standard
+        scores = []
+        for student in roster:
+            attempt = filter(lambda item: (item.user_id == student.id) and (item.standard_id == standard.id), standard_scores)
+            score = list(attempt) if attempt else None
+            scores.append(
+                {
+                    "user": student,
+                    "score": score
+                }
+            )
+
+        # Sort the scores list by last name
+        sorted_scores = sorted(scores, key=lambda item: item["user"].last_name)
+        results[f"standard_{standard.id}"]["scores"] = sorted_scores
+
+    return results
 
 
 @bp.get("/courses/create")
@@ -98,8 +125,6 @@ def roster_upload(course_id):
 
     course = current_user.enrollments.filter(Course.id == course_id).first()
 
-    csv_file = TextIOWrapper(args["file"], encoding="utf-8")
-    reader = csv.reader(csv_file, delimiter=",")
     next(reader)
 
     for row in reader:
@@ -276,48 +301,27 @@ def get_single_assignment(course_id, assignment_id):
     # Limit the results for the assignment to the current course only.
     # This returns all StandardAttempt records for the current course,
     # arranged by student ID.
-    query = (
-        StandardAttempt.query.join(Assignment)
-        .join(course_assignments)
-        .filter(
-            (course_assignments.c.course_id == course_id)
-            & (StandardAttempt.assignment_id == assignment_id)
-        )
-        .order_by(StandardAttempt.user_id)
-        .all()
+    stmt = (
+        db.select(StandardAttempt)
+        .join(User).join(user_courses)
+        .where(
+               and_(
+                    user_courses.c.course_id == course_id, StandardAttempt.assignment_id == assignment_id
+                )
+           ).order_by(StandardAttempt.user_id)
     )
 
-    attempt_items = [attempt.user_id for attempt in query]
+    query = db.session.scalars(stmt).all()
 
-    # Use a defaultdict class to collect the StandardAttempt objects by
-    # user in a dictionary.
-    results = defaultdict(dict)
-
-    # buld the response data for each student. Add results for students who have stored attempts.
-    for user in students:
-
-        # set the result object for the current student.
-        # Include the assessed standard items for everyone
-        results["user_{}".format(user.id)]["user"] = user
-        results["user_{}".format(user.id)].setdefault("includes", []).append(
-            assignment.alignments.all()
-        )
-
-        # Assume there is no record attempt for everyone.
-        results["user_{}".format(user.id)]["has_assessment"] = False
-
-        if user.id in attempt_items:
-            results["user_{}".format(user.id)]["items"] = [
-                item for item in query if item.user.id == user.id
-            ]
-            results["user_{}".format(user.id)]["has_assessment"] = True
-
-    sorted_results = sorted(results.values(), key=lambda item: item["user"].last_name)
+    # Nov 2026 - Implemented a new data structure to better fit the template. This old query was used to organize standards by user rather than by standard.
+    #
+    # Instead of each result being keyed to the user, the current UI is keyed to the standard with user results below that.
+    results = standard_keyed_dict(students, assignment.alignments.all(), query)
 
     template = ("assignments/assignment-detail.html",)
     resp_data = {
         "assignment": assignment,
-        "results": sorted_results,
+        "results": results,
         "course_id": course_id,
     }
 

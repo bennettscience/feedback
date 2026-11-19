@@ -23,8 +23,8 @@
 </div>
 <hr />
 <section class="box flex wide">
-  {% for standard in assignment.alignments %}
-    <h2>{{ standard.display_name }}</h2>
+  {% for standard in results.values() %}
+    <h2>{{ standard["standard"].display_name }}</h2>
     <table>
       <thead>
         <tr>
@@ -34,7 +34,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for student in results %}
+        {% for student in standard["scores"] %}
         <tr class="student-score">
           <td>
             {{ student["user"].last_name }}, {{ student["user"].first_name }}
@@ -44,10 +44,10 @@
             class="assignment-scores"
             hx-swap="none"
             hx-trigger="change"
-            {% if student['has_assessment'] %}
-              hx-put="/standards/{{student['items'][0].standard_id}}/attempts/{{student['items'][0].id}}?source=standard"
+            {% if student["score"]|length != 0 %}
+              hx-put="/standards/{{standard['standard'].id}}/attempts/{{student['score'][0].id}}?source=standard"
             {% else %}
-              hx-post="/standards/{{ standard.id }}/attempts"
+              hx-post="/standards/{{ standard['standard'].id }}/attempts"
             {% endif %}
             >
             <input type="hidden" name="user_id" value="{{ student['user'].id }}" />
@@ -59,18 +59,17 @@
                   class="score-{{standard.id}}"
                   name="score"
                   value="{{loop.index0}}"
-                  {% if student['has_assessment'] == True %}
-                  {% set attempt=student['items']|selectattr("standard_id", "equalto", standard.id)|list %}
-                  {% if attempt and attempt[0].score == loop.index0 %}checked{% endif %} />
+                  {% if student['score']|length != 0 %}
+                  {% if student['score'][0].score == loop.index0 %}checked{% endif %} />
                   {% endif %}
                 <span class="radio-label">{{loop.index0}}</span>
               </label>
               {% endfor %}
             </form>
           </td>
-          {% if student['has_assessment'] == True %}
+          {% if student['score']|length != 0 %}
           <td>
-          <button class="btn" hx-delete="/standards/{{standard.id}}/attempts/{{student['items'][0].id}}" hx-swap="none" _="on click reset closest <form/>">Delete</button>
+          <button class="btn" hx-delete="/standards/{{standard['standard'].id}}/attempts/{{student['score'][0].id}}" hx-swap="none" _="on click reset closest <form/>">Delete</button>
           </td>
           {% endif %}
         </tr>
