@@ -25,7 +25,10 @@
               >{{ user.enrollments.all()[0].name }}</a
             >
           </td>
-          <td></td>
+          <td>
+            {{ user.proficiencies.all()|length }} / {{
+            user.enrollments.all()[0].standards.all()| length}}
+          </td>
         </tr>
         {% endfor %}
       </tbody>
