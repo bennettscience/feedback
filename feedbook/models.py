@@ -424,6 +424,17 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def standard_progress(self):
+        # Get the standards in the enrolled course for the user
+        # return the user's proficiencies and the standards in the course
+
+        course_standards = self.enrollments.all()[0].standards.all()
+
+        return {
+            "proficient": len(self.proficiencies.all()),
+            "assessed": len(course_standards)
+        }
+
 
 class UserType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
