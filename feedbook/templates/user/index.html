@@ -26,8 +26,14 @@
             >
           </td>
           <td>
-            {{ user.proficiencies.all()|length }} / {{
-            user.enrollments.all()[0].standards.all()| length}}
+            <div
+              class="graph"
+              style="--data-cols: {{user.enrollments.all()[0].standards.all()| length}}"
+            >
+              <span
+                style="--data-colspan: {{ user.proficiencies.all()|length }}"
+              ></span>
+            </div>
           </td>
         </tr>
         {% endfor %}
